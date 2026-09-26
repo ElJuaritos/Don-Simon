@@ -41,7 +41,7 @@
 - Ayuda: tallas, envíos, cambios, preguntas frecuentes, contacto
 - Marca: nuestra historia, cuidado del calzado
 - Newsletter (correo + botón)
-- Redes sociales, métodos de pago aceptados, avisos legales, © 2026 Don Simón
+- Redes sociales, métodos de pago aceptados, avisos legales, © 2026 Don Simon
 
 ## Páginas
 
@@ -77,7 +77,7 @@
 - Líneas del carrito con foto, nombre, color, talla, cantidad y precio; subtotal; barra de progreso hacia el envío gratis; botón para ir al checkout.
 
 ### Nuestra historia `/nuestra-historia`
-Página editorial larga: origen del nombre, quién es Don Simón, el taller, proceso paso a paso (patrón → corte → cosido → montado → acabado) con fotos, y materiales.
+Página editorial larga: origen del nombre, quién es Don Simon, el taller, proceso paso a paso (patrón → corte → cosido → montado → acabado) con fotos, y materiales.
 
 ### Guía de tallas `/ayuda/guia-de-tallas`
 Tabla de equivalencias MX / US / EU / cm, cómo medir el pie en casa y notas de horma por modelo ("talla normal", "recomendamos media talla menos").

@@ -9,7 +9,7 @@
 - Versiones que se necesitan: café sobre crema, crema/blanco sobre café o sobre fotografía, y monograma solo.
 - **Pendiente**: archivos vectoriales (SVG) del monograma y el logotipo. No se debe usar el PNG del brand board en producción.
 
-> Nota: en el logotipo aparece "Simon" sin acento. Hay que definir si el nombre oficial en textos es "Don Simón" o "Don Simon" y usarlo igual en todo el sitio (ver [decisiones pendientes](08-decisiones-pendientes.md)).
+> El nombre oficial se escribe **"Don Simon", sin acento**, igual que en el logotipo, en todo el sitio y la comunicación. Ojo: el nombre podría cambiar por el conflicto con la marca de bebidas Don Simón (ver [decisiones pendientes](08-decisiones-pendientes.md#0-conflicto-de-nombre-y-registro-de-marca)).
 
 ## Paleta de color
 

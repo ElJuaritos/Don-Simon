@@ -1,6 +1,6 @@
-# Don Simón
+# Don Simon
 
-Sitio web oficial y tienda en línea de **Don Simón** (Est. 2026), marca de calzado artesanal de piel.
+Sitio web oficial y tienda en línea de **Don Simon** (Est. 2026), marca de calzado artesanal de piel.
 
 El sitio tiene dos objetivos: **contar la historia de la marca** (oficio, materiales, origen) y **vender el calzado en línea**.
 

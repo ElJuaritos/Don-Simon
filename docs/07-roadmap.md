@@ -7,8 +7,13 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 - [x] Documentación inicial del proyecto
 - [x] Plataforma: todo a la medida
 - [x] Pasarela de pago: Stripe
+- [x] Plática inicial con el dueño (Notion, 2026-09-26)
+- [x] Nombre en textos: "Don Simon", sin acento
+- [ ] Revisar el nombre en el IMPI (clase 25) y definir el dominio
 - [ ] Logo en vectores (SVG) y licencia web de The Seasons
 - [ ] Inventario de productos del lanzamiento (modelos, colores, tallas, precios)
+
+> **Acordado en la plática:** entregar pronto un **esqueleto funcional** (sitio + admin) para que el dueño y su pareja lo revisen. Por eso las fases 1 a 3 se trabajan de forma iterativa: primero una versión básica con la marca aplicada y después se pule con su retroalimentación.
 
 ## Fase 1 · Diseño
 - [ ] Sistema de diseño: tokens, tipografía, botones, formularios, tarjetas

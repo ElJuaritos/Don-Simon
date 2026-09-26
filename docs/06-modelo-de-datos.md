@@ -145,6 +145,12 @@ pedido_id, paqueteria, numero_guia, url_rastreo, enviado_en, entregado_en.
 
 Se usa Supabase Auth, más una tabla `admins` (auth_user_id, nombre, rol: `dueño` | `operador`). Solo los usuarios de esta tabla pueden entrar a `/admin`.
 
+## Preparado para una tienda física (futuro)
+
+Si se abre un local, las ventas en tienda y en línea descuentan del **mismo inventario** (`variantes.stock`). Para permitirlo sin rehacer el modelo:
+- `pedidos.canal`: enum `en_linea` | `tienda` (hoy siempre `en_linea`).
+- Si hubiera varias ubicaciones, `variantes.stock` pasaría a una tabla `inventario(variante_id, ubicacion_id, cantidad)`.
+
 ## Tallas
 - Sistema principal: **MX (cm)**; las equivalencias US/EU se muestran en la guía de tallas.
 - Rango por definir (ver [08](08-decisiones-pendientes.md#3-catálogo-de-lanzamiento)).
