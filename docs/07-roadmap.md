@@ -15,6 +15,16 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 
 > **Acordado en la plática:** entregar pronto un **esqueleto funcional** (sitio + admin) para que el dueño y su pareja lo revisen. Por eso las fases 1 a 3 se trabajan de forma iterativa: primero una versión básica con la marca aplicada y después se pule con su retroalimentación.
 
+## ✅ Esqueleto funcional (2026-09-26)
+- [x] Next.js 16 + TypeScript + Tailwind con los tokens de marca
+- [x] Base de datos (Drizzle + PGlite en local), migraciones y 6 productos de ejemplo
+- [x] Tienda: portada, colección con filtros, producto con color y talla, guía de tallas, carrito, checkout, búsqueda
+- [x] Nuestra historia, ayuda, legales (borradores), contacto, newsletter
+- [x] Stripe Checkout + webhook (listo para las llaves de prueba) y modo demo sin llaves
+- [x] Inventario con apartado y liberación de pares
+- [x] Admin: login, tablero, productos (datos, tallas, inventario, fotos), pedidos (estados, guía), categorías, mensajes
+- [ ] Revisión del dueño y su pareja → lista de cambios
+
 ## Fase 1 · Diseño
 - [ ] Sistema de diseño: tokens, tipografía, botones, formularios, tarjetas
 - [ ] Wireframes móvil y desktop: portada, colección, producto, carrito, checkout

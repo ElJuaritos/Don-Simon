@@ -4,7 +4,18 @@ Tienda en línea a la medida para **Don Simon**, marca mexicana de calzado de pi
 
 ## Estado
 
-Fase 0 (definición). Todavía no hay código. El siguiente paso acordado con el dueño es un **esqueleto funcional** del sitio y del admin, para que él lo revise y dé retroalimentación ([07-roadmap](docs/07-roadmap.md)).
+Esqueleto funcional del sitio y del admin, listo para la retroalimentación del dueño ([07-roadmap](docs/07-roadmap.md)). Lo que falta está marcado con `TODO` en el código y en el roadmap: correos con Resend, Supabase Storage, Supabase Auth, fotos y logo reales.
+
+## Arquitectura
+
+- `src/app/(tienda)/`: sitio público. `src/app/admin/`: panel, con `login/` fuera del grupo protegido `(panel)/`.
+- `src/db/`: esquema de Drizzle, conexión y datos de ejemplo. Sin `DATABASE_URL` se usa **PGlite** en `.data/pglite`, con migraciones y seed automáticos al arrancar.
+- `src/lib/data/`: consultas. `src/lib/actions/`: Server Actions. `tienda.ts` es público y `admin.ts` empieza cada acción con `requireAdmin()`.
+- `src/lib/carrito.ts`: el carrito vive en una cookie que solo guarda IDs y cantidades.
+- **Inventario**: al crear un pedido se aparta el stock (`stock_apartado`). El webhook de Stripe lo descuenta al confirmarse el pago y lo libera si el pago vence o falla. Ver `src/lib/data/pedidos.ts`.
+- `src/lib/storage.ts`: en local, las imágenes se guardan en `.data/uploads` y se sirven en `/media/*`.
+- `src/config/marca.ts`: nombre, contacto, costos de envío y anuncio.
+- Next.js 16: se usa `proxy.ts` (antes llamado middleware), y `params`, `searchParams` y `cookies()` son asíncronos. Antes de usar una API, consulta `node_modules/next/dist/docs/`.
 
 ## Decisiones ya tomadas (no replantear)
 
@@ -32,4 +43,9 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 
 ## Comandos
 
-_Se agregarán cuando exista el proyecto de Next.js._
+- `npm run dev`: servidor de desarrollo. También existe la configuración `don-simon` en `.claude/launch.json`.
+- `npm run typecheck && npm run lint && npm run build`: correr antes de hacer commit.
+- `npm run db:generar`: después de cambiar `src/db/schema.ts`, genera la migración en `drizzle/`.
+- `npm run db:reiniciar`: borra la base local. Detén el servidor antes, porque PGlite no admite dos procesos abiertos a la vez.
+
+@AGENTS.md

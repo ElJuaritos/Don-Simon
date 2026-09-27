@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* Tokens de marca: docs/02-identidad-de-marca.md */
+@theme {
+  --color-cafe: #5d3f24;
+  --color-cafe-oscuro: #3f2a17;
+  --color-crema: #e7dac7;
+  --color-crema-claro: #f4eee5;
+  --color-olivo: #9e9268;
+  --color-olivo-oscuro: #6f6648;
+  --color-terracota: #a85f3e;
+  --color-terracota-oscuro: #8c4d31;
+
+  --font-sans: var(--font-quicksand), ui-sans-serif, system-ui, sans-serif;
+  /* The Seasons (pendiente de licencia) → Cormorant Garamond como sustituto */
+  --font-display: var(--font-display-serif), Georgia, serif;
+  /* Logotipo: se reemplaza por el SVG oficial cuando exista */
+  --font-script: var(--font-script-logo), cursive;
+
+  --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-crema-claro text-cafe font-sans antialiased;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  @media (min-width: 768px) {
+    body {
+      font-size: 1.0625rem;
+    }
+  }
+  ::selection {
+    @apply bg-terracota text-white;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-terracota;
+  }
+}
+
+@utility titulo-display {
+  @apply font-display italic font-medium leading-[1.05] tracking-tight;
+}
+
+@utility etiqueta {
+  @apply text-[0.75rem] font-semibold uppercase tracking-[0.14em];
+}
+
+@utility contenedor {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10;
+}
+
+@utility btn {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-[2px] px-7 text-[0.8125rem] font-semibold uppercase tracking-[0.12em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@utility btn-primario {
+  @apply btn bg-cafe text-crema-claro hover:bg-cafe-oscuro;
+}
+
+@utility btn-acento {
+  @apply btn bg-terracota text-white hover:bg-terracota-oscuro;
+}
+
+@utility btn-claro {
+  @apply btn bg-crema-claro text-cafe hover:bg-white;
+}
+
+@utility btn-contorno {
+  @apply btn border border-current bg-transparent hover:bg-cafe hover:text-crema-claro;
+}
+
+@utility btn-contorno-claro {
+  @apply btn border border-crema-claro/70 text-crema-claro hover:bg-crema-claro hover:text-cafe;
+}
+
+@utility campo {
+  @apply block w-full rounded-[2px] border border-cafe/25 bg-white px-4 py-3 text-base text-cafe placeholder:text-cafe/50 transition-colors focus:border-cafe focus:outline-none;
+}
+
+@utility campo-label {
+  @apply mb-1.5 block text-sm font-semibold;
+}
+
+@utility enlace {
+  @apply underline decoration-cafe/30 underline-offset-4 transition-colors hover:decoration-cafe;
+}
+
+@layer components {
+  .prosa p {
+    @apply mb-4;
+  }
+  .prosa h2 {
+    @apply titulo-display mt-10 mb-4 text-3xl;
+  }
+  .prosa h3 {
+    @apply mt-8 mb-2 text-lg font-semibold;
+  }
+  .prosa ul {
+    @apply mb-4 list-disc space-y-1 pl-5;
+  }
+  .prosa a {
+    @apply enlace;
+  }
+}
+
+/* Textura sutil de piel/papel para bloques sin fotografía */
+.textura {
+  background-image:
+    radial-gradient(circle at 20% 15%, rgb(255 255 255 / 0.08), transparent 45%),
+    radial-gradient(circle at 80% 85%, rgb(0 0 0 / 0.12), transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aparecer {
+    animation: aparecer 0.9s var(--ease-suave) both;
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
