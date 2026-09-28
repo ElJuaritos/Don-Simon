@@ -14,7 +14,7 @@ export default function Ayuda() {
           <li key={slug}>
             <Link
               href={`/ayuda/${slug}`}
-              className="group flex h-full items-start justify-between gap-4 border border-cafe/15 p-6 transition-colors hover:border-cafe hover:bg-crema/50"
+              className="group flex h-full items-start justify-between gap-4 border border-cafe/15 p-6 transition-colors hover:border-cafe hover:bg-arena/60"
             >
               <span>
                 <span className="titulo-display block text-3xl">{p.titulo}</span>

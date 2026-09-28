@@ -10,6 +10,7 @@ import {
   type Categoria,
   type Imagen,
   type Producto,
+  type Publico,
   type Variante,
 } from "@/db/schema";
 
@@ -45,6 +46,8 @@ export async function getCategoria(slug: string) {
 export async function getProductos(
   filtros: {
     categoriaSlug?: string;
+    /** "hombre" o "mujer": incluye también los modelos unisex */
+    para?: Exclude<Publico, "unisex">;
     talla?: number;
     color?: string;
     orden?: Orden;
@@ -57,6 +60,7 @@ export async function getProductos(
   const condiciones: SQL[] = [eq(productos.estado, "activo")];
   if (filtros.categoriaSlug) condiciones.push(eq(categorias.slug, filtros.categoriaSlug));
   if (filtros.soloDestacados) condiciones.push(eq(productos.destacado, true));
+  if (filtros.para) condiciones.push(inArray(productos.publico, [filtros.para, "unisex"]));
   if (filtros.q) {
     const q = `%${filtros.q}%`;
     condiciones.push(

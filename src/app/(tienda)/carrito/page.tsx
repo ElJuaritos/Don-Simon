@@ -27,7 +27,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
     <div className="contenedor py-12 md:py-16">
       <h1 className="titulo-display text-5xl">Tu carrito</h1>
       {sp.pago === "cancelado" && (
-        <p role="status" className="mt-6 bg-crema px-4 py-3">
+        <p role="status" className="mt-6 bg-arena px-4 py-3">
           El pago no se completó. Tus productos siguen aquí cuando quieras intentarlo de nuevo.
         </p>
       )}
@@ -69,7 +69,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                         name="cantidad"
                         value={l.cantidad - 1}
                         aria-label="Quitar un par"
-                        className="grid h-10 w-10 place-items-center hover:bg-crema"
+                        className="grid h-10 w-10 place-items-center hover:bg-arena"
                       >
                         −
                       </button>
@@ -109,7 +109,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
 function Resumen({ carrito }: { carrito: CarritoDetallado }) {
   const progreso = Math.min(100, (carrito.subtotal / tienda.envioGratisDesde) * 100);
   return (
-    <aside className="h-fit bg-crema/60 p-6 lg:sticky lg:top-28" aria-labelledby="titulo-resumen">
+    <aside className="h-fit bg-arena p-6 lg:sticky lg:top-28" aria-labelledby="titulo-resumen">
       <h2 id="titulo-resumen" className="etiqueta">
         Resumen
       </h2>

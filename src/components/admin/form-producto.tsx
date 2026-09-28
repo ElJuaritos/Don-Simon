@@ -1,18 +1,9 @@
 import type { Categoria, Horma, Producto } from "@/db/schema";
 import { guardarProducto } from "@/lib/actions/admin";
+import { Campo } from "./campos";
 import { FormAdmin } from "./form-admin";
 
 const pesos = (centavos: number | null | undefined) => (centavos == null ? "" : String(centavos / 100));
-
-function Campo({ label, ayuda, children }: { label: string; ayuda?: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="campo-label">{label}</span>
-      {children}
-      {ayuda && <span className="mt-1 block text-xs text-cafe/85">{ayuda}</span>}
-    </label>
-  );
-}
 
 export function FormProducto({
   producto,
@@ -44,6 +35,13 @@ export function FormProducto({
                 {c.nombre}
               </option>
             ))}
+          </select>
+        </Campo>
+        <Campo label="¿Para quién es?" ayuda="Unisex aparece tanto en Hombre como en Mujer.">
+          <select name="publico" required defaultValue={producto?.publico ?? "hombre"} className="campo">
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+            <option value="unisex">Unisex</option>
           </select>
         </Campo>
         <Campo label="Horma" ayuda="Define la recomendación de talla que ve el cliente.">

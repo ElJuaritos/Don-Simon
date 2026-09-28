@@ -8,6 +8,8 @@ export async function GET(_req: Request, ctx: RouteContext<"/media/[archivo]">) 
     headers: {
       "Content-Type": img.tipo,
       "Cache-Control": "public, max-age=31536000, immutable",
+      // El tipo del archivo lo declara el navegador al subirlo: que no se interprete como otra cosa
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

@@ -4,7 +4,7 @@ Tienda en línea a la medida para **Don Simon**, marca mexicana de calzado de pi
 
 ## Estado
 
-Esqueleto funcional del sitio y del admin, listo para la retroalimentación del dueño ([07-roadmap](docs/07-roadmap.md)). Lo que falta está marcado con `TODO` en el código y en el roadmap: correos con Resend, Supabase Storage, Supabase Auth, fotos y logo reales.
+MVP funcional en local, con el rediseño editorial pedido por el dueño (referencias en su PDF de estilo visual: minimalismo cálido, el producto como protagonista, cuadros de imagen y texto). Todavía no es para producción ([07-roadmap](docs/07-roadmap.md)). Lo que falta está marcado con `TODO` en el código y en el roadmap: correos con Resend, Supabase Storage, Supabase Auth, fotos y logo reales.
 
 ## Arquitectura
 
@@ -14,7 +14,11 @@ Esqueleto funcional del sitio y del admin, listo para la retroalimentación del 
 - `src/lib/carrito.ts`: el carrito vive en una cookie que solo guarda IDs y cantidades.
 - **Inventario**: al crear un pedido se aparta el stock (`stock_apartado`). El webhook de Stripe lo descuenta al confirmarse el pago y lo libera si el pago vence o falla. Ver `src/lib/data/pedidos.ts`.
 - `src/lib/storage.ts`: en local, las imágenes se guardan en `.data/uploads` y se sirven en `/media/*`.
-- `src/config/marca.ts`: nombre, contacto, costos de envío y anuncio.
+- `src/config/marca.ts`: nombre, contacto, costos de envío y anuncio. Los datos de contacto vacíos no se muestran.
+- **Contenido editable**: cada cuadro de la portada y de Nuestra historia está definido en `src/content/bloques.ts` (campos, proporción de foto y textos por defecto). El dueño lo edita en `/admin/contenido` y se guarda en la tabla `bloques`. Si no hay fila, se usa el texto por defecto. Ver `src/lib/data/contenido.ts` y `src/lib/actions/contenido.ts`.
+- **Hombre / Mujer**: `productos.publico` (`hombre`, `mujer`, `unisex`). `/coleccion?para=mujer` muestra los de mujer y los unisex.
+- Las hormas (`/nuestras-hormas`) y las fotos de categorías se editan en `/admin/hormas` y `/admin/categorias`.
+- Componentes de la portada en `src/components/portada/`. Enlaces de navegación en `src/components/layout/navegacion.ts`.
 - Next.js 16: se usa `proxy.ts` (antes llamado middleware), y `params`, `searchParams` y `cookies()` son asíncronos. Antes de usar una API, consulta `node_modules/next/dist/docs/`.
 
 ## Decisiones ya tomadas (no replantear)
@@ -32,6 +36,7 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 - **Idioma**: todo lo que ve el usuario (textos y URLs) va en español de México, tuteando. Código, nombres de variables y commits pueden ir en inglés, pero las tablas y columnas de la BD siguen el español de [06-modelo-de-datos](docs/06-modelo-de-datos.md).
 - **Marca** ([02-identidad-de-marca](docs/02-identidad-de-marca.md)):
   - Colores solo mediante tokens: `cafe #5d3f24`, `crema #e7dac7`, `olivo #9e9268`, `terracota #a85f3e`.
+  - La base es neutra y cálida: fondos `hueso #faf7f2`, `arena #f0e9df` y `piedra #e3d9ca`. Café, olivo y terracota van solo como acentos (botones, badges, detalles), no como fondos de sección.
   - Texto de cuerpo solo en café sobre crema o blanco. Blanco sobre terracota está bien. Sobre olivo, solo títulos grandes. Nunca café sobre terracota.
   - Tipografía: *The Seasons* (display, ≥32px) y *Quicksand* (todo lo demás).
   - Esquinas rectas o de radio mínimo, animaciones suaves, sin estética de plantilla.
@@ -46,6 +51,6 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 - `npm run dev`: servidor de desarrollo. También existe la configuración `don-simon` en `.claude/launch.json`.
 - `npm run typecheck && npm run lint && npm run build`: correr antes de hacer commit.
 - `npm run db:generar`: después de cambiar `src/db/schema.ts`, genera la migración en `drizzle/`.
-- `npm run db:reiniciar`: borra la base local. Detén el servidor antes, porque PGlite no admite dos procesos abiertos a la vez.
+- `npm run db:reiniciar`: borra la base local. Detén el servidor antes, porque PGlite no admite dos procesos abiertos a la vez. Las migraciones nuevas se aplican solas, pero el seed solo corre en una base vacía: reinicia si cambias `src/db/seed.ts`.
 
 @AGENTS.md

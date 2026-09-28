@@ -11,14 +11,16 @@ export default function Contacto() {
         <h1 className="titulo-display text-5xl md:text-6xl">Hablemos</h1>
         <p className="mt-6">¿Dudas con tu talla, un pedido o un modelo? Escríbenos y te respondemos en menos de 24 horas hábiles.</p>
         <dl className="mt-10 space-y-5">
-          <div>
-            <dt className="etiqueta text-cafe/85">Correo</dt>
-            <dd className="mt-1">
-              <a href={`mailto:${marca.email}`} className="enlace">
-                {marca.email}
-              </a>
-            </dd>
-          </div>
+          {marca.email && (
+            <div>
+              <dt className="etiqueta text-cafe/85">Correo</dt>
+              <dd className="mt-1">
+                <a href={`mailto:${marca.email}`} className="enlace">
+                  {marca.email}
+                </a>
+              </dd>
+            </div>
+          )}
           {marca.whatsapp && (
             <div>
               <dt className="etiqueta text-cafe/85">WhatsApp</dt>

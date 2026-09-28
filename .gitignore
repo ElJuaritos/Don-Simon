@@ -37,6 +37,9 @@ yarn-error.log*
 # base de datos local (PGlite) e imagenes subidas en desarrollo
 /.data/
 
+# capturas y scripts de pruebas con playwright-cli
+/.playwright-cli/
+
 # vercel
 .vercel
 

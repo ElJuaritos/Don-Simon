@@ -27,6 +27,7 @@ export const categorias = pgTable("categorias", {
   nombre: text("nombre").notNull(),
   slug: text("slug").notNull().unique(),
   descripcion: text("descripcion").notNull().default(""),
+  imagenUrl: text("imagen_url"),
   orden: integer("orden").notNull().default(0),
   ...timestamps,
 });
@@ -36,10 +37,17 @@ export const hormas = pgTable("hormas", {
   nombre: text("nombre").notNull(),
   recomendacion: text("recomendacion").notNull(),
   ancho: text("ancho", { enum: ["estandar", "ancho"] }).notNull().default("estandar"),
+  // Para la página "Nuestras hormas"
+  descripcion: text("descripcion").notNull().default(""),
+  imagenUrl: text("imagen_url"),
+  orden: integer("orden").notNull().default(0),
   ...timestamps,
 });
 
 export const ESTADOS_PRODUCTO = ["borrador", "activo", "archivado"] as const;
+// Unisex aparece tanto en Hombre como en Mujer
+export const PUBLICOS = ["hombre", "mujer", "unisex"] as const;
+export type Publico = (typeof PUBLICOS)[number];
 
 export const productos = pgTable("productos", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -49,6 +57,7 @@ export const productos = pgTable("productos", {
     .notNull()
     .references(() => categorias.id),
   hormaId: uuid("horma_id").references(() => hormas.id),
+  publico: text("publico", { enum: PUBLICOS }).notNull().default("unisex"),
   descripcion: text("descripcion").notNull().default(""),
   precio: integer("precio").notNull(),
   precioComparacion: integer("precio_comparacion"),
@@ -172,6 +181,21 @@ export const mensajes = pgTable("mensajes", {
   ...timestamps,
 });
 
+// Cuadros editables de la portada y de las páginas de marca (foto + textos).
+// La lista de bloques y sus textos por defecto vive en src/content/bloques.ts;
+// aquí solo se guarda lo que el dueño cambió desde el admin.
+export const bloques = pgTable("bloques", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  clave: text("clave").notNull().unique(),
+  titulo: text("titulo"),
+  texto: text("texto"),
+  enlaceTexto: text("enlace_texto"),
+  enlaceUrl: text("enlace_url"),
+  imagenUrl: text("imagen_url"),
+  imagenAlt: text("imagen_alt"),
+  ...timestamps,
+});
+
 export type Categoria = typeof categorias.$inferSelect;
 export type Horma = typeof hormas.$inferSelect;
 export type Producto = typeof productos.$inferSelect;
@@ -179,3 +203,4 @@ export type Variante = typeof variantes.$inferSelect;
 export type Imagen = typeof imagenes.$inferSelect;
 export type Pedido = typeof pedidos.$inferSelect;
 export type PedidoLinea = typeof pedidoLineas.$inferSelect;
+export type Bloque = typeof bloques.$inferSelect;

@@ -13,12 +13,14 @@ import {
   productos,
   variantes,
   ESTADOS_PRODUCTO,
+  PUBLICOS,
   type EstadoPedido,
 } from "@/db/schema";
 import { cerrarSesion, iniciarSesion, passwordCorrecta, requireAdmin } from "@/lib/auth";
 import { cancelarPedidoPendiente } from "@/lib/data/pedidos";
 import { pesosACentavos, slugify } from "@/lib/formato";
 import { borrarImagen, guardarImagen } from "@/lib/storage";
+import { expirarSesion } from "@/lib/stripe";
 import type { EstadoForm } from "./tienda";
 
 // Cada acción empieza con requireAdmin(): las Server Actions son endpoints públicos.
@@ -59,6 +61,7 @@ const productoSchema = z.object({
   cuidado: z.string().trim(),
   hechoEn: z.string().trim(),
   estado: z.enum(ESTADOS_PRODUCTO),
+  publico: z.enum(PUBLICOS, "Elige para quién es el modelo."),
 });
 
 export async function guardarProducto(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
@@ -98,6 +101,7 @@ export async function guardarProducto(_prev: EstadoForm, formData: FormData): Pr
     hechoEn: d.hechoEn,
     destacado: formData.get("destacado") === "on",
     estado: d.estado,
+    publico: d.publico,
   };
 
   if (id) {
@@ -272,6 +276,8 @@ export async function cambiarEstadoPedido(_prev: EstadoForm, formData: FormData)
   if (!pedido) return { error: "Pedido no encontrado." };
 
   if (nuevo === "cancelado" && pedido.estado === "pendiente_pago") {
+    // Primero se cierra el pago en Stripe para que el cliente ya no pueda completarlo
+    await expirarSesion(pedido.stripeSessionId);
     await cancelarPedidoPendiente(id);
     revalidatePath("/admin/pedidos");
     return { ok: true, mensaje: "Pedido cancelado y pares liberados." };

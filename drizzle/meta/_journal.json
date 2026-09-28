@@ -8,6 +8,13 @@
       "when": 1790445057386,
       "tag": "0000_inicial",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790615474254,
+      "tag": "0001_portada_hormas_publico",
+      "breakpoints": true
     }
   ]
 }

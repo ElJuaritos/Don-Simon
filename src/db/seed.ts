@@ -1,6 +1,6 @@
 import { count } from "drizzle-orm";
 import type { Db } from "./index";
-import { categorias, hormas, productos, variantes } from "./schema";
+import { categorias, hormas, productos, variantes, type Publico } from "./schema";
 
 // Datos de ejemplo para desarrollo. Solo se cargan si la base está vacía.
 // Son modelos inventados: se reemplazan por el catálogo real desde el admin.
@@ -25,6 +25,7 @@ const MODELOS: {
   slug: string;
   codigo: string;
   categoria: string;
+  publico: Publico;
   precio: number;
   precioComparacion?: number;
   colores: ColorKey[];
@@ -38,6 +39,7 @@ const MODELOS: {
     slug: "mocasin-alameda",
     codigo: "ALA",
     categoria: "mocasines",
+    publico: "hombre",
     precio: 349000,
     colores: ["cafe", "conac"],
     destacado: true,
@@ -51,6 +53,7 @@ const MODELOS: {
     slug: "mocasin-olivar",
     codigo: "OLI",
     categoria: "mocasines",
+    publico: "unisex",
     precio: 329000,
     precioComparacion: 369000,
     colores: ["negro", "olivo"],
@@ -65,6 +68,7 @@ const MODELOS: {
     slug: "bota-sierra",
     codigo: "SIE",
     categoria: "botas",
+    publico: "hombre",
     precio: 429000,
     colores: ["cafe", "conac"],
     destacado: true,
@@ -78,6 +82,7 @@ const MODELOS: {
     slug: "chelsea-encino",
     codigo: "ENC",
     categoria: "botas",
+    publico: "unisex",
     precio: 399000,
     colores: ["negro", "cafe"],
     destacado: true,
@@ -91,6 +96,7 @@ const MODELOS: {
     slug: "oxford-real",
     codigo: "REA",
     categoria: "oxford-y-derby",
+    publico: "hombre",
     precio: 369000,
     colores: ["negro", "cafe"],
     destacado: false,
@@ -104,6 +110,7 @@ const MODELOS: {
     slug: "derby-campo",
     codigo: "CAM",
     categoria: "oxford-y-derby",
+    publico: "hombre",
     precio: 339000,
     colores: ["conac", "olivo"],
     destacado: true,
@@ -112,7 +119,38 @@ const MODELOS: {
     descripcion:
       "Derby de cierre abierto, más relajado que un Oxford. El zapato para quien quiere verse bien sin esfuerzo.",
   },
+  {
+    nombre: "Mocasín Lucía",
+    slug: "mocasin-lucia",
+    codigo: "LUC",
+    categoria: "mocasines",
+    publico: "mujer",
+    precio: 319000,
+    colores: ["conac", "negro"],
+    destacado: true,
+    construccion: "Cosido Blake",
+    suela: "Suela de cuero con tapa de goma",
+    descripcion:
+      "Mocasín de silueta afinada y puntera almendrada. Suave desde el primer día y hecho para caminar la ciudad.",
+  },
+  {
+    nombre: "Botín Jacaranda",
+    slug: "botin-jacaranda",
+    codigo: "JAC",
+    categoria: "botas",
+    publico: "mujer",
+    precio: 389000,
+    colores: ["cafe", "negro"],
+    destacado: false,
+    construccion: "Cosido Blake",
+    suela: "Suela de cuero con tacón de 4 cm",
+    descripcion:
+      "Botín al tobillo con cierre lateral y tacón bajo de madera forrada en piel. Va de la oficina a la cena.",
+  },
 ];
+
+// Tallas de dama: se generan con otro rango que las de caballero
+const TALLAS_MUJER = [22, 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26];
 
 export async function seed(db: Db) {
   const [{ total }] = await db.select({ total: count() }).from(categorias);
@@ -145,11 +183,20 @@ export async function seed(db: Db) {
   const [clasica, amplia] = await db
     .insert(hormas)
     .values([
-      { nombre: "Horma Clásica", recomendacion: "Pide tu talla de siempre." },
+      {
+        nombre: "Horma Clásica",
+        recomendacion: "Pide tu talla de siempre.",
+        orden: 1,
+        descripcion:
+          "Nuestra horma de base. Puntera redondeada, empeine medio y un talón firme que sujeta sin apretar. Es la que usan los mocasines y los zapatos de vestir.",
+      },
       {
         nombre: "Horma Amplia",
         recomendacion: "Calza un poco grande: si estás entre dos tallas, pide la menor.",
         ancho: "ancho",
+        orden: 2,
+        descripcion:
+          "Más volumen en el empeine y en la punta para dejar espacio a un calcetín grueso. Pensada para botas y para pies anchos.",
       },
     ])
     .returning();
@@ -163,6 +210,7 @@ export async function seed(db: Db) {
         slug: m.slug,
         categoriaId: categoria.id,
         hormaId: m.categoria === "botas" ? amplia.id : clasica.id,
+        publico: m.publico,
         descripcion: m.descripcion,
         precio: m.precio,
         precioComparacion: m.precioComparacion ?? null,
@@ -178,7 +226,7 @@ export async function seed(db: Db) {
 
     await db.insert(variantes).values(
       m.colores.flatMap((key) =>
-        TALLAS.map((talla, j) => {
+        (m.publico === "mujer" ? TALLAS_MUJER : TALLAS).map((talla, j) => {
           const color = COLORES[key];
           const colorCode = color.nombre.slice(0, 3).toUpperCase().replace("Ñ", "N");
           return {

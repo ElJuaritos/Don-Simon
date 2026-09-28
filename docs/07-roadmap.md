@@ -23,7 +23,16 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 - [x] Stripe Checkout + webhook (listo para las llaves de prueba) y modo demo sin llaves
 - [x] Inventario con apartado y liberación de pares
 - [x] Admin: login, tablero, productos (datos, tallas, inventario, fotos), pedidos (estados, guía), categorías, mensajes
-- [ ] Revisión del dueño y su pareja → lista de cambios
+- [x] Primera retroalimentación del dueño: PDF de estilo visual con referencias
+
+## ✅ MVP funcional en local (2026-09-26)
+- [x] Rediseño editorial: base neutra (hueso, arena, piedra), cuadros de imagen y texto, header con Hombre / Mujer / Colección / La casa, footer claro
+- [x] Portada y Nuestra historia editables desde el admin (fotos, textos y botones de cada cuadro)
+- [x] Hombre / Mujer: campo por modelo, filtro en la colección y 2 modelos de mujer de ejemplo
+- [x] Página Nuestras hormas y su admin; fotos de categorías editables
+- [x] Checkout más robusto: libera stock si Stripe falla, cierra la sesión al cancelar, avisa de pagos tardíos, guarda el método de pago real y bloquea el modo demo en producción
+- [ ] Revisión del dueño con sus fotos reales → lista de cambios
+- [ ] Probar un pago completo con las llaves de prueba de Stripe
 
 ## Fase 1 · Diseño
 - [ ] Sistema de diseño: tokens, tipografía, botones, formularios, tarjetas

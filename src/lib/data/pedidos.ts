@@ -126,6 +126,23 @@ export function cancelarPedidoPendiente(pedidoId: string) {
   return moverInventario(pedidoId, "pendiente_pago", "cancelado", {}, false);
 }
 
+/**
+ * Llegó un pago para un pedido que ya no espera pago (por ejemplo, se canceló y el
+ * depósito de OXXO llegó después). No se toca el inventario; se deja una nota para
+ * que el dueño lo revise y haga el reembolso desde Stripe.
+ */
+export async function registrarPagoTardio(pedidoId: string) {
+  const db = await getDb();
+  const [pedido] = await db
+    .update(pedidos)
+    .set({
+      notas: sql`trim(${pedidos.notas} || ' [Aviso] Llegó un pago cuando el pedido ya estaba cancelado: revisa y reembolsa desde Stripe.')`,
+    })
+    .where(and(eq(pedidos.id, pedidoId), eq(pedidos.estado, "cancelado")))
+    .returning({ id: pedidos.id });
+  if (pedido) console.error(`Pago recibido para el pedido cancelado ${pedidoId}`);
+}
+
 export async function getPedido(id: string) {
   const db = await getDb();
   const [pedido] = await db.select().from(pedidos).where(eq(pedidos.id, id));

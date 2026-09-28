@@ -38,6 +38,9 @@ suscriptores (newsletter)    paginas (contenido editable)    ajustes (clave/valo
 | nombre | text | "Horma Clásica" |
 | recomendacion | text | "Talla normal" / "Media talla menos" |
 | ancho | enum | estandar, ancho |
+| descripcion | text | Para `/nuestras-hormas` |
+| imagen_url | text, nullable | |
+| orden | int | |
 
 ### `productos`
 | Campo | Tipo | Notas |
@@ -55,6 +58,7 @@ suscriptores (newsletter)    paginas (contenido editable)    ajustes (clave/valo
 | cuidado | text | |
 | hecho_en | text | |
 | dias_fabricacion | int, nullable | Solo para modelos por encargo |
+| publico | enum | hombre, mujer, unisex (unisex aparece en ambos) |
 | destacado | bool | Aparece en la portada |
 | estado | enum | borrador, activo, archivado |
 | seo_titulo, seo_descripcion | text | |
@@ -138,7 +142,8 @@ pedido_id, paqueteria, numero_guia, url_rastreo, enviado_en, entregado_en.
 
 - **`cupones`** (fase 1.5): codigo, tipo (porcentaje / monto), valor, minimo_compra, usos_maximos, usos, vigencia.
 - **`suscriptores`**: email, origen (footer, popup), confirmado.
-- **`paginas`**: slug, titulo, contenido (Markdown), seo. Para Nuestra historia, ayuda y legales.
+- **`bloques`** (implementada): clave única, titulo, texto, enlace_texto, enlace_url, imagen_url, imagen_alt. Cada fila personaliza un cuadro de la portada o de Nuestra historia. Los cuadros existentes y sus textos por defecto se definen en código (`src/content/bloques.ts`), así que la tabla solo guarda lo que el dueño cambió.
+- **`paginas`**: slug, titulo, contenido (Markdown), seo. Para ayuda y legales.
 - **`ajustes`**: clave/valor, p. ej. `barra_anuncio`, `envio_gratis_minimo`, `costo_envio`, `whatsapp`.
 
 ## Usuarios del admin

@@ -71,7 +71,7 @@ export function FormCheckout() {
       </div>
 
       {estado?.error && (
-        <p role="alert" className="border-l-4 border-terracota bg-crema px-4 py-3">
+        <p role="alert" className="border-l-4 border-terracota bg-arena px-4 py-3">
           {estado.error}
         </p>
       )}

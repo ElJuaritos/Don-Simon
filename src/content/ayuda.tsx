@@ -110,7 +110,7 @@ export const paginasLegales: Record<string, PaginaContenido> = {
     descripcion: "Cómo tratamos tus datos personales.",
     contenido: (
       <>
-        <p className="border-l-4 border-terracota bg-crema px-4 py-3">
+        <p className="border-l-4 border-terracota bg-arena px-4 py-3">
           <strong>Borrador.</strong> Este texto es un marcador de posición y debe redactarlo o revisarlo un abogado conforme a la LFPDPPP antes del lanzamiento.
         </p>
         <h2>Responsable</h2>
@@ -120,7 +120,7 @@ export const paginasLegales: Record<string, PaginaContenido> = {
         <h2>Pagos</h2>
         <p>Los pagos los procesa Stripe. No almacenamos datos de tarjetas.</p>
         <h2>Derechos ARCO</h2>
-        <p>Puedes ejercer tus derechos de acceso, rectificación, cancelación y oposición escribiendo a {marca.email}.</p>
+        <p>Puedes ejercer tus derechos de acceso, rectificación, cancelación y oposición escribiéndonos desde <Link href="/contacto">contacto</Link>.</p>
       </>
     ),
   },
@@ -129,7 +129,7 @@ export const paginasLegales: Record<string, PaginaContenido> = {
     descripcion: "Condiciones de uso y compra.",
     contenido: (
       <>
-        <p className="border-l-4 border-terracota bg-crema px-4 py-3">
+        <p className="border-l-4 border-terracota bg-arena px-4 py-3">
           <strong>Borrador.</strong> Este texto es un marcador de posición y debe redactarlo o revisarlo un abogado antes del lanzamiento.
         </p>
         <h2>Precios</h2>

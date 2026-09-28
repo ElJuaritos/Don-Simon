@@ -8,7 +8,7 @@ export function FormContacto() {
 
   if (estado?.ok) {
     return (
-      <div className="flex items-center bg-crema p-8" role="status">
+      <div className="flex items-center bg-arena p-8" role="status">
         <p className="titulo-display text-3xl">{estado.mensaje}</p>
       </div>
     );

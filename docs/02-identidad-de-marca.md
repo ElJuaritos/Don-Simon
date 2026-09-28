@@ -21,6 +21,14 @@
 | `--color-terracota` | Terracota | `#a85f3e` | Acento: CTA destacados, ofertas, estados activos |
 | `--color-blanco` | Blanco | `#ffffff` | Tarjetas, texto sobre fotografía |
 
+**Base neutra (2026-09-26).** Siguiendo el PDF de estilo visual del dueño, el sitio usa fondos neutros cálidos y deja la paleta de marca como acento. Café se queda para texto y botones primarios; olivo y terracota, para detalles y ofertas. Ya no se usan como fondos de sección.
+
+| Token | HEX | Uso |
+|-------|-----|-----|
+| `--color-hueso` | `#faf7f2` | Fondo general |
+| `--color-arena` | `#f0e9df` | Secciones alternas, footer, resúmenes, espacios de foto |
+| `--color-piedra` | `#e3d9ca` | Espacios de foto con más contraste |
+
 ### Contraste (WCAG)
 
 Mínimos: 4.5:1 para texto normal (AA) y 3:1 para texto grande (≥ 24px, o ≥ 18.66px en negritas).

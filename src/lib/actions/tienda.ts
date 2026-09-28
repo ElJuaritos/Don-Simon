@@ -2,15 +2,22 @@
 
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import type Stripe from "stripe";
 import { z } from "zod";
 import { getDb } from "@/db";
 import { mensajes, pedidos, productos, suscriptores, variantes } from "@/db/schema";
 import { tienda } from "@/config/marca";
-import { getCarritoDetallado, guardarCarrito, leerCarrito, vaciarCarrito } from "@/lib/carrito";
+import {
+  getCarritoDetallado,
+  guardarCarrito,
+  leerCarrito,
+  vaciarCarrito,
+  type CarritoDetallado,
+} from "@/lib/carrito";
 import { disponibles } from "@/lib/data/catalogo";
-import { crearPedido, SinStockError } from "@/lib/data/pedidos";
+import { cancelarPedidoPendiente, crearPedido, SinStockError } from "@/lib/data/pedidos";
 import { folio } from "@/lib/formato";
-import { getStripe, urlDelSitio } from "@/lib/stripe";
+import { esModoDemo, getStripe, urlDelSitio } from "@/lib/stripe";
 
 export type EstadoForm = { ok?: boolean; error?: string; mensaje?: string } | undefined;
 
@@ -81,6 +88,11 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const d = parsed.data;
 
+  const stripe = getStripe();
+  if (!stripe && !esModoDemo()) {
+    return { error: "Los pagos no están disponibles en este momento. Intenta más tarde." };
+  }
+
   // Precios y totales se recalculan aquí, nunca se confía en el navegador
   const carrito = await getCarritoDetallado();
   if (carrito.lineas.length === 0) return { error: "Tu carrito está vacío." };
@@ -112,18 +124,41 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
     throw e;
   }
 
-  const stripe = getStripe();
   if (!stripe) {
-    // Modo demo: sin llaves de Stripe el pedido queda "pendiente de pago"
+    // Modo demo (solo desarrollo): el pedido queda "pendiente de pago"
     await vaciarCarrito();
     redirect(`/checkout/gracias?pedido=${pedido.id}&demo=1`);
   }
 
+  let sesion;
+  try {
+    sesion = await crearSesionPago(stripe, pedido, carrito, d.email);
+  } catch (e) {
+    // Sin sesión de pago no llegará ningún webhook: hay que liberar los pares aquí
+    console.error("No se pudo crear la sesión de Stripe", e);
+    await cancelarPedidoPendiente(pedido.id);
+    return { error: "No pudimos conectar con el sistema de pago. Intenta de nuevo en unos minutos." };
+  }
+
+  const db = await getDb();
+  await db.update(pedidos).set({ stripeSessionId: sesion.id }).where(eq(pedidos.id, pedido.id));
+  redirect(sesion.url!);
+}
+
+function crearSesionPago(
+  stripe: Stripe,
+  pedido: { id: string; numero: number },
+  carrito: CarritoDetallado,
+  email: string,
+) {
   const sitio = urlDelSitio();
-  const sesion = await stripe.checkout.sessions.create({
+  const envio = carrito.envio > 0
+    ? [{ quantity: 1, price_data: { currency: "mxn", unit_amount: carrito.envio, product_data: { name: "Envío" } } }]
+    : [];
+  return stripe.checkout.sessions.create({
     mode: "payment",
     locale: "es",
-    customer_email: d.email,
+    customer_email: email,
     client_reference_id: pedido.id,
     metadata: { pedidoId: pedido.id, folio: folio(pedido.numero) },
     payment_intent_data: { metadata: { pedidoId: pedido.id } },
@@ -136,27 +171,12 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
           product_data: { name: `${l.nombre} · ${l.color} · Talla ${l.talla}` },
         },
       })),
-      ...(carrito.envio > 0
-        ? [
-            {
-              quantity: 1,
-              price_data: {
-                currency: "mxn",
-                unit_amount: carrito.envio,
-                product_data: { name: "Envío" },
-              },
-            },
-          ]
-        : []),
+      ...envio,
     ],
     // El ID del pedido es un UUID: no se puede adivinar como un folio consecutivo
     success_url: `${sitio}/checkout/gracias?pedido=${pedido.id}`,
     cancel_url: `${sitio}/carrito?pago=cancelado`,
   });
-
-  const db = await getDb();
-  await db.update(pedidos).set({ stripeSessionId: sesion.id }).where(eq(pedidos.id, pedido.id));
-  redirect(sesion.url!);
 }
 
 // ---------- Newsletter y contacto ----------

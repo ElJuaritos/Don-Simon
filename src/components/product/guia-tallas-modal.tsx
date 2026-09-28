@@ -15,7 +15,7 @@ export function GuiaTallasModal({ recomendacion }: { recomendacion?: string }) {
         ref={ref}
         aria-labelledby="titulo-guia"
         onClick={(e) => e.target === ref.current && ref.current?.close()}
-        className="m-auto w-[min(40rem,calc(100%-2rem))] bg-crema-claro p-0 text-cafe backdrop:bg-cafe-oscuro/50"
+        className="m-auto w-[min(40rem,calc(100%-2rem))] bg-hueso p-0 text-cafe backdrop:bg-cafe-oscuro/50"
       >
         <div className="p-6 md:p-8">
           <div className="flex items-start justify-between gap-4">
@@ -27,7 +27,7 @@ export function GuiaTallasModal({ recomendacion }: { recomendacion?: string }) {
             </button>
           </div>
           {recomendacion && (
-            <p className="mt-3 bg-crema px-4 py-3 text-sm">
+            <p className="mt-3 bg-arena px-4 py-3 text-sm">
               <strong>Para este modelo:</strong> {recomendacion}
             </p>
           )}

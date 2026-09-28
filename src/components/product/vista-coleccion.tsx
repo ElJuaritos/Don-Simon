@@ -1,17 +1,26 @@
 import Link from "next/link";
 import type { Categoria } from "@/db/schema";
 import { getOpcionesFiltro, getProductos, type Orden } from "@/lib/data/catalogo";
-import { formatTalla } from "@/lib/formato";
+import { FormFiltros, ORDENES } from "./filtros-coleccion";
 import { RejillaProductos } from "./tarjeta-producto";
 
-const ORDENES: { valor: Orden; texto: string }[] = [
-  { valor: "destacados", texto: "Destacados" },
-  { valor: "novedades", texto: "Novedades" },
-  { valor: "precio-asc", texto: "Precio: menor a mayor" },
-  { valor: "precio-desc", texto: "Precio: mayor a menor" },
-];
+// Listado de productos compartido por /coleccion y /coleccion/[categoria].
+// ?para=hombre|mujer filtra por público (los unisex aparecen en ambos).
 
-export type FiltrosColeccion = { talla?: string; color?: string; orden?: string };
+export type FiltrosColeccion = { talla?: string; color?: string; orden?: string; para?: string };
+
+const PUBLICOS = [
+  { valor: undefined, texto: "Todo" },
+  { valor: "hombre", texto: "Hombre" },
+  { valor: "mujer", texto: "Mujer" },
+] as const;
+
+type Para = "hombre" | "mujer";
+
+/** Arma la URL conservando el público elegido. */
+function conPara(ruta: string, para?: Para) {
+  return para ? `${ruta}?para=${para}` : ruta;
+}
 
 export async function VistaColeccion({
   titulo,
@@ -28,27 +37,33 @@ export async function VistaColeccion({
   filtros: FiltrosColeccion;
   rutaBase: string;
 }) {
+  const para: Para | undefined = filtros.para === "hombre" || filtros.para === "mujer" ? filtros.para : undefined;
   const talla = filtros.talla ? Number(filtros.talla) : undefined;
   const orden = ORDENES.some((o) => o.valor === filtros.orden) ? (filtros.orden as Orden) : "destacados";
   const [productos, opciones] = await Promise.all([
     getProductos({
       categoriaSlug: categoria?.slug,
+      para,
       talla: Number.isFinite(talla) ? talla : undefined,
       color: filtros.color || undefined,
       orden,
     }),
     getOpcionesFiltro(),
   ]);
-  const hayFiltros = Boolean(filtros.talla || filtros.color);
+
+  const nombrePara = PUBLICOS.find((p) => p.valor === para)?.texto;
+  const tituloFinal = para && !categoria ? nombrePara! : titulo;
+  const pestana = (activa: boolean) =>
+    `whitespace-nowrap border-b pb-1.5 transition-colors ${activa ? "border-cafe" : "border-transparent text-cafe/85 hover:text-cafe"}`;
 
   return (
-    <div className="contenedor py-12 md:py-16">
+    <div className="contenedor py-12 md:py-20">
       <header className="max-w-2xl">
         <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
           <Link href="/" className="hover:text-cafe">
             Inicio
           </Link>
-          {categoria && (
+          {(categoria || para) && (
             <>
               {" / "}
               <Link href="/coleccion" className="hover:text-cafe">
@@ -56,93 +71,59 @@ export async function VistaColeccion({
               </Link>
             </>
           )}
+          {categoria && para && (
+            <>
+              {" / "}
+              <Link href={conPara("/coleccion", para)} className="hover:text-cafe">
+                {nombrePara}
+              </Link>
+            </>
+          )}
         </nav>
-        <h1 className="titulo-display mt-3 text-5xl md:text-6xl">{titulo}</h1>
-        {descripcion && <p className="mt-4 text-lg">{descripcion}</p>}
+        <h1 className="titulo-display mt-4 text-5xl md:text-7xl">{tituloFinal}</h1>
+        {descripcion && <p className="mt-5 text-lg">{descripcion}</p>}
       </header>
 
-      <nav aria-label="Categorías" className="mt-8 flex flex-wrap gap-2">
-        <Link
-          href="/coleccion"
-          className={`etiqueta border px-4 py-2 transition-colors ${!categoria ? "border-cafe bg-cafe text-crema-claro" : "border-cafe/25 hover:border-cafe"}`}
-        >
-          Todo
-        </Link>
-        {categorias.map((c) => (
-          <Link
-            key={c.id}
-            href={`/coleccion/${c.slug}`}
-            className={`etiqueta border px-4 py-2 transition-colors ${categoria?.id === c.id ? "border-cafe bg-cafe text-crema-claro" : "border-cafe/25 hover:border-cafe"}`}
-          >
-            {c.nombre}
+      <div className="mt-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <nav aria-label="Público" className="etiqueta flex gap-6">
+          {PUBLICOS.map((p) => (
+            <Link key={p.texto} href={conPara(rutaBase, p.valor)} aria-current={p.valor === para ? "page" : undefined} className={pestana(p.valor === para)}>
+              {p.texto}
+            </Link>
+          ))}
+        </nav>
+        <nav aria-label="Categorías" className="-mx-4 flex gap-6 overflow-x-auto px-4 text-[0.9375rem] md:mx-0 md:px-0">
+          <Link href={conPara("/coleccion", para)} className={pestana(!categoria)}>
+            Todas
           </Link>
-        ))}
-      </nav>
+          {categorias.map((c) => (
+            <Link key={c.id} href={conPara(`/coleccion/${c.slug}`, para)} className={pestana(categoria?.id === c.id)}>
+              {c.nombre}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
-      {/* Filtros: formulario GET, funciona sin JavaScript */}
-      <form
-        method="get"
-        action={rutaBase}
-        className="mt-6 flex flex-wrap items-end gap-3 border-y border-cafe/10 py-4"
-      >
-        <div>
-          <label htmlFor="f-talla" className="campo-label text-xs">
-            Talla (MX)
-          </label>
-          <select id="f-talla" name="talla" defaultValue={filtros.talla ?? ""} className="campo min-w-28 py-2">
-            <option value="">Todas</option>
-            {opciones.tallas.map((t) => (
-              <option key={t} value={t}>
-                {formatTalla(t)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="f-color" className="campo-label text-xs">
-            Color
-          </label>
-          <select id="f-color" name="color" defaultValue={filtros.color ?? ""} className="campo min-w-32 py-2">
-            <option value="">Todos</option>
-            {opciones.colores.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="f-orden" className="campo-label text-xs">
-            Ordenar
-          </label>
-          <select id="f-orden" name="orden" defaultValue={orden} className="campo min-w-48 py-2">
-            {ORDENES.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.texto}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="btn-primario min-h-11">
-          Aplicar
-        </button>
-        {hayFiltros && (
-          <Link href={rutaBase} className="enlace ml-1 self-center text-sm">
-            Quitar filtros
-          </Link>
-        )}
-        <p className="ml-auto self-center text-sm text-cafe/85">
-          {productos.length} {productos.length === 1 ? "modelo" : "modelos"}
-        </p>
-      </form>
+      <div className="mt-6">
+        <FormFiltros
+          rutaBase={rutaBase}
+          para={para}
+          talla={filtros.talla}
+          color={filtros.color}
+          orden={orden}
+          opciones={opciones}
+          total={productos.length}
+          limpiarHref={conPara(rutaBase, para)}
+        />
+      </div>
 
-      <div className="mt-10">
+      <div className="mt-12">
         {productos.length > 0 ? (
           <RejillaProductos productos={productos} />
         ) : (
-          <div className="py-20 text-center">
-            <p className="titulo-display text-3xl">No encontramos modelos con esos filtros.</p>
-            <Link href={rutaBase} className="btn-contorno mt-6">
+          <div className="py-24 text-center">
+            <p className="titulo-display text-3xl md:text-4xl">No encontramos modelos con esos filtros.</p>
+            <Link href={conPara(rutaBase, para)} className="btn-contorno mt-8">
               Ver todo
             </Link>
           </div>

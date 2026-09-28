@@ -36,12 +36,16 @@ Ya existe **Don Simón**, una marca de jugos y vinos muy conocida en México y e
 - ¿Rango de precios?
 - ¿Hay modelos por encargo o todo es inventario disponible?
 
-**Decisión**: _pendiente_
+**Decisión parcial (2026-09-26)**: ✅ El sitio queda listo para **Hombre y Mujer**. Cada modelo se marca como hombre, mujer o unisex, y la navegación tiene entradas separadas. Los modelos, precios y tallas reales siguen _pendientes_.
 
 ## Importantes (antes de diseñar)
 
 ### 4. Nombre oficial en textos
 **Decisión (2026-09-26)**: ✅ **"Don Simon", sin acento**, como en el logotipo.
+
+### 4b. Dirección visual
+El dueño compartió un PDF de estilo visual con referencias (Jean Pierre, Gran Par, Morjas, Myrqvist, Magnanni, Velasca, Dante).
+**Decisión (2026-09-26)**: ✅ **Minimalismo cálido con base neutra**: fondos hueso, arena y piedra, y la paleta de marca solo como acento. Composición editorial de cuadros de imagen y texto, con el producto como protagonista. Ver [02](02-identidad-de-marca.md).
 
 ### 5. Historia de marca
 ¿Quién es Don Simon? ¿Dónde está el taller? ¿Qué hace diferente al producto (piel, construcción, origen)? Esto define la página "Nuestra historia" y el tono de toda la comunicación.

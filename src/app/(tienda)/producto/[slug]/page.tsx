@@ -57,6 +57,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     producto.horma && {
       titulo: "Horma y ajuste",
       contenido: `${producto.horma.nombre}. ${producto.horma.recomendacion}`,
+      enlace: { href: "/nuestras-hormas", texto: "Conoce nuestras hormas" },
     },
     { titulo: "Cuidado", contenido: producto.cuidado },
     {
@@ -187,7 +188,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
       </div>
 
       {relacionados.length > 0 && (
-        <section className="border-t border-cafe/10 bg-crema/40 py-16 md:py-20" aria-labelledby="titulo-relacionados">
+        <section className="border-t border-cafe/10 bg-arena/50 py-16 md:py-24" aria-labelledby="titulo-relacionados">
           <div className="contenedor">
             <h2 id="titulo-relacionados" className="titulo-display mb-10 text-4xl">
               También te puede gustar

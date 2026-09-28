@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import { suscribir } from "@/lib/actions/tienda";
 
-export function FormNewsletter({ origen = "footer", oscuro = true }: { origen?: string; oscuro?: boolean }) {
+/** Suscripción al newsletter: una línea con el correo y el botón. */
+export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
   const [estado, accion, enviando] = useActionState(suscribir, undefined);
 
   if (estado?.ok) {
@@ -16,7 +17,7 @@ export function FormNewsletter({ origen = "footer", oscuro = true }: { origen?: 
       <label htmlFor={`email-${origen}`} className="sr-only">
         Correo electrónico
       </label>
-      <div className={`flex flex-col gap-2 ${oscuro ? "md:max-lg:flex-row" : "sm:flex-row"}`}>
+      <div className="flex items-end gap-3 border-b border-cafe/40 focus-within:border-cafe">
         <input
           id={`email-${origen}`}
           name="email"
@@ -24,13 +25,9 @@ export function FormNewsletter({ origen = "footer", oscuro = true }: { origen?: 
           required
           autoComplete="email"
           placeholder="Tu correo electrónico"
-          className={
-            oscuro
-              ? "min-h-12 min-w-0 flex-1 rounded-[2px] border border-crema/40 bg-transparent px-4 text-crema-claro placeholder:text-crema/60 focus:border-crema focus:outline-none"
-              : "campo min-w-0 flex-1"
-          }
+          className="min-h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-cafe/60 focus:outline-none"
         />
-        <button type="submit" disabled={enviando} className={oscuro ? "btn-claro" : "btn-primario"}>
+        <button type="submit" disabled={enviando} className="etiqueta min-h-12 shrink-0 transition-opacity hover:opacity-60 disabled:opacity-40">
           {enviando ? "Enviando…" : "Suscribirme"}
         </button>
       </div>

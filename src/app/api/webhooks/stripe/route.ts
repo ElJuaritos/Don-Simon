@@ -1,9 +1,15 @@
 import type Stripe from "stripe";
-import { cancelarPedidoPendiente, confirmarPago } from "@/lib/data/pedidos";
-import { getStripe } from "@/lib/stripe";
+import { cancelarPedidoPendiente, confirmarPago, registrarPagoTardio } from "@/lib/data/pedidos";
+import { getStripe, metodoDePago } from "@/lib/stripe";
 
 // Único lugar donde un pedido pasa a "pagado". Stripe firma cada evento y aquí se verifica.
 // En local: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+
+async function pagar(sesion: Stripe.Checkout.Session, pedidoId: string) {
+  const pedido = await confirmarPago(pedidoId, await metodoDePago(sesion.id));
+  // null = el pedido ya no estaba pendiente: reenvío del mismo evento o pago tardío
+  if (!pedido) await registrarPagoTardio(pedidoId);
+}
 
 export async function POST(request: Request) {
   const stripe = getStripe();
@@ -24,15 +30,14 @@ export async function POST(request: Request) {
     const sesion = evento.data.object as Stripe.Checkout.Session;
     const pedidoId = sesion.metadata?.pedidoId;
     if (!pedidoId) return new Response("ok");
-    const metodo = sesion.payment_method_types?.[0] ?? null;
 
     switch (evento.type) {
       case "checkout.session.completed":
         // Con OXXO/SPEI la sesión se completa pero el pago llega después (async_payment_succeeded)
-        if (sesion.payment_status === "paid") await confirmarPago(pedidoId, metodo);
+        if (sesion.payment_status === "paid") await pagar(sesion, pedidoId);
         break;
       case "checkout.session.async_payment_succeeded":
-        await confirmarPago(pedidoId, metodo);
+        await pagar(sesion, pedidoId);
         break;
       case "checkout.session.async_payment_failed":
       case "checkout.session.expired":

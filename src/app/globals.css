@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
-/* Tokens de marca: docs/02-identidad-de-marca.md */
+/* Tokens de marca: docs/02-identidad-de-marca.md
+   Base neutra y cálida (hueso, arena, piedra) con café para el texto;
+   olivo y terracota quedan como acentos puntuales. */
 @theme {
+  --color-hueso: #faf7f2;
+  --color-arena: #f0e9df;
+  --color-piedra: #e3d9ca;
+
   --color-cafe: #5d3f24;
   --color-cafe-oscuro: #3f2a17;
   --color-crema: #e7dac7;
@@ -25,7 +31,7 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-crema-claro text-cafe font-sans antialiased;
+    @apply bg-hueso text-cafe font-sans antialiased;
     font-size: 1rem;
     line-height: 1.65;
   }
@@ -90,6 +96,16 @@
   @apply underline decoration-cafe/30 underline-offset-4 transition-colors hover:decoration-cafe;
 }
 
+/* Enlace editorial: mayúsculas pequeñas con línea inferior que se desvanece al pasar */
+@utility enlace-etiqueta {
+  @apply etiqueta inline-block border-b border-current pb-1 transition-opacity duration-300 hover:opacity-60;
+}
+
+/* Espaciado vertical amplio entre secciones */
+@utility seccion {
+  @apply py-20 md:py-32;
+}
+
 @layer components {
   .prosa p {
     @apply mb-4;
@@ -116,18 +132,28 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .aparecer {
     animation: aparecer 0.9s var(--ease-suave) both;
   }
-  @keyframes aparecer {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
+
+  /* Aparece suavemente al entrar en pantalla. Sin soporte del navegador, simplemente se muestra. */
+  @supports (animation-timeline: view()) {
+    .revelar {
+      animation: aparecer linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
     }
   }
 }
