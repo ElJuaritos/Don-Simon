@@ -74,9 +74,15 @@ export function Foto({
   colorZapato,
   sinIlustracion = false,
   zoomAlPasar = false,
+  encuadre = "object-center",
+  cubrir = false,
 }: {
   imagen: { url: string; alt: string } | null;
   className?: string;
+  /** Ocupa todo el contenedor posicionado (absolute inset-0) en lugar de fluir en la página */
+  cubrir?: boolean;
+  /** Punto de la foto que se conserva al recortar (clases object-position) */
+  encuadre?: string;
   sizes?: string;
   prioridad?: boolean;
   tono?: Tono;
@@ -87,9 +93,10 @@ export function Foto({
   zoomAlPasar?: boolean;
 }) {
   const zoom = zoomAlPasar ? "transition-transform duration-[1200ms] ease-suave group-hover:scale-[1.03]" : "";
+  const posicion = cubrir ? "absolute inset-0" : "relative";
   if (!imagen) {
     return (
-      <div className={`overflow-hidden ${className}`}>
+      <div className={`${posicion} overflow-hidden ${className}`}>
         <FotoPendiente
           tono={tono}
           nota={nota}
@@ -101,8 +108,8 @@ export function Foto({
     );
   }
   return (
-    <div className={`relative overflow-hidden bg-arena ${className}`}>
-      <Image src={imagen.url} alt={imagen.alt} fill sizes={sizes} priority={prioridad} className={`object-cover ${zoom}`} />
+    <div className={`${posicion} overflow-hidden bg-arena ${className}`}>
+      <Image src={imagen.url} alt={imagen.alt} fill sizes={sizes} priority={prioridad} className={`object-cover ${encuadre} ${zoom}`} />
     </div>
   );
 }

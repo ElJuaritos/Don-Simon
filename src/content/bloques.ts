@@ -163,8 +163,8 @@ export const BLOQUES: DefinicionBloque[] = [
       imagenAlt: "Retrato del fundador en el taller",
     },
   },
-  galeria(1, "herramientas del taller", "historia"),
-  galeria(2, "piel con el logo grabado", "historia"),
+  galeria(1, "hormas de madera y rollo de piel", "historia"),
+  galeria(2, "pieles en coñac, café y olivo", "historia"),
   galeria(3, "par terminado sobre madera", "historia"),
 ];
 

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "db:generar": "drizzle-kit generate",
     "db:migrar": "tsx scripts/migrar.ts",
+    "db:fotos": "tsx scripts/cargar-fotos.mts",
     "db:reiniciar": "node -e \"require('fs').rmSync('.data/pglite',{recursive:true,force:true})\""
   },
   "dependencies": {

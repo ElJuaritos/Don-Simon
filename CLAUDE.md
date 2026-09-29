@@ -52,5 +52,6 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 - `npm run typecheck && npm run lint && npm run build`: correr antes de hacer commit.
 - `npm run db:generar`: después de cambiar `src/db/schema.ts`, genera la migración en `drizzle/`.
 - `npm run db:reiniciar`: borra la base local. Detén el servidor antes, porque PGlite no admite dos procesos abiertos a la vez. Las migraciones nuevas se aplican solas, pero el seed solo corre en una base vacía: reinicia si cambias `src/db/seed.ts`.
+- `npm run db:fotos`: asigna las fotos de ejemplo (generadas con IA, en `.data/fotos-ejemplo`) a la portada, historia, categorías, hormas y productos. Con el servidor detenido. Se reemplazan desde el admin cuando lleguen las fotos reales.
 
 @AGENTS.md

@@ -14,7 +14,8 @@ export function Hero({ bloque }: { bloque: BloqueResuelto }) {
         sinIlustracion
         sizes="100vw"
         prioridad
-        className="absolute inset-0"
+        encuadre="object-[72%_50%] md:object-center"
+        cubrir
       />
       {conFoto && <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-cafe-oscuro/60 via-cafe-oscuro/10 to-transparent" />}
 

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scripts sueltos de pruebas con playwright-cli (no son parte de la app)
+    ".playwright-cli/**",
   ]),
 ]);
 

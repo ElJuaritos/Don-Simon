@@ -107,7 +107,11 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
                     key={img.id}
                     imagen={img}
                     prioridad={i === 0}
-                    sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 85vw"
+                    sizes={
+                      i === 0
+                        ? "(min-width: 1024px) 45vw, (min-width: 640px) 90vw, 85vw"
+                        : "(min-width: 1024px) 23vw, (min-width: 640px) 45vw, 85vw"
+                    }
                     className={`aspect-[4/5] w-[85%] shrink-0 snap-center sm:w-auto ${i === 0 ? "sm:col-span-2" : ""}`}
                   />
                 ))
