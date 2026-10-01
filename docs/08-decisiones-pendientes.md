@@ -10,7 +10,7 @@ Ya existe **Don Simón**, una marca de jugos y vinos muy conocida en México y e
 - **Opciones**: (a) mantener "Don Simon" si el IMPI lo permite; (b) agregar un distintivo ("Don Simon Calzado", "Don Simon Taller", "Casa Don Simon"); (c) cambiar de nombre.
 - **Impacto en el desarrollo**: casi nulo. El nombre, el dominio y el logo son configurables, así que se puede empezar a programar con "Don Simon" y cambiarlo después sin rehacer nada.
 
-**Decisión**: _pendiente_ (responsable: el dueño)
+**Decisión parcial (2026-09-29)**: ✅ La marca sigue como **Don Simon** y el dominio será **donsimonshoes.com** (ver #11). Falta confirmar el registro de la marca en el IMPI, clase 25 (responsable: el dueño).
 
 ### 1. Plataforma de comercio
 ¿Shopify (tema propio), headless (Next.js + Shopify) o todo a la medida?
@@ -71,11 +71,13 @@ Hay que comprar la licencia web. Si no se consigue, alternativas gratuitas simil
 ¿Se emitirá CFDI? ¿Con qué proveedor (Facturama, Facturapi, contador)?
 
 ### 11. Dominio y correo
-Depende de la decisión #0. Precios de referencia de la plática: ~620 MXN/año por un `.com.mx` (GoDaddy, Wix y otros).
+**Decisión (2026-09-29)**: ✅ Dominio **`donsimonshoes.com`**. Al ser `.com` funciona también si después se vende fuera de México.
+- Pendiente: registrarlo (si no se ha hecho) en un proveedor que permita apuntar el DNS a Vercel, y crear el correo de la marca (p. ej. `hola@donsimonshoes.com`).
+
+Notas de la plática: Precios de referencia de la plática: ~620 MXN/año por un `.com.mx` (GoDaddy, Wix y otros).
 - `.mx` / `.com.mx`: posicionan mejor en búsquedas desde México. `.com`: mejor si se piensa vender fuera.
 - Un solo dominio sirve para varios países: los mercados se separan con rutas (`/us`, `/es`), no con dominios distintos.
 - Recomendación: registrarlo en un proveedor que permita apuntar el DNS a Vercel (Cloudflare, Namecheap o GoDaddy). Evitar Wix, que está pensado para sitios hechos en Wix.
-- ¿Correo de la marca (p. ej. `hola@dominio`) para contacto y notificaciones?
 
 ### 12. Redes y canales
 Cuentas de Instagram, Facebook, TikTok y número de WhatsApp Business.
