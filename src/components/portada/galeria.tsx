@@ -6,7 +6,7 @@ export function Galeria({ fotos, titulo }: { fotos: BloqueResuelto[]; titulo?: s
   const [grande, ...chicas] = fotos;
   if (!grande) return null;
   return (
-    <section className="contenedor revelar py-12 md:py-20" aria-label={titulo ?? "Galería"}>
+    <section className="contenedor revelar py-10 md:py-12" aria-label={titulo ?? "Galería"}>
       <div className="grid gap-2 md:grid-cols-12 md:gap-3">
         <FotoConPie bloque={grande} className="aspect-[4/5] md:col-span-7 md:aspect-auto md:h-full" sizes="(min-width: 768px) 58vw, 100vw" />
         <div className="grid grid-cols-2 gap-2 md:col-span-5 md:grid-cols-1 md:gap-3">

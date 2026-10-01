@@ -21,7 +21,7 @@ export async function Header() {
   return (
     <>
       {tienda.anuncio && (
-        <div className="bg-cafe px-4 py-2 text-center text-[0.75rem] font-medium tracking-wide text-crema-claro">
+        <div className="border-b border-cafe/10 bg-arena px-4 py-2 text-center text-[0.75rem] font-medium tracking-wide text-cafe">
           {tienda.anuncio}
         </div>
       )}

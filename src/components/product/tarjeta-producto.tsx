@@ -28,7 +28,8 @@ export function TarjetaProducto({ producto, prioridad = false }: { producto: Pro
           <span className="etiqueta absolute left-3 top-3 bg-hueso/90 px-2.5 py-1 text-[0.625rem]">{badge}</span>
         )}
       </div>
-      <div className="mt-4 flex items-start justify-between gap-3">
+      {/* En celular el precio va debajo del nombre: si el nombre ocupa dos renglones, las tarjetas vecinas no se desalinean */}
+      <div className="mt-4 flex flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
         <h3 className="font-medium leading-snug">{producto.nombre}</h3>
         <Precio precio={producto.precio} comparacion={producto.precioComparacion} className="shrink-0 text-[0.9375rem]" />
       </div>

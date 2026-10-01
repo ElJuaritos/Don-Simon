@@ -28,7 +28,7 @@ export default async function NuestraHistoria() {
 
   return (
     <>
-      <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-28 md:pb-16">
+      <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-16">
         <p className="etiqueta text-cafe/85">Nuestra historia</p>
         <h1 className="titulo-display mx-auto mt-5 max-w-4xl text-5xl md:text-7xl">{intro.titulo}</h1>
         {intro.texto && <p className="mx-auto mt-8 max-w-xl text-lg">{intro.texto}</p>}

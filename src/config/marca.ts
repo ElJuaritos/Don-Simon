@@ -9,8 +9,9 @@ export const marca = {
   lema: "Hecho a mano, paso a paso.",
   descripcion:
     "Calzado de piel hecho a mano en México. Piezas premium, duraderas y pensadas para acompañarte muchos años.",
-  // Vacíos hasta definir dominio y redes (docs/08 #11 y #12); la interfaz los oculta si no hay valor
-  email: "",
+  dominio: "donsimonshoes.com",
+  // Vacíos hasta crearlos (docs/08 #11 y #12); la interfaz los oculta si no hay valor
+  email: "", // p. ej. hola@donsimonshoes.com, cuando exista el buzón
   whatsapp: "", // formato 521XXXXXXXXXX
   instagram: "",
   facebook: "",

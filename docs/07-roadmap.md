@@ -9,7 +9,9 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 - [x] Pasarela de pago: Stripe
 - [x] Plática inicial con el dueño (Notion, 2026-09-26)
 - [x] Nombre en textos: "Don Simon", sin acento
-- [ ] Revisar el nombre en el IMPI (clase 25) y definir el dominio
+- [x] Dominio: `donsimonshoes.com`
+- [ ] Confirmar el registro de "Don Simon" en el IMPI (clase 25)
+- [ ] Correo de la marca en el dominio (p. ej. `hola@donsimonshoes.com`)
 - [ ] Logo en vectores (SVG) y licencia web de The Seasons
 - [ ] Inventario de productos del lanzamiento (modelos, colores, tallas, precios)
 
@@ -31,6 +33,7 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 - [x] Hombre / Mujer: campo por modelo, filtro en la colección y 2 modelos de mujer de ejemplo
 - [x] Página Nuestras hormas y su admin; fotos de categorías editables
 - [x] Checkout más robusto: libera stock si Stripe falla, cierra la sesión al cancelar, avisa de pagos tardíos, guarda el método de pago real y bloquea el modo demo en producción
+- [x] Revisión de diseño y espacio (2026-09-29): secciones más compactas (la portada pasó de 8.3 a 7.2 pantallas), bloques editoriales 5:4, foto fija en la ficha de producto, sugerencias por público, filtros automáticos (en celular, detrás de un botón), carrito lateral al agregar, Hombre / Mujer lado a lado en celular y barra de anuncio clara
 - [ ] Revisión del dueño con sus fotos reales → lista de cambios
 - [ ] Probar un pago completo con las llaves de prueba de Stripe
 

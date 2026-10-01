@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Categoria } from "@/db/schema";
 import { getOpcionesFiltro, getProductos, type Orden } from "@/lib/data/catalogo";
-import { FormFiltros, ORDENES } from "./filtros-coleccion";
+import { FormFiltros } from "./filtros-coleccion";
+import { ORDENES } from "./ordenes";
 import { RejillaProductos } from "./tarjeta-producto";
 
 // Listado de productos compartido por /coleccion y /coleccion/[categoria].
@@ -57,7 +58,7 @@ export async function VistaColeccion({
     `whitespace-nowrap border-b pb-1.5 transition-colors ${activa ? "border-cafe" : "border-transparent text-cafe/85 hover:text-cafe"}`;
 
   return (
-    <div className="contenedor py-12 md:py-20">
+    <div className="contenedor pt-8 pb-16 md:pt-12 md:pb-24">
       <header className="max-w-2xl">
         <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
           <Link href="/" className="hover:text-cafe">
@@ -80,11 +81,11 @@ export async function VistaColeccion({
             </>
           )}
         </nav>
-        <h1 className="titulo-display mt-4 text-5xl md:text-7xl">{tituloFinal}</h1>
-        {descripcion && <p className="mt-5 text-lg">{descripcion}</p>}
+        <h1 className="titulo-display mt-3 text-5xl md:text-6xl">{tituloFinal}</h1>
+        {descripcion && <p className="mt-3 text-lg">{descripcion}</p>}
       </header>
 
-      <div className="mt-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="mt-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <nav aria-label="Público" className="etiqueta flex gap-6">
           {PUBLICOS.map((p) => (
             <Link key={p.texto} href={conPara(rutaBase, p.valor)} aria-current={p.valor === para ? "page" : undefined} className={pestana(p.valor === para)}>
@@ -117,7 +118,7 @@ export async function VistaColeccion({
         />
       </div>
 
-      <div className="mt-12">
+      <div className="mt-8 md:mt-10">
         {productos.length > 0 ? (
           <RejillaProductos productos={productos} />
         ) : (

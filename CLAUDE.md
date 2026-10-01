@@ -27,7 +27,7 @@ MVP funcional en local, con el rediseño editorial pedido por el dueño (referen
 - **Pagos con Stripe** (Checkout alojado + webhooks). Nunca procesamos ni guardamos datos de tarjeta.
 - Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Postgres, Auth, Storage) + Drizzle + Resend, en Vercel** ([05-stack-tecnico](docs/05-stack-tecnico.md)).
 - Arrancar en los **planes gratuitos**; el costo bajo es un requisito.
-- El nombre se escribe **"Don Simon", sin acento**. Todavía puede cambiar por el conflicto con la marca de bebidas Don Simón ([08](docs/08-decisiones-pendientes.md)), así que el nombre, el dominio y el logo deben ser configurables y no ir escritos a mano por todo el código.
+- El nombre se escribe **"Don Simon", sin acento**. Todavía puede cambiar por el conflicto con la marca de bebidas Don Simón ([08](docs/08-decisiones-pendientes.md)), así que el nombre y el logo deben ser configurables. Dominio: `donsimonshoes.com` (`marca.dominio`) y no ir escritos a mano por todo el código.
 
 Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-pendientes.md). Cuando se resuelva una, actualiza ese archivo y el documento afectado.
 
