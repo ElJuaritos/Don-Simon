@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
-import { agregarAlCarrito } from "@/lib/actions/tienda";
+import { useActionState, useCallback, useState } from "react";
+import { agregarAlCarrito, type EstadoAgregar } from "@/lib/actions/tienda";
 import { formatTalla } from "@/lib/formato";
+import { CarritoLateral } from "@/components/cart/carrito-lateral";
 
 export type OpcionTalla = { varianteId: string; talla: number; disponibles: number };
 
@@ -12,6 +13,10 @@ export function SelectorCompra({ tallas }: { tallas: OpcionTalla[] }) {
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const elegida = tallas.find((t) => t.varianteId === seleccion);
   const hayStock = tallas.some((t) => t.disponibles > 0);
+  // El panel se abre con cada respuesta exitosa y se cierra hasta la siguiente
+  const [cerradoPara, setCerradoPara] = useState<EstadoAgregar>(undefined);
+  const panelAbierto = Boolean(estado?.ok && estado.carrito && estado !== cerradoPara);
+  const cerrar = useCallback(() => setCerradoPara(estado), [estado]);
 
   return (
     <form action={accion}>
@@ -73,6 +78,10 @@ export function SelectorCompra({ tallas }: { tallas: OpcionTalla[] }) {
           </p>
         )}
       </div>
+
+      {estado?.carrito && (
+        <CarritoLateral carrito={estado.carrito} agregadoId={estado.agregadoId} abierto={panelAbierto} onCerrar={cerrar} />
+      )}
     </form>
   );
 }

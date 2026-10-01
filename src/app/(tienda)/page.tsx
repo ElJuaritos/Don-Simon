@@ -23,8 +23,8 @@ export default async function Inicio() {
     <>
       <Hero bloque={b["portada-hero"]} />
 
-      {/* Hombre / Mujer: dos cuadros grandes lado a lado */}
-      <section className="grid gap-2 px-2 pt-2 md:grid-cols-2" aria-label="Comprar por público">
+      {/* Hombre / Mujer: dos cuadros lado a lado, también en celular (antes ocupaban dos pantallas) */}
+      <section className="grid grid-cols-2 gap-1.5 px-1.5 pt-1.5 md:gap-2 md:px-2 md:pt-2" aria-label="Comprar por público">
         {publico.map((bloque) => (
           <CuadroEnlace
             key={bloque.clave}
@@ -34,8 +34,8 @@ export default async function Inicio() {
             etiqueta={bloque.enlaceTexto}
             nota={bloque.notaFoto}
             tono="claro"
-            sizes="(min-width: 768px) 50vw, 100vw"
-            className="aspect-[4/5] lg:aspect-[5/6]"
+            sizes="50vw"
+            className="aspect-[3/4] lg:aspect-[5/6]"
           />
         ))}
       </section>
@@ -43,7 +43,7 @@ export default async function Inicio() {
       <Manifiesto bloque={b["portada-manifiesto"]} />
 
       {/* Categorías: en celular se deslizan de lado */}
-      <section className="contenedor pb-20 md:pb-28" aria-labelledby="titulo-categorias">
+      <section className="contenedor pb-16 md:pb-24" aria-labelledby="titulo-categorias">
         <EncabezadoSeccion
           id="titulo-categorias"
           etiqueta="Colección"
@@ -81,13 +81,13 @@ export default async function Inicio() {
         </section>
       )}
 
-      <div className="py-8 md:py-16">
+      <Valores />
+
+      <div className="py-6 md:py-12">
         <EditorialDividido bloque={b["portada-oficio"]} etiqueta="El oficio" />
         <EditorialDividido bloque={b["portada-hormas"]} etiqueta="Ajuste" invertido />
         <Galeria fotos={[b["portada-galeria-1"], b["portada-galeria-2"], b["portada-galeria-3"]]} />
       </div>
-
-      <Valores />
     </>
   );
 }

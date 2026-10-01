@@ -15,16 +15,16 @@ export default async function NuestrasHormas() {
 
   return (
     <>
-      <section className="contenedor aparecer pt-16 pb-16 md:pt-28 md:pb-24">
+      <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-20">
         <p className="etiqueta text-cafe/85">Ajuste</p>
-        <h1 className="titulo-display mt-5 max-w-3xl text-5xl md:text-7xl">Nuestras hormas</h1>
-        <p className="mt-8 max-w-xl text-lg">
+        <h1 className="titulo-display mx-auto mt-5 max-w-3xl text-5xl md:text-7xl">Nuestras hormas</h1>
+        <p className="mx-auto mt-8 max-w-xl text-lg">
           La horma es el molde de madera sobre el que se monta cada zapato. De ella dependen la forma de la punta, la
           altura del empeine y cómo te sujeta el talón. Cada modelo te dice en qué horma está hecho.
         </p>
       </section>
 
-      <div className="contenedor space-y-16 pb-20 md:space-y-28 md:pb-32">
+      <div className="contenedor space-y-16 pb-16 md:space-y-20 md:pb-24">
         {hormas.map((h, i) => (
           <section key={h.id} className="revelar grid items-center gap-8 md:grid-cols-12 md:gap-6" aria-labelledby={`horma-${h.id}`}>
             <Foto
@@ -33,7 +33,7 @@ export default async function NuestrasHormas() {
               nota={`${h.nombre.toLowerCase()} en el taller`}
               sinIlustracion
               sizes="(min-width: 768px) 50vw, 100vw"
-              className={`aspect-[4/5] md:col-span-6 ${i % 2 ? "md:order-2 md:col-start-7" : ""}`}
+              className={`aspect-[4/5] md:col-span-6 md:aspect-square ${i % 2 ? "md:order-2 md:col-start-7" : ""}`}
             />
             <div className={`md:col-span-5 ${i % 2 ? "md:order-1 md:col-start-1" : "md:col-start-8"}`}>
               <span className="etiqueta text-cafe/85">{String(i + 1).padStart(2, "0")}</span>

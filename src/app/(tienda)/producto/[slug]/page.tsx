@@ -39,11 +39,20 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     .filter((v) => v.color === color?.nombre)
     .map((v) => ({ varianteId: v.id, talla: v.talla, disponibles: disponibles(v) }));
   const imagenesColor = producto.imagenes.filter((i) => !i.color || i.color === color?.nombre);
+  // Con una sola foto, la foto se queda fija al hacer scroll (si no, su columna queda vacía
+  // junto a la descripción). Con varias, la galería llena el espacio y lo fijo es la ficha.
+  const unaFoto = imagenesColor.length === 1;
+  const fijo = "lg:sticky lg:top-28 lg:self-start";
   const hayStock = producto.variantes.some((v) => disponibles(v) > 0);
 
-  const relacionados = (await getProductos({ categoriaSlug: producto.categoria.slug }))
-    .filter((p) => p.id !== producto.id)
-    .slice(0, 4);
+  // Sugerencias del mismo público (hombre, mujer o unisex): primero la misma categoría
+  // y se completa hasta 4 con modelos de otras categorías
+  const para = producto.publico === "unisex" ? undefined : producto.publico;
+  const candidatos = (await getProductos({ para })).filter((p) => p.id !== producto.id);
+  const relacionados = [
+    ...candidatos.filter((p) => p.categoria.slug === producto.categoria.slug),
+    ...candidatos.filter((p) => p.categoria.slug !== producto.categoria.slug),
+  ].slice(0, 4);
 
   type Detalle = { titulo: string; contenido: string; abierto?: boolean; enlace?: { href: string; texto: string } };
   const detalles = ([
@@ -100,7 +109,9 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
           {/* Galería: en móvil se desliza horizontalmente */}
-          <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0">
+          <div
+            className={`-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 ${unaFoto ? fijo : ""}`}
+          >
             {imagenesColor.length > 0
               ? imagenesColor.map((img, i) => (
                   <FotoProducto
@@ -112,7 +123,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
                         ? "(min-width: 1024px) 45vw, (min-width: 640px) 90vw, 85vw"
                         : "(min-width: 1024px) 23vw, (min-width: 640px) 45vw, 85vw"
                     }
-                    className={`aspect-[4/5] w-[85%] shrink-0 snap-center sm:w-auto ${i === 0 ? "sm:col-span-2" : ""}`}
+                    className={`aspect-[4/5] shrink-0 snap-center sm:w-auto ${unaFoto ? "w-full lg:aspect-square" : "w-[85%]"} ${i === 0 ? "sm:col-span-2" : ""}`}
                   />
                 ))
               : ANGULOS.map((angulo, i) => (
@@ -126,7 +137,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
                 ))}
           </div>
 
-          <div className="lg:sticky lg:top-28 lg:self-start">
+          <div className={unaFoto ? "" : fijo}>
             <p className="etiqueta text-cafe/85">{producto.categoria.nombre}</p>
             <h1 className="titulo-display mt-2 text-5xl md:text-6xl">{producto.nombre}</h1>
             <Precio precio={producto.precio} comparacion={producto.precioComparacion} className="mt-4 text-xl" />

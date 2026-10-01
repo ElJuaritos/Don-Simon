@@ -8,6 +8,7 @@ import { getDb } from "@/db";
 import { mensajes, pedidos, productos, suscriptores, variantes } from "@/db/schema";
 import { tienda } from "@/config/marca";
 import {
+  detallarCarrito,
   getCarritoDetallado,
   guardarCarrito,
   leerCarrito,
@@ -23,7 +24,15 @@ export type EstadoForm = { ok?: boolean; error?: string; mensaje?: string } | un
 
 // ---------- Carrito ----------
 
-export async function agregarAlCarrito(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
+export type EstadoAgregar =
+  | (NonNullable<EstadoForm> & {
+      /** Carrito actualizado, para mostrarlo en el panel lateral sin otra consulta */
+      carrito?: CarritoDetallado;
+      agregadoId?: string;
+    })
+  | undefined;
+
+export async function agregarAlCarrito(_prev: EstadoAgregar, formData: FormData): Promise<EstadoAgregar> {
   const varianteId = z.uuid().safeParse(formData.get("varianteId"));
   if (!varianteId.success) return { error: "Elige una talla." };
 
@@ -47,7 +56,7 @@ export async function agregarAlCarrito(_prev: EstadoForm, formData: FormData): P
   if (existente) existente.q = nueva;
   else items.push({ v: varianteId.data, q: 1 });
   await guardarCarrito(items);
-  return { ok: true, mensaje: "Agregado al carrito" };
+  return { ok: true, mensaje: "Agregado al carrito", carrito: await detallarCarrito(items), agregadoId: varianteId.data };
 }
 
 export async function cambiarCantidad(formData: FormData) {

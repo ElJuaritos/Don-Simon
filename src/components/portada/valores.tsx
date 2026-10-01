@@ -14,7 +14,7 @@ export function Valores() {
     { Icono: IconoCambio, titulo: "Pago seguro", texto: "Con tarjeta de crédito o débito, procesado por Stripe." },
   ];
   return (
-    <section className="border-t border-cafe/10" aria-label="Por qué comprar aquí">
+    <section className="border-y border-cafe/10" aria-label="Por qué comprar aquí">
       <ul className="contenedor grid md:grid-cols-3">
         {valores.map(({ Icono, titulo, texto }) => (
           <li key={titulo} className="flex gap-5 border-b border-cafe/10 py-10 md:border-b-0 md:border-r md:px-8 md:py-14 md:first:pl-0 md:last:border-r-0">

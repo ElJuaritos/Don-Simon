@@ -65,7 +65,11 @@ export function calcularEnvio(subtotal: number) {
 }
 
 export async function getCarritoDetallado() {
-  const items = await leerCarrito();
+  return detallarCarrito(await leerCarrito());
+}
+
+/** Carrito con precios y stock de la base de datos, a partir de los IDs de la cookie. */
+export async function detallarCarrito(items: ItemCookie[]) {
   const lineas: LineaCarrito[] = [];
 
   if (items.length > 0) {
