@@ -10,6 +10,7 @@ MVP funcional en local, con el rediseño editorial pedido por el dueño (referen
 
 - `src/app/(tienda)/`: sitio público. `src/app/admin/`: panel, con `login/` fuera del grupo protegido `(panel)/`.
 - `src/db/`: esquema de Drizzle, conexión y datos de ejemplo. Sin `DATABASE_URL` se usa **PGlite** en `.data/pglite`, con migraciones y seed automáticos al arrancar.
+- **Supabase** (`dqvmxpdzwsainzgfpowm`): ya tiene el esquema y los datos de ejemplo. Todas las tablas llevan RLS sin políticas (`.enableRLS()` en el esquema): la app entra por la conexión directa de Postgres y la API REST pública no expone nada. Las tablas nuevas también deben llevar `.enableRLS()`. Drizzle registra las migraciones en `drizzle.__drizzle_migrations`, así que `npm run db:migrar` solo aplica las nuevas.
 - `src/lib/data/`: consultas. `src/lib/actions/`: Server Actions. `tienda.ts` es público y `admin.ts` empieza cada acción con `requireAdmin()`.
 - `src/lib/carrito.ts`: el carrito vive en una cookie que solo guarda IDs y cantidades.
 - **Inventario**: al crear un pedido se aparta el stock (`stock_apartado`). El webhook de Stripe lo descuenta al confirmarse el pago y lo libera si el pago vence o falla. Ver `src/lib/data/pedidos.ts`.
@@ -25,7 +26,7 @@ MVP funcional en local, con el rediseño editorial pedido por el dueño (referen
 
 - **Todo a la medida, sin Shopify** ni otras plataformas de e-commerce. El dueño lo rechazó por el poco control sobre el diseño.
 - **Pagos con Stripe** (Checkout alojado + webhooks). Nunca procesamos ni guardamos datos de tarjeta.
-- Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Postgres, Auth, Storage) + Drizzle + Resend, en Vercel** ([05-stack-tecnico](docs/05-stack-tecnico.md)).
+- Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Postgres, Auth, Storage) + Drizzle + Resend, en Cloudflare Workers** con OpenNext, en el plan gratuito. Se muda a Vercel cuando la tienda crezca ([05-stack-tecnico](docs/05-stack-tecnico.md), [08 #11b](docs/08-decisiones-pendientes.md)).
 - Arrancar en los **planes gratuitos**; el costo bajo es un requisito.
 - El nombre se escribe **"Don Simon", sin acento**. Todavía puede cambiar por el conflicto con la marca de bebidas Don Simón ([08](docs/08-decisiones-pendientes.md)), así que el nombre y el logo deben ser configurables. Dominio: `donsimonshoes.com` (`marca.dominio`) y no ir escritos a mano por todo el código.
 
@@ -44,7 +45,7 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 - **Seguridad en la compra**: el precio y el stock se recalculan en el servidor; un pedido solo pasa a `pagado` por el webhook verificado de Stripe, nunca por la redirección de éxito.
 - **Móvil primero** (375px), WCAG 2.1 AA, Lighthouse ≥ 90.
 - **Admin**: lo usa el dueño, que no tiene experiencia técnica. Tiene que ser simple, en lenguaje claro y usable desde el celular.
-- Secretos solo en `.env.local` y en Vercel. Al repo solo sube `.env.example`.
+- Secretos solo en `.env.local` y en Cloudflare. Al repo solo sube `.env.example`.
 
 ## Comandos
 

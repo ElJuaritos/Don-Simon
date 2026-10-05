@@ -13,7 +13,7 @@
 | Cobro con tarjeta, OXXO, SPEI, MSI | | **Stripe** |
 | Base de datos, archivos, autenticación | | Supabase |
 | Envío de correos | | Resend |
-| Hosting | | Vercel |
+| Hosting | | Cloudflare Workers (después, Vercel) |
 | Guías de paquetería | | Envia.com / Skydropx (fase 2) |
 | Facturación CFDI | | Facturama o similar (fase 2) |
 
@@ -32,7 +32,7 @@
 | Pagos | **Stripe** (Checkout alojado + webhooks) | Tarjetas, OXXO, SPEI y MSI en México; nunca tocamos datos de tarjeta |
 | Correos | **Resend** + React Email | Confirmación de pedido, envío, contacto |
 | Validación | Zod | Formularios y API |
-| Hosting | **Vercel** | Despliegue automático desde GitHub y previews por rama |
+| Hosting | **Cloudflare Workers** (OpenNext) | Plan gratuito con uso comercial. Se muda a Vercel cuando la tienda crezca ([08 #11b](08-decisiones-pendientes.md)) |
 | Analítica | GA4 + Meta Pixel | |
 | Pruebas | Vitest (lógica) + Playwright (flujo de compra) | |
 
@@ -108,13 +108,13 @@ don-simon/
 | Preview | cualquier PR | Proyecto Supabase de desarrollo | Modo prueba |
 | Producción | `main` | Proyecto Supabase de producción | Modo real |
 
-Los secretos (llaves de la pasarela, de Supabase y de Resend) viven en Vercel y en un `.env.local` que no se sube al repositorio. En el repo solo va `.env.example` con los nombres de las variables.
+Los secretos (llaves de la pasarela, de Supabase y de Resend) viven en Cloudflare (secretos del Worker) y en un `.env.local` que no se sube al repositorio. En el repo solo va `.env.example` con los nombres de las variables.
 
 ## Costos estimados al arrancar
 
 | Servicio | Costo |
 |----------|-------|
-| Vercel | Gratis (Hobby) → US$20/mes (Pro, cuando haya ventas) |
+| Cloudflare Workers | Gratis → US$5/mes (Paid) si se rebasan los límites → Vercel Pro (US$20/mes) cuando la tienda crezca |
 | Supabase | Gratis → US$25/mes (Pro, recomendado para producción por los respaldos diarios) |
 | Resend | Gratis hasta 3,000 correos/mes |
 | Stripe | Sin mensualidad; comisión por transacción (~3.6% + fijo) |

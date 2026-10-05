@@ -15,6 +15,13 @@
       "when": 1790615474254,
       "tag": "0001_portada_hormas_publico",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790815676860,
+      "tag": "0002_rls",
+      "breakpoints": true
     }
   ]
 }

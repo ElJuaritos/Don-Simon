@@ -11,6 +11,7 @@
     "db:generar": "drizzle-kit generate",
     "db:migrar": "tsx scripts/migrar.ts",
     "db:fotos": "tsx scripts/cargar-fotos.mts",
+    "db:subir-fotos": "tsx --env-file=.env.local scripts/subir-fotos.mts",
     "db:reiniciar": "node -e \"require('fs').rmSync('.data/pglite',{recursive:true,force:true})\""
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.7",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -35,6 +37,7 @@
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.145.0"
   }
 }

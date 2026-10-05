@@ -45,9 +45,9 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 
 ## Fase 2 · Base técnica
 - [ ] Inicializar Next.js + TypeScript + Tailwind con los tokens de marca
-- [ ] Proyecto Supabase (desarrollo) y esquema de base de datos con migraciones
+- [x] Proyecto Supabase y esquema de base de datos con migraciones, RLS y datos de ejemplo (2026-09-30)
 - [ ] Datos de prueba (seed) con 3–4 productos
-- [ ] Despliegue en Vercel con previews
+- [ ] Despliegue en Cloudflare Workers (OpenNext)
 - [ ] Layout global: header, footer, barra de anuncios, fuentes
 
 ## Fase 3 · Catálogo + admin de productos

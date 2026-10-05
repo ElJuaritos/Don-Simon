@@ -72,12 +72,21 @@ Hay que comprar la licencia web. Si no se consigue, alternativas gratuitas simil
 
 ### 11. Dominio y correo
 **Decisión (2026-09-29)**: ✅ Dominio **`donsimonshoes.com`**. Al ser `.com` funciona también si después se vende fuera de México.
-- Pendiente: registrarlo (si no se ha hecho) en un proveedor que permita apuntar el DNS a Vercel, y crear el correo de la marca (p. ej. `hola@donsimonshoes.com`).
+- Pendiente: registrarlo (si no se ha hecho) en un proveedor que permita apuntar el DNS a Cloudflare, y crear el correo de la marca (p. ej. `hola@donsimonshoes.com`).
 
 Notas de la plática: Precios de referencia de la plática: ~620 MXN/año por un `.com.mx` (GoDaddy, Wix y otros).
 - `.mx` / `.com.mx`: posicionan mejor en búsquedas desde México. `.com`: mejor si se piensa vender fuera.
 - Un solo dominio sirve para varios países: los mercados se separan con rutas (`/us`, `/es`), no con dominios distintos.
 - Recomendación: registrarlo en un proveedor que permita apuntar el DNS a Vercel (Cloudflare, Namecheap o GoDaddy). Evitar Wix, que está pensado para sitios hechos en Wix.
+
+### 11b. Hosting: Vercel o Cloudflare
+El plan gratuito de Vercel (**Hobby**) solo permite uso personal y no comercial. Una tienda que vende es uso comercial y requiere el plan **Pro** (~20 USD/mes por miembro; con una sola persona, ~20 USD/mes). Confirmar precio vigente en vercel.com/pricing. Esto choca con el requisito de arrancar en planes gratuitos.
+- **Opciones**: (a) Hobby durante el desarrollo y las revisiones del dueño, y Pro al abrir la tienda con ventas reales; (b) alojar en Cloudflare Workers (OpenNext) o Netlify, que permiten uso comercial gratis, pero implica replantear el stack y probar Server Actions, `proxy.ts` y el webhook de Stripe.
+- **Recomendación**: (a). No cambia el código y el costo es bajo frente a lo que factura la tienda.
+
+**Decisión (2026-09-30)**: ✅ **Cloudflare Workers, plan gratuito** (con el adaptador OpenNext), para arrancar sin costo. Cuando la tienda despegue se muda a **Vercel Pro**; el código sigue siendo Next.js estándar, así que la mudanza es de configuración.
+- Límites del plan gratuito de Workers que hay que vigilar: **10 ms de CPU por petición**, **3 MiB comprimido** por Worker, **100,000 peticiones al día** y **50 subpeticiones** por petición. Primera medición del bundle: 2.89 MiB comprimido (muy justo).
+- Si se rebasan, el siguiente paso es **Workers Paid (~5 USD/mes)**: 10 MiB, 30 s de CPU y sin límite diario. Sigue siendo mucho más barato que Vercel Pro.
 
 ### 12. Redes y canales
 Cuentas de Instagram, Facebook, TikTok y número de WhatsApp Business.

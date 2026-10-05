@@ -13,6 +13,8 @@ import {
 
 // Modelo de datos: ver docs/06-modelo-de-datos.md
 // Todos los montos son enteros en centavos de MXN, con IVA incluido.
+// RLS activo en todas las tablas y sin políticas: la app entra por la conexión
+// directa de Postgres, y así la API REST pública de Supabase no expone nada.
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -30,7 +32,7 @@ export const categorias = pgTable("categorias", {
   imagenUrl: text("imagen_url"),
   orden: integer("orden").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 export const hormas = pgTable("hormas", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -42,7 +44,7 @@ export const hormas = pgTable("hormas", {
   imagenUrl: text("imagen_url"),
   orden: integer("orden").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 export const ESTADOS_PRODUCTO = ["borrador", "activo", "archivado"] as const;
 // Unisex aparece tanto en Hombre como en Mujer
@@ -69,7 +71,7 @@ export const productos = pgTable("productos", {
   destacado: boolean("destacado").notNull().default(false),
   estado: text("estado", { enum: ESTADOS_PRODUCTO }).notNull().default("borrador"),
   ...timestamps,
-});
+}).enableRLS();
 
 export const variantes = pgTable(
   "variantes",
@@ -90,7 +92,7 @@ export const variantes = pgTable(
     ...timestamps,
   },
   (t) => [unique("variantes_producto_color_talla").on(t.productoId, t.color, t.talla)],
-);
+).enableRLS();
 
 export const imagenes = pgTable("imagenes", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -102,7 +104,7 @@ export const imagenes = pgTable("imagenes", {
   alt: text("alt").notNull(),
   orden: integer("orden").notNull().default(0),
   ...timestamps,
-});
+}).enableRLS();
 
 export const ESTADOS_PEDIDO = [
   "pendiente_pago",
@@ -147,7 +149,7 @@ export const pedidos = pgTable("pedidos", {
   numeroGuia: text("numero_guia"),
   enviadoEn: timestamp("enviado_en", { withTimezone: true }),
   ...timestamps,
-});
+}).enableRLS();
 
 export const pedidoLineas = pgTable("pedido_lineas", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -162,14 +164,14 @@ export const pedidoLineas = pgTable("pedido_lineas", {
   sku: text("sku").notNull(),
   precioUnitario: integer("precio_unitario").notNull(),
   cantidad: integer("cantidad").notNull(),
-});
+}).enableRLS();
 
 export const suscriptores = pgTable("suscriptores", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   origen: text("origen").notNull().default("footer"),
   ...timestamps,
-});
+}).enableRLS();
 
 export const mensajes = pgTable("mensajes", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -179,7 +181,7 @@ export const mensajes = pgTable("mensajes", {
   mensaje: text("mensaje").notNull(),
   leido: boolean("leido").notNull().default(false),
   ...timestamps,
-});
+}).enableRLS();
 
 // Cuadros editables de la portada y de las páginas de marca (foto + textos).
 // La lista de bloques y sus textos por defecto vive en src/content/bloques.ts;
@@ -194,7 +196,7 @@ export const bloques = pgTable("bloques", {
   imagenUrl: text("imagen_url"),
   imagenAlt: text("imagen_alt"),
   ...timestamps,
-});
+}).enableRLS();
 
 export type Categoria = typeof categorias.$inferSelect;
 export type Horma = typeof hormas.$inferSelect;
