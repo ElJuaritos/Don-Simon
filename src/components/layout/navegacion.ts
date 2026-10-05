@@ -1,17 +1,21 @@
-// Enlaces de navegación compartidos por el header, el menú móvil y el footer.
+import { marca } from "@/config/marca";
+
+// Enlaces compartidos por el header, el menú móvil y el footer.
+// Las páginas que todavía no existen (accesorios, reseñas, notas, rastreo)
+// no se enlazan, para no llevar a una página vacía.
 
 export type Enlace = { href: string; texto: string };
+export type ColumnaNav = { titulo: string; enlaces: Enlace[] };
+export type FotoNav = {
+  href: string;
+  titulo: string;
+  imagen: { url: string; alt: string } | null;
+  nota?: string;
+};
 
-export const TIENDA_PUBLICO: Enlace[] = [
-  { href: "/coleccion?para=hombre", texto: "Hombre" },
-  { href: "/coleccion?para=mujer", texto: "Mujer" },
-];
-
-export const LA_CASA: Enlace[] = [
-  { href: "/nuestra-historia", texto: "Nuestra historia" },
-  { href: "/nuestras-hormas", texto: "Nuestras hormas" },
-  { href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" },
-];
+export type EntradaNav =
+  | { tipo: "enlace"; id: string; href: string; texto: string }
+  | { tipo: "menu"; id: string; href: string; texto: string; columnas: ColumnaNav[]; fotos: FotoNav[] };
 
 export const AYUDA: Enlace[] = [
   { href: "/ayuda/guia-de-tallas", texto: "Guía de tallas" },
@@ -20,3 +24,81 @@ export const AYUDA: Enlace[] = [
   { href: "/ayuda/preguntas-frecuentes", texto: "Preguntas frecuentes" },
   { href: "/contacto", texto: "Contacto" },
 ];
+
+type CategoriaNav = { slug: string; nombre: string };
+
+/**
+ * Columnas del mega menú de Hombre o Mujer.
+ * «Ocasión» apunta al catálogo con ?ocasion=; el filtro se aplica en la etapa B.
+ * Cinturones, calcetines y piel pequeña esperan a que se definan los accesorios.
+ */
+export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaNav[]): ColumnaNav[] {
+  return [
+    {
+      titulo: "Calzado",
+      enlaces: [
+        ...categorias.map((c) => ({ href: `/coleccion/${c.slug}?para=${para}`, texto: c.nombre })),
+        { href: `/coleccion?para=${para}`, texto: "Ver todo" },
+      ],
+    },
+    {
+      titulo: "Accesorios",
+      enlaces: [{ href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" }],
+    },
+    {
+      titulo: "Ocasión",
+      enlaces: [
+        { href: `/coleccion?para=${para}&ocasion=formal`, texto: "Formal" },
+        { href: `/coleccion?para=${para}&ocasion=casual`, texto: "Casual" },
+        { href: `/coleccion?para=${para}&ocasion=boda`, texto: "Boda" },
+      ],
+    },
+  ];
+}
+
+export function columnasNosotros(): ColumnaNav[] {
+  return [
+    {
+      titulo: "Nosotros",
+      enlaces: [
+        { href: "/nuestra-historia", texto: "Nuestra historia" },
+        { href: "/nuestras-hormas", texto: "Nuestras hormas" },
+      ],
+    },
+    {
+      titulo: marca.nombre,
+      enlaces: [{ href: "/lookbook", texto: "Lookbook" }],
+    },
+    { titulo: "Ayuda", enlaces: AYUDA },
+  ];
+}
+
+export function columnasFooter(): ColumnaNav[] {
+  return [
+    {
+      titulo: "Tienda",
+      enlaces: [
+        { href: "/coleccion?para=hombre", texto: "Hombre" },
+        { href: "/coleccion?para=mujer", texto: "Mujer" },
+        { href: "/lookbook", texto: "Lookbook" },
+        { href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" },
+      ],
+    },
+    { titulo: "Ayuda", enlaces: AYUDA },
+    {
+      titulo: marca.nombre,
+      enlaces: [
+        { href: "/nuestra-historia", texto: "Nuestra historia" },
+        { href: "/nuestras-hormas", texto: "Nuestras hormas" },
+        { href: "/lookbook", texto: "Lookbook" },
+      ],
+    },
+    {
+      titulo: "Mi cuenta",
+      enlaces: [
+        { href: "/cuenta", texto: "Iniciar sesión" },
+        { href: "/cuenta", texto: "Crear cuenta" },
+      ],
+    },
+  ];
+}

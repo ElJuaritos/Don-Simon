@@ -1,78 +1,104 @@
 import Link from "next/link";
 import { marca } from "@/config/marca";
-import { getCategorias } from "@/lib/data/catalogo";
-import { Logo } from "@/components/ui/logo";
+import { IconoFacebook, IconoInstagram, IconoPinterest, IconoTiktok, IconoYoutube } from "@/components/ui/iconos-redes";
+import { LogosPago } from "@/components/ui/logos-pago";
 import { FormNewsletter } from "./form-newsletter";
-import { AYUDA, LA_CASA, TIENDA_PUBLICO } from "./navegacion";
+import { columnasFooter } from "./navegacion";
 
-// Footer claro: newsletter arriba, columnas de enlaces y avisos legales abajo.
+const REDES = [
+  { href: marca.instagram, nombre: "Instagram", Icono: IconoInstagram },
+  { href: marca.facebook, nombre: "Facebook", Icono: IconoFacebook },
+  { href: marca.tiktok, nombre: "TikTok", Icono: IconoTiktok },
+  { href: marca.pinterest, nombre: "Pinterest", Icono: IconoPinterest },
+  { href: marca.youtube, nombre: "YouTube", Icono: IconoYoutube },
+].filter((r) => r.href);
 
-export async function Footer() {
-  const categorias = await getCategorias();
-  const columnas = [
-    {
-      titulo: "Tienda",
-      enlaces: [
-        ...TIENDA_PUBLICO,
-        ...categorias.map((c) => ({ href: `/coleccion/${c.slug}`, texto: c.nombre })),
-      ],
-    },
-    { titulo: "La casa", enlaces: LA_CASA },
-    { titulo: "Ayuda", enlaces: AYUDA },
-  ];
-  const redes = [
-    { href: marca.instagram, texto: "Instagram" },
-    { href: marca.facebook, texto: "Facebook" },
-    { href: marca.tiktok, texto: "TikTok" },
-  ].filter((r) => r.href);
+/** Footer: boletín primero en el celular, columnas en acordeón y franja legal en café oscuro. */
+export function Footer() {
+  const columnas = columnasFooter();
+  const anio = new Date().getFullYear();
+
+  const lista = (enlaces: { href: string; texto: string }[]) => (
+    <ul className="space-y-2">
+      {enlaces.map((e) => (
+        <li key={`${e.texto}-${e.href}`}>
+          <Link href={e.href} className="texto-nav inline-block py-1 transition-opacity hover:opacity-60">
+            {e.texto}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <footer className="mt-auto border-t border-cafe/10 bg-arena">
-      <div className="contenedor grid gap-14 py-16 md:grid-cols-12 md:py-24">
-        <div className="md:col-span-12 lg:col-span-4">
-          <Link href="/" aria-label="Inicio" className="text-5xl">
-            <Logo conFecha />
-          </Link>
-          <p className="mt-8 max-w-sm">Lanzamientos, piezas limitadas y noticias del taller. Sin spam.</p>
-          <div className="mt-5 max-w-sm">
+      <div className="contenedor grid gap-10 py-14 lg:grid-cols-12 lg:py-20">
+        <div className="lg:col-span-4 lg:col-start-9">
+          <h2 className="text-lg font-medium">Novedades</h2>
+          <p className="mt-3 max-w-sm text-sm">Lanzamientos y noticias del taller. Sin spam.</p>
+          <div className="mt-5 max-w-md">
             <FormNewsletter />
           </div>
-        </div>
-
-        {columnas.map((col) => (
-          <nav key={col.titulo} aria-label={col.titulo} className="md:col-span-4 lg:col-span-2 lg:first-of-type:col-start-7">
-            <h2 className="etiqueta text-cafe/85">{col.titulo}</h2>
-            <ul className="mt-5 space-y-3 text-[0.9375rem]">
-              {col.enlaces.map((e) => (
-                <li key={e.href}>
-                  <Link href={e.href} className="transition-opacity hover:opacity-60">
-                    {e.texto}
-                  </Link>
+          {REDES.length > 0 && (
+            <ul aria-label="Redes" className="mt-6 flex gap-1">
+              {REDES.map((r) => (
+                <li key={r.nombre}>
+                  <a
+                    href={r.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={r.nombre}
+                    className="grid h-11 w-11 place-items-center transition-opacity hover:opacity-60"
+                  >
+                    <r.Icono />
+                  </a>
                 </li>
               ))}
             </ul>
-          </nav>
-        ))}
+          )}
+        </div>
+
+        <div className="hidden lg:col-span-8 lg:col-start-1 lg:row-start-1 lg:grid lg:grid-cols-4 lg:gap-6">
+          {columnas.map((col) => (
+            <nav key={col.titulo} aria-label={col.titulo}>
+              <h2 className="etiqueta text-cafe/85">{col.titulo}</h2>
+              <div className="mt-4">{lista(col.enlaces)}</div>
+            </nav>
+          ))}
+        </div>
+
+        <div className="border-t border-cafe/10 lg:hidden">
+          {columnas.map((col) => (
+            <details key={col.titulo} className="group border-b border-cafe/10">
+              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between py-3 text-lg font-medium [&::-webkit-details-marker]:hidden">
+                {col.titulo}
+                <span className="text-cafe/70 group-open:hidden" aria-hidden>
+                  +
+                </span>
+                <span className="hidden text-cafe/70 group-open:inline" aria-hidden>
+                  −
+                </span>
+              </summary>
+              <div className="pb-4">{lista(col.enlaces)}</div>
+            </details>
+          ))}
+        </div>
       </div>
 
-      <div className="border-t border-cafe/10">
-        <div className="contenedor flex flex-col gap-3 py-6 text-[0.8125rem] text-cafe/85 md:flex-row md:items-center md:justify-between">
+      <div id="franja-legal" className="bg-cafe-oscuro text-crema-claro">
+        <div className="contenedor flex flex-col gap-4 py-6 text-[0.8125rem] md:flex-row md:items-center md:justify-between">
           <p>
-            © {new Date().getFullYear()} {marca.nombre}. Hecho a mano en México.
+            © {anio} {marca.nombre}
           </p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {redes.map((r) => (
-              <a key={r.texto} href={r.href} target="_blank" rel="noopener noreferrer" className="hover:text-cafe">
-                {r.texto}
-              </a>
-            ))}
-            <Link href="/legal/aviso-de-privacidad" className="hover:text-cafe">
+          <LogosPago />
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-5 gap-y-2">
+            <Link href="/legal/aviso-de-privacidad" className="underline-offset-2 hover:underline">
               Aviso de privacidad
             </Link>
-            <Link href="/legal/terminos-y-condiciones" className="hover:text-cafe">
-              Términos y condiciones
+            <Link href="/legal/terminos-y-condiciones" className="underline-offset-2 hover:underline">
+              Términos
             </Link>
-          </div>
+          </nav>
         </div>
       </div>
     </footer>

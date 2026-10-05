@@ -3,15 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconoCerrar, IconoMenu } from "@/components/ui/iconos";
+import { IconoCerrar, IconoMenu, IconoPersona } from "@/components/ui/iconos";
 import { Logo } from "@/components/ui/logo";
-import { LA_CASA, TIENDA_PUBLICO, type Enlace } from "./navegacion";
+import type { EntradaNav } from "./navegacion";
 
-/** Menú lateral del celular. Se cierra al navegar, con Escape o tocando fuera. */
-export function MenuMovil({ categorias }: { categorias: Enlace[] }) {
+/** Menú del celular. Hombre, Mujer y Nosotros se abren como acordeones, sin las fotos. */
+export function MenuMovil({ entradas }: { entradas: EntradaNav[] }) {
   const [abierto, setAbierto] = useState(false);
   const pathname = usePathname();
-
   const [rutaPrevia, setRutaPrevia] = useState(pathname);
   if (pathname !== rutaPrevia) {
     setRutaPrevia(pathname);
@@ -29,14 +28,8 @@ export function MenuMovil({ categorias }: { categorias: Enlace[] }) {
   const cerrar = () => setAbierto(false);
 
   return (
-    <div className="md:hidden">
-      <button
-        type="button"
-        onClick={() => setAbierto(true)}
-        aria-label="Abrir menú"
-        aria-expanded={abierto}
-        className="-ml-2 p-2"
-      >
+    <div className="lg:hidden">
+      <button type="button" onClick={() => setAbierto(true)} aria-label="Abrir menú" aria-expanded={abierto} className="-ml-2 p-2">
         <IconoMenu />
       </button>
 
@@ -58,38 +51,53 @@ export function MenuMovil({ categorias }: { categorias: Enlace[] }) {
             </button>
           </div>
 
-          <ul className="mt-10 space-y-1">
-            {TIENDA_PUBLICO.map((e) => (
-              <li key={e.href}>
-                {/* El filtro va en la URL: cambia solo la consulta, así que se cierra a mano */}
-                <Link href={e.href} onClick={cerrar} className="titulo-display block py-1 text-4xl" tabIndex={tab}>
-                  {e.texto}
-                </Link>
+          <ul className="mt-8 divide-y divide-cafe/10 border-y border-cafe/10">
+            {entradas.map((e) => (
+              <li key={e.id}>
+                {e.tipo === "enlace" ? (
+                  <Link href={e.href} onClick={cerrar} className="block py-3 text-lg font-medium" tabIndex={tab}>
+                    {e.texto}
+                  </Link>
+                ) : (
+                  <details className="group">
+                    <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between py-3 text-lg font-medium [&::-webkit-details-marker]:hidden">
+                      {e.texto}
+                      <span className="text-cafe/70 group-open:hidden" aria-hidden>
+                        +
+                      </span>
+                      <span className="hidden text-cafe/70 group-open:inline" aria-hidden>
+                        −
+                      </span>
+                    </summary>
+                    <div className="space-y-5 pb-4">
+                      {e.columnas.map((col) => (
+                        <div key={col.titulo}>
+                          <p className="etiqueta text-cafe/85">{col.titulo}</p>
+                          <ul className="mt-2 space-y-1">
+                            {col.enlaces.map((enlace) => (
+                              <li key={`${col.titulo}-${enlace.texto}`}>
+                                <Link href={enlace.href} onClick={cerrar} className="block py-1.5" tabIndex={tab}>
+                                  {enlace.texto}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                )}
               </li>
             ))}
           </ul>
 
-          <p className="etiqueta mt-10 text-cafe/85">Colección</p>
-          <ul className="mt-3 divide-y divide-cafe/10 border-y border-cafe/10">
-            {categorias.map((c) => (
-              <li key={c.href}>
-                <Link href={c.href} className="block py-3" tabIndex={tab}>
-                  {c.texto}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <p className="etiqueta mt-10 text-cafe/85">La casa</p>
-          <ul className="mt-3 space-y-3">
-            {[...LA_CASA, { href: "/ayuda", texto: "Ayuda" }, { href: "/contacto", texto: "Contacto" }].map((e) => (
-              <li key={e.href}>
-                <Link href={e.href} className="block" tabIndex={tab}>
-                  {e.texto}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <Link href="/cuenta" onClick={cerrar} className="mt-6 flex items-center gap-2 py-2 text-lg font-medium" tabIndex={tab}>
+            <IconoPersona />
+            Tu cuenta
+          </Link>
+          <Link href="/ayuda" onClick={cerrar} className="block py-2" tabIndex={tab}>
+            Ayuda
+          </Link>
         </nav>
       </div>
     </div>

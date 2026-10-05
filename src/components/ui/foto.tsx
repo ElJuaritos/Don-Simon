@@ -109,7 +109,15 @@ export function Foto({
   }
   return (
     <div className={`${posicion} overflow-hidden bg-arena ${className}`}>
-      <Image src={imagen.url} alt={imagen.alt} fill sizes={sizes} priority={prioridad} className={`object-cover ${encuadre} ${zoom}`} />
+      <Image
+        src={imagen.url}
+        alt={imagen.alt}
+        fill
+        sizes={sizes}
+        priority={prioridad}
+        fetchPriority={prioridad ? "high" : "auto"}
+        className={`object-cover ${encuadre} ${zoom}`}
+      />
     </div>
   );
 }

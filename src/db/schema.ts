@@ -166,10 +166,26 @@ export const pedidoLineas = pgTable("pedido_lineas", {
   cantidad: integer("cantidad").notNull(),
 }).enableRLS();
 
+export const PREFERENCIAS_BOLETIN = ["hombre", "mujer", "ambos"] as const;
+export type PreferenciaBoletin = (typeof PREFERENCIAS_BOLETIN)[number];
+
 export const suscriptores = pgTable("suscriptores", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   origen: text("origen").notNull().default("footer"),
+  preferencia: text("preferencia", { enum: PREFERENCIAS_BOLETIN }).notNull().default("ambos"),
+  ...timestamps,
+}).enableRLS();
+
+// Galería editorial. Si después hay varias temporadas, se agrega una tabla lookbooks arriba.
+export const lookbookFotos = pgTable("lookbook_fotos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  imagenUrl: text("imagen_url"),
+  alt: text("alt").notNull().default(""),
+  publico: text("publico", { enum: PUBLICOS }).notNull().default("hombre"),
+  productoId: uuid("producto_id").references(() => productos.id, { onDelete: "set null" }),
+  orden: integer("orden").notNull().default(0),
+  activa: boolean("activa").notNull().default(true),
   ...timestamps,
 }).enableRLS();
 
@@ -206,3 +222,4 @@ export type Imagen = typeof imagenes.$inferSelect;
 export type Pedido = typeof pedidos.$inferSelect;
 export type PedidoLinea = typeof pedidoLineas.$inferSelect;
 export type Bloque = typeof bloques.$inferSelect;
+export type LookbookFoto = typeof lookbookFotos.$inferSelect;

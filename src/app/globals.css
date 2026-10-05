@@ -56,6 +56,15 @@
   @apply text-[0.75rem] font-semibold uppercase tracking-[0.14em];
 }
 
+/* Menú, footer y datos de tarjeta: Quicksand, sin mayúsculas ni tracking. */
+@utility texto-nav {
+  @apply text-[0.8125rem] font-medium normal-case tracking-normal lg:text-[0.875rem];
+}
+
+@utility enlace-nav {
+  @apply texto-nav inline-block border-b border-current pb-0.5 transition-opacity duration-300 hover:opacity-60;
+}
+
 @utility contenedor {
   @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10;
 }

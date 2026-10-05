@@ -1,7 +1,7 @@
 // Carga fotos de ejemplo (generadas con IA) en la base local para ver el diseño completo.
-// Toma las imágenes de .data/fotos-ejemplo, las copia a .data/uploads y las asigna
-// a los cuadros de portada/historia, categorías, hormas y productos. Se puede correr
-// varias veces: reemplaza las fotos de ejemplo anteriores.
+// Toma las imágenes de .data/fotos-ejemplo (también la carpeta lookbook/), las copia a
+// .data/uploads y las asigna a portada, menús, historia, categorías, hormas, productos
+// y lookbook. Se puede correr varias veces: reemplaza las fotos de ejemplo anteriores.
 // Uso (con el servidor detenido, PGlite no admite dos procesos): npm run db:fotos
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -11,19 +11,60 @@ import { PGlite } from "@electric-sql/pglite";
 import { and, eq, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
+import { LOOKBOOK_EJEMPLO } from "../src/content/lookbook-ejemplo";
 import * as schema from "../src/db/schema";
 import { seed } from "../src/db/seed";
 
-const { bloques, categorias, hormas, imagenes, productos } = schema;
+const { bloques, categorias, hormas, imagenes, lookbookFotos, productos } = schema;
 
 const ORIGEN = path.join(process.cwd(), ".data", "fotos-ejemplo");
 const DESTINO = path.join(process.cwd(), ".data", "uploads");
 
 const BLOQUES = [
-  "portada-hero", "portada-hombre", "portada-mujer", "portada-oficio", "portada-hormas",
-  "portada-galeria-1", "portada-galeria-2", "portada-galeria-3",
-  "historia-intro", "historia-quien", "historia-galeria-1", "historia-galeria-2", "historia-galeria-3",
+  "portada-hombre",
+  "portada-mujer",
+  "portada-oficio",
+  "portada-col-hombre-1",
+  "portada-col-hombre-2",
+  "portada-col-hombre-3",
+  "portada-col-mujer-1",
+  "portada-col-mujer-2",
+  "portada-col-mujer-3",
+  "menu-hombre-1",
+  "menu-hombre-2",
+  "menu-hombre-3",
+  "menu-mujer-1",
+  "menu-mujer-2",
+  "menu-mujer-3",
+  "menu-nosotros-1",
+  "menu-nosotros-2",
+  "menu-nosotros-3",
+  "historia-intro",
+  "historia-quien",
+  "historia-galeria-1",
+  "historia-galeria-2",
+  "historia-galeria-3",
 ];
+
+/** Si no hay un archivo con el nombre del cuadro, se reutiliza otra foto de ejemplo. */
+const ALIAS: Record<string, string> = {
+  "portada-col-hombre-1": "lookbook-07",
+  "portada-col-hombre-2": "lookbook-03",
+  "portada-col-hombre-3": "lookbook-06",
+  "portada-col-mujer-1": "lookbook-02",
+  "portada-col-mujer-2": "lookbook-05",
+  "portada-col-mujer-3": "lookbook-08",
+  "menu-hombre-1": "lookbook-01",
+  "menu-hombre-2": "lookbook-03",
+  "menu-hombre-3": "lookbook-06",
+  "menu-mujer-1": "lookbook-02",
+  "menu-mujer-2": "lookbook-05",
+  "menu-mujer-3": "portada-mujer",
+  "menu-nosotros-1": "historia-intro",
+  "menu-nosotros-2": "portada-oficio",
+  "menu-nosotros-3": "portada-hormas",
+};
+
 const CATEGORIAS: Record<string, string> = {
   mocasines: "categoria-mocasines",
   botas: "categoria-botas",
@@ -48,31 +89,45 @@ const PRODUCTOS: Record<string, [string, string]> = {
 if (!existsSync(ORIGEN)) {
   console.error(
     `No encontré la carpeta de fotos de ejemplo (${ORIGEN}).\n` +
-      "Crea .data/fotos-ejemplo y pon ahí los PNG (portada-hero.png, producto-alameda.png, etc.) antes de correr este comando.",
+      "Crea .data/fotos-ejemplo y pon ahí los archivos (portada-hombre.png, lookbook/lookbook-01.jpg, etc.) antes de correr este comando.",
   );
   process.exit(1);
 }
 
-const disponibles = new Set((await readdir(ORIGEN)).map((f) => f.replace(/\.png$/, "")));
-await mkdir(DESTINO, { recursive: true });
+async function indexar(dir: string, mapa: Map<string, string>) {
+  const entradas = await readdir(dir, { withFileTypes: true });
+  for (const e of entradas) {
+    const ruta = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      await indexar(ruta, mapa);
+      continue;
+    }
+    const match = e.name.match(/^(.+)\.(png|jpe?g|webp)$/i);
+    if (match) mapa.set(match[1], ruta);
+  }
+}
 
+const archivos = new Map<string, string>();
+await indexar(ORIGEN, archivos);
+await mkdir(DESTINO, { recursive: true });
 const subidas = await readdir(DESTINO);
 
 /**
  * Copia la foto a uploads y devuelve su URL pública, o null si no existe.
- * El nombre lleva un hash del contenido: si la foto cambia, cambia la URL y
- * ni el optimizador de Next ni el navegador sirven la versión en caché.
+ * El nombre lleva un hash del contenido: si la foto cambia, cambia la URL.
  */
 async function publicar(nombre: string) {
-  if (!disponibles.has(nombre)) {
-    console.warn(`  Falta ${nombre}.png`);
+  const fuente = archivos.get(ALIAS[nombre] ?? nombre);
+  if (!fuente) {
+    console.warn(`  Falta ${nombre}`);
     return null;
   }
-  const datos = await readFile(path.join(ORIGEN, `${nombre}.png`));
+  const datos = await readFile(fuente);
   const hash = createHash("sha1").update(datos).digest("hex").slice(0, 8);
-  const archivo = `ejemplo-${nombre}-${hash}.png`;
+  const ext = path.extname(fuente).slice(1).toLowerCase().replace("jpeg", "jpg");
+  const archivo = `ejemplo-${nombre}-${hash}.${ext}`;
   for (const viejo of subidas) {
-    if (viejo !== archivo && new RegExp(`^ejemplo-${nombre}(-[0-9a-f]{8})?\\.png$`).test(viejo)) {
+    if (viejo !== archivo && new RegExp(`^ejemplo-${nombre}(-[0-9a-f]{8})?\\.(png|jpe?g|webp)$`, "i").test(viejo)) {
       await unlink(path.join(DESTINO, viejo)).catch(() => {});
     }
   }
@@ -93,7 +148,7 @@ for (const clave of BLOQUES) {
     .values({ clave, imagenUrl: url })
     .onConflictDoUpdate({ target: bloques.clave, set: { imagenUrl: url } });
 }
-console.log("✓ Portada y Nuestra historia");
+console.log("✓ Portada, menús y Nuestra historia");
 
 for (const [slug, archivo] of Object.entries(CATEGORIAS)) {
   const url = await publicar(archivo);
@@ -114,8 +169,39 @@ for (const [slug, [archivo, color]] of Object.entries(PRODUCTOS)) {
   await db
     .delete(imagenes)
     .where(and(eq(imagenes.productoId, producto.id), like(imagenes.url, "/media/ejemplo-%")));
-  await db.insert(imagenes).values({ productoId: producto.id, color, url, alt: `${producto.nombre} en ${color.toLowerCase()}`, orden: 0 });
+  await db.insert(imagenes).values({
+    productoId: producto.id,
+    color,
+    url,
+    alt: `${producto.nombre} en ${color.toLowerCase()}`,
+    orden: 0,
+  });
 }
 console.log("✓ Productos");
+
+const actuales = await db.select().from(lookbookFotos);
+const delDueno = actuales.some((f) => f.imagenUrl && !f.imagenUrl.includes("/media/ejemplo-"));
+if (delDueno) {
+  console.log("✓ Lookbook ya tiene fotos propias: no las reemplazo");
+} else {
+  if (actuales.length > 0) await db.delete(lookbookFotos);
+  const filas = [];
+  for (const item of LOOKBOOK_EJEMPLO) {
+    const url = await publicar(item.archivo);
+    const [producto] = item.producto
+      ? await db.select({ id: productos.id }).from(productos).where(eq(productos.slug, item.producto))
+      : [undefined];
+    filas.push({
+      alt: item.alt,
+      publico: item.publico,
+      orden: item.orden,
+      activa: true,
+      imagenUrl: url,
+      productoId: producto?.id ?? null,
+    });
+  }
+  if (filas.length > 0) await db.insert(lookbookFotos).values(filas);
+  console.log("✓ Lookbook");
+}
 
 await client.close();

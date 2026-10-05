@@ -37,6 +37,22 @@ export async function getCategorias() {
   return db.select().from(categorias).orderBy(asc(categorias.orden), asc(categorias.nombre));
 }
 
+/** Categorías que tienen al menos un modelo activo de ese público (los unisex cuentan en los dos). */
+export async function getCategoriasPara(para: "hombre" | "mujer") {
+  const db = await getDb();
+  return db
+    .selectDistinct({
+      id: categorias.id,
+      nombre: categorias.nombre,
+      slug: categorias.slug,
+      orden: categorias.orden,
+    })
+    .from(categorias)
+    .innerJoin(productos, eq(productos.categoriaId, categorias.id))
+    .where(and(eq(productos.estado, "activo"), inArray(productos.publico, [para, "unisex"])))
+    .orderBy(asc(categorias.orden), asc(categorias.nombre));
+}
+
 export async function getCategoria(slug: string) {
   const db = await getDb();
   const [cat] = await db.select().from(categorias).where(eq(categorias.slug, slug));

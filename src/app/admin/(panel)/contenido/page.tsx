@@ -3,18 +3,19 @@ import Link from "next/link";
 import { inArray } from "drizzle-orm";
 import { getDb } from "@/db";
 import { bloques } from "@/db/schema";
-import { BLOQUES, GRUPOS, type GrupoBloque } from "@/content/bloques";
+import { BLOQUES, GRUPOS, GRUPOS_CONTENIDO } from "@/content/bloques";
 import { getBloques } from "@/lib/data/contenido";
 import { FormBloque } from "@/components/admin/form-bloque";
 import { TituloAdmin } from "@/components/admin/ui";
 
-export const metadata: Metadata = { title: "Portada y textos" };
+export const metadata: Metadata = { title: "Textos y fotos" };
 
-// Editor de los cuadros (foto + textos) de la portada y de Nuestra historia.
+// Editor de los cuadros (foto + textos) de la portada, el aviso, los menús y Nuestra historia.
 
 export default async function ContenidoAdmin({ searchParams }: PageProps<"/admin/contenido">) {
   const { grupo: g } = await searchParams;
-  const grupo: GrupoBloque = g === "historia" ? "historia" : "portada";
+  const pedido = Array.isArray(g) ? g[0] : g;
+  const grupo = GRUPOS_CONTENIDO.find((item) => item === pedido) ?? "portada";
   const defs = BLOQUES.filter((b) => b.grupo === grupo);
 
   const db = await getDb();
@@ -32,16 +33,16 @@ export default async function ContenidoAdmin({ searchParams }: PageProps<"/admin
           </Link>
         }
       >
-        Portada y textos
+        Textos y fotos
       </TituloAdmin>
 
-      <nav aria-label="Página a editar" className="mb-6 flex gap-2">
-        {(Object.keys(GRUPOS) as GrupoBloque[]).map((clave) => (
+      <nav aria-label="Página a editar" className="mb-6 flex flex-wrap gap-2">
+        {(GRUPOS_CONTENIDO).map((clave) => (
           <Link
             key={clave}
             href={`/admin/contenido?grupo=${clave}`}
             aria-current={clave === grupo ? "page" : undefined}
-            className={`etiqueta border px-4 py-2.5 ${clave === grupo ? "border-cafe bg-cafe text-crema-claro" : "border-cafe/25 hover:border-cafe"}`}
+            className={`border px-4 py-2.5 text-sm font-medium ${clave === grupo ? "border-cafe bg-cafe text-crema-claro" : "border-cafe/25 hover:border-cafe"}`}
           >
             {GRUPOS[clave].nombre}
           </Link>

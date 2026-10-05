@@ -1,6 +1,7 @@
 import { count } from "drizzle-orm";
 import type { Db } from "./index";
-import { categorias, hormas, productos, variantes, type Publico } from "./schema";
+import { categorias, hormas, lookbookFotos, productos, variantes, type Publico } from "./schema";
+import { LOOKBOOK_EJEMPLO } from "../content/lookbook-ejemplo";
 
 // Datos de ejemplo para desarrollo. Solo se cargan si la base está vacía.
 // Son modelos inventados: se reemplazan por el catálogo real desde el admin.
@@ -201,6 +202,7 @@ export async function seed(db: Db) {
     ])
     .returning();
 
+  const idsPorSlug = new Map<string, string>();
   for (const [i, m] of MODELOS.entries()) {
     const categoria = cats.find((c) => c.slug === m.categoria)!;
     const [producto] = await db
@@ -223,6 +225,7 @@ export async function seed(db: Db) {
         estado: "activo",
       })
       .returning();
+    idsPorSlug.set(m.slug, producto.id);
 
     await db.insert(variantes).values(
       m.colores.flatMap((key) =>
@@ -242,4 +245,14 @@ export async function seed(db: Db) {
       ),
     );
   }
+
+  await db.insert(lookbookFotos).values(
+    LOOKBOOK_EJEMPLO.map((f) => ({
+      alt: f.alt,
+      publico: f.publico,
+      orden: f.orden,
+      activa: true,
+      productoId: f.producto ? (idsPorSlug.get(f.producto) ?? null) : null,
+    })),
+  );
 }

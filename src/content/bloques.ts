@@ -1,12 +1,12 @@
-import { marca } from "@/config/marca";
+import { marca, tienda } from "@/config/marca";
 
-// Cuadros editables (foto + textos) de la portada y de Nuestra historia.
+// Cuadros editables (foto + textos) de la portada, los menús y Nuestra historia.
 // Aquí se define qué cuadros existen, qué campos tiene cada uno y su texto por defecto.
 // Lo que el dueño cambia desde /admin/contenido se guarda en la tabla `bloques`
 // y tiene prioridad sobre estos valores.
 
 export type CampoBloque = "titulo" | "texto" | "enlace" | "imagen";
-export type GrupoBloque = "portada" | "historia";
+export type GrupoBloque = "portada" | "historia" | "global" | "menus" | "lookbook";
 
 export type DefinicionBloque = {
   clave: string;
@@ -20,6 +20,8 @@ export type DefinicionBloque = {
   proporcion?: string;
   /** Qué foto va aquí mientras no se sube una */
   notaFoto?: string;
+  /** Ayuda del campo de texto, si hace falta algo distinto a la genérica */
+  ayudaTexto?: string;
   defecto: {
     titulo?: string;
     texto?: string;
@@ -32,7 +34,13 @@ export type DefinicionBloque = {
 export const GRUPOS: Record<GrupoBloque, { nombre: string; ruta: string }> = {
   portada: { nombre: "Portada", ruta: "/" },
   historia: { nombre: "Nuestra historia", ruta: "/nuestra-historia" },
+  global: { nombre: "Aviso de arriba", ruta: "/" },
+  menus: { nombre: "Fotos de los menús", ruta: "/" },
+  lookbook: { nombre: "Lookbook", ruta: "/lookbook" },
 };
+
+/** Grupos que se editan en /admin/contenido. El lookbook tiene su propia pantalla. */
+export const GRUPOS_CONTENIDO = (Object.keys(GRUPOS) as GrupoBloque[]).filter((g) => g !== "lookbook");
 
 const galeria = (n: number, notaFoto: string, grupo: GrupoBloque): DefinicionBloque => ({
   clave: `${grupo}-galeria-${n}`,
@@ -48,60 +56,109 @@ const galeria = (n: number, notaFoto: string, grupo: GrupoBloque): DefinicionBlo
   defecto: { titulo: "", imagenAlt: notaFoto },
 });
 
+function cuadroFoto(
+  clave: string,
+  grupo: GrupoBloque,
+  nombre: string,
+  ayuda: string,
+  notaFoto: string,
+  defecto: DefinicionBloque["defecto"],
+  proporcion = "Vertical 3:4",
+): DefinicionBloque {
+  return { clave, grupo, nombre, ayuda, campos: ["imagen", "titulo", "enlace"], proporcion, notaFoto, defecto };
+}
+
+const fotosColeccion = (para: "hombre" | "mujer", piezas: [string, string][]): DefinicionBloque[] =>
+  piezas.map(([titulo, slug], i) =>
+    cuadroFoto(
+      `portada-col-${para}-${i + 1}`,
+      "portada",
+      `Colección ${para === "hombre" ? "Hombre" : "Mujer"} · foto ${i + 1}`,
+      `Foto ${i + 1} de la fila «Colección ${para === "hombre" ? "Hombre" : "Mujer"}», en la portada.`,
+      notaDe(titulo),
+      {
+        titulo,
+        enlaceTexto: titulo,
+        enlaceUrl: slug ? `/coleccion/${slug}?para=${para}` : `/coleccion?para=${para}`,
+        imagenAlt: `${titulo} de la colección de ${para}`,
+      },
+    ),
+  );
+
+function notaDe(titulo: string) {
+  return `${titulo.toLowerCase()} de piel, luz natural`;
+}
+
+const fotosMenu = (
+  menu: "hombre" | "mujer" | "nosotros",
+  piezas: { titulo: string; href: string; nota: string }[],
+): DefinicionBloque[] =>
+  piezas.map((p, i) =>
+    cuadroFoto(
+      `menu-${menu}-${i + 1}`,
+      "menus",
+      `Menú ${menu} · foto ${i + 1}`,
+      `Foto ${i + 1} que aparece a la derecha del menú de ${menu}.`,
+      p.nota,
+      { titulo: p.titulo, enlaceTexto: p.titulo, enlaceUrl: p.href, imagenAlt: p.nota },
+    ),
+  );
+
 export const BLOQUES: DefinicionBloque[] = [
   {
-    clave: "portada-hero",
-    grupo: "portada",
-    nombre: "Foto principal",
-    ayuda: "Lo primero que se ve al entrar. Ocupa toda la pantalla.",
-    campos: ["imagen", "titulo", "texto", "enlace"],
-    proporcion: "Horizontal 16:9 (en el celular se recorta al centro)",
-    notaFoto: "mocasín sobre piedra, luz de tarde",
-    defecto: {
-      titulo: "Hecho a mano, pensado para durar",
-      texto: "Calzado de piel cosido por artesanos mexicanos.",
-      enlaceTexto: "Ver colección",
-      enlaceUrl: "/coleccion",
-      imagenAlt: "Mocasín de piel sobre piedra con luz de tarde",
-    },
+    clave: "global-anuncio",
+    grupo: "global",
+    nombre: "Barra de arriba",
+    ayuda: "La franja café oscuro que se ve en todas las páginas, encima del menú.",
+    ayudaTexto: "Hasta 3 avisos, uno por línea. Se van turnando solos cada 5 segundos.",
+    campos: ["texto"],
+    defecto: { texto: tienda.anuncio },
   },
   {
     clave: "portada-hombre",
     grupo: "portada",
-    nombre: "Cuadro Hombre",
-    ayuda: "Cuadro izquierdo debajo de la foto principal. Lleva a los modelos de hombre.",
+    nombre: "Puerta Hombre",
+    ayuda: "Foto grande de la portada, a la izquierda en computadora y arriba en el celular.",
     campos: ["imagen", "titulo", "enlace"],
-    proporcion: "Vertical 4:5",
-    notaFoto: "retrato de hombre con mocasines",
-    defecto: { titulo: "Hombre", enlaceTexto: "Ver hombre", enlaceUrl: "/coleccion?para=hombre", imagenAlt: "Hombre con mocasines de piel" },
+    proporcion: "Vertical, de borde a borde",
+    notaFoto: "hombre con calzado de piel, luz de tarde",
+    defecto: {
+      titulo: "Hombre",
+      enlaceTexto: "Explorar Hombre",
+      enlaceUrl: "/coleccion?para=hombre",
+      imagenAlt: "Hombre con mocasines de piel",
+    },
   },
   {
     clave: "portada-mujer",
     grupo: "portada",
-    nombre: "Cuadro Mujer",
-    ayuda: "Cuadro derecho debajo de la foto principal. Lleva a los modelos de mujer.",
+    nombre: "Puerta Mujer",
+    ayuda: "Foto grande de la portada, a la derecha en computadora y abajo en el celular.",
     campos: ["imagen", "titulo", "enlace"],
-    proporcion: "Vertical 4:5",
-    notaFoto: "retrato de mujer con botines",
-    defecto: { titulo: "Mujer", enlaceTexto: "Ver mujer", enlaceUrl: "/coleccion?para=mujer", imagenAlt: "Mujer con botines de piel" },
-  },
-  {
-    clave: "portada-manifiesto",
-    grupo: "portada",
-    nombre: "Frase de la marca",
-    ayuda: "Texto grande centrado, sin foto, entre los cuadros y las categorías.",
-    campos: ["titulo", "texto"],
+    proporcion: "Vertical, de borde a borde",
+    notaFoto: "mujer con calzado de piel, luz de tarde",
     defecto: {
-      titulo: "Piel que mejora con los años.",
-      texto:
-        "Elegimos cada piel, la cortamos y la cosemos a mano. No seguimos temporadas: hacemos zapatos para usarse mucho tiempo.",
+      titulo: "Mujer",
+      enlaceTexto: "Explorar Mujer",
+      enlaceUrl: "/coleccion?para=mujer",
+      imagenAlt: "Mujer con botines de piel",
     },
   },
+  ...fotosColeccion("hombre", [
+    ["Temporada", ""],
+    ["Mocasines", "mocasines"],
+    ["Botas", "botas"],
+  ]),
+  ...fotosColeccion("mujer", [
+    ["Temporada", ""],
+    ["Mocasines", "mocasines"],
+    ["Botines", "botas"],
+  ]),
   {
     clave: "portada-oficio",
     grupo: "portada",
-    nombre: "El oficio",
-    ayuda: "Foto a la izquierda y texto a la derecha, debajo de las novedades.",
+    nombre: "Bloque editorial",
+    ayuda: "El único cuadro de texto de la portada, al final. Foto a la izquierda y texto a la derecha.",
     campos: ["imagen", "titulo", "texto", "enlace"],
     proporcion: "Vertical 4:5",
     notaFoto: "manos cortando piel en el taller",
@@ -114,26 +171,32 @@ export const BLOQUES: DefinicionBloque[] = [
       imagenAlt: "Manos de artesano cortando piel",
     },
   },
+  ...fotosMenu("hombre", [
+    { titulo: "Temporada", href: "/coleccion?para=hombre", nota: "calzado de hombre, luz de tarde" },
+    { titulo: "Mocasines", href: "/coleccion/mocasines?para=hombre", nota: "mocasines de piel café" },
+    { titulo: "Botas", href: "/coleccion/botas?para=hombre", nota: "botas de piel sobre madera" },
+  ]),
+  ...fotosMenu("mujer", [
+    { titulo: "Temporada", href: "/coleccion?para=mujer", nota: "calzado de mujer, luz natural" },
+    { titulo: "Mocasines", href: "/coleccion/mocasines?para=mujer", nota: "mocasines coñac" },
+    { titulo: "Botines", href: "/coleccion/botas?para=mujer", nota: "botines de piel" },
+  ]),
+  ...fotosMenu("nosotros", [
+    { titulo: "Nuestra historia", href: "/nuestra-historia", nota: "vista del taller con luz natural" },
+    { titulo: "El oficio", href: "/nuestra-historia", nota: "manos cortando piel" },
+    { titulo: "El taller", href: "/nuestras-hormas", nota: "hormas de madera en el taller" },
+  ]),
   {
-    clave: "portada-hormas",
-    grupo: "portada",
-    nombre: "Nuestras hormas",
-    ayuda: "Texto a la izquierda y foto a la derecha, después de El oficio.",
-    campos: ["imagen", "titulo", "texto", "enlace"],
-    proporcion: "Vertical 4:5",
-    notaFoto: "hormas de madera en el taller",
+    clave: "lookbook-intro",
+    grupo: "lookbook",
+    nombre: "Texto de la página",
+    ayuda: "El título y la frase corta que se ven arriba de las fotos del lookbook.",
+    campos: ["titulo", "texto"],
     defecto: {
-      titulo: "Todo empieza en la horma",
-      texto:
-        "La horma es el molde sobre el que se construye cada zapato. Define cómo te queda, dónde aprieta y dónde no. Por eso cada modelo te dice en qué horma está hecho.",
-      enlaceTexto: "Conoce nuestras hormas",
-      enlaceUrl: "/nuestras-hormas",
-      imagenAlt: "Hormas de madera sobre la mesa del taller",
+      titulo: "La temporada",
+      texto: "Piel café y coñac, luz de tarde y el oficio de siempre.",
     },
   },
-  galeria(1, "par terminado sobre madera vieja", "portada"),
-  galeria(2, "detalle de costura a mano", "portada"),
-  galeria(3, "herramientas: lezna, tijeras, hilo", "portada"),
   {
     clave: "historia-intro",
     grupo: "historia",

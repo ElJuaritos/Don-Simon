@@ -59,6 +59,18 @@ export const IconoCambio = (p: P) => (
     <path d="M4 9h13l-3-3M20 15H7l3 3" />
   </svg>
 );
+export const IconoPersona = (p: P) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="8" r="3.2" />
+    <path d="M5.5 19.5c1.2-3.2 3.4-4.8 6.5-4.8s5.3 1.6 6.5 4.8" />
+  </svg>
+);
+export const IconoCorreo = (p: P) => (
+  <svg {...base} {...p}>
+    <rect x="3.5" y="5.5" width="17" height="13" />
+    <path d="m4 7 8 6 8-6" />
+  </svg>
+);
 export const IconoWhatsapp = (p: P) => (
   <svg {...base} {...p}>
     <path d="M4 20l1.2-3.6A8 8 0 1 1 8 19.1L4 20Z" />

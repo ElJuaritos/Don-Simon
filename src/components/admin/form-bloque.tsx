@@ -43,7 +43,10 @@ export function FormBloque({
           </Campo>
         )}
         {usa("texto") && (
-          <Campo label="Texto" ayuda="Frases cortas se leen mejor. Deja una línea en blanco para separar párrafos.">
+          <Campo
+            label="Texto"
+            ayuda={def.ayudaTexto ?? "Frases cortas se leen mejor. Deja una línea en blanco para separar párrafos."}
+          >
             <textarea name="texto" rows={4} defaultValue={bloque.texto} maxLength={3000} className="campo" />
           </Campo>
         )}

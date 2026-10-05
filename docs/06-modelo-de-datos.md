@@ -18,7 +18,8 @@ clientes 1───* direcciones
               └───* envios
 
 carritos 1───* carrito_lineas *───1 variantes
-suscriptores (newsletter)    paginas (contenido editable)    ajustes (clave/valor)
+suscriptores (newsletter)    lookbook_fotos *───0..1 productos
+paginas (contenido editable)    ajustes (clave/valor)
 ```
 
 ## Catálogo
@@ -141,8 +142,9 @@ pedido_id, paqueteria, numero_guia, url_rastreo, enviado_en, entregado_en.
 ## Marketing y contenido
 
 - **`cupones`** (fase 1.5): codigo, tipo (porcentaje / monto), valor, minimo_compra, usos_maximos, usos, vigencia.
-- **`suscriptores`**: email, origen (footer, popup), confirmado.
-- **`bloques`** (implementada): clave única, titulo, texto, enlace_texto, enlace_url, imagen_url, imagen_alt. Cada fila personaliza un cuadro de la portada o de Nuestra historia. Los cuadros existentes y sus textos por defecto se definen en código (`src/content/bloques.ts`), así que la tabla solo guarda lo que el dueño cambió.
+- **`suscriptores`**: email, origen (footer, popup), preferencia (`hombre` / `mujer` / `ambos`).
+- **`bloques`** (implementada): clave única, titulo, texto, enlace_texto, enlace_url, imagen_url, imagen_alt. Cada fila personaliza un cuadro de la portada, de los menús, del lookbook o de Nuestra historia. Los cuadros existentes y sus textos por defecto se definen en código (`src/content/bloques.ts`), así que la tabla solo guarda lo que el dueño cambió.
+- **`lookbook_fotos`** (implementada): imagen_url, alt, publico (`hombre` / `mujer` / `unisex`), producto_id opcional, orden, activa. La galería `/lookbook` se edita en `/admin/lookbook`.
 - **`paginas`**: slug, titulo, contenido (Markdown), seo. Para ayuda y legales.
 - **`ajustes`**: clave/valor, p. ej. `barra_anuncio`, `envio_gratis_minimo`, `costo_envio`, `whatsapp`.
 

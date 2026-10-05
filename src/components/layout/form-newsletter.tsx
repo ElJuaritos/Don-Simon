@@ -3,7 +3,13 @@
 import { useActionState } from "react";
 import { suscribir } from "@/lib/actions/tienda";
 
-/** Suscripción al newsletter: una línea con el correo y el botón. */
+const OPCIONES = [
+  { valor: "hombre", texto: "Hombre" },
+  { valor: "mujer", texto: "Mujer" },
+  { valor: "ambos", texto: "Ambos" },
+] as const;
+
+/** Suscripción al boletín, con la preferencia de qué quiere recibir. */
 export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
   const [estado, accion, enviando] = useActionState(suscribir, undefined);
 
@@ -14,10 +20,27 @@ export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
   return (
     <form action={accion} className="w-full">
       <input type="hidden" name="origen" value={origen} />
+      <fieldset>
+        <legend className="mb-2 text-sm font-medium">¿Qué quieres recibir?</legend>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {OPCIONES.map((opcion) => (
+            <label key={opcion.valor} className="inline-flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name="preferencia"
+                value={opcion.valor}
+                defaultChecked={opcion.valor === "ambos"}
+                className="h-4 w-4 accent-cafe"
+              />
+              {opcion.texto}
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <label htmlFor={`email-${origen}`} className="sr-only">
         Correo electrónico
       </label>
-      <div className="flex items-end gap-3 border-b border-cafe/40 focus-within:border-cafe">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
         <input
           id={`email-${origen}`}
           name="email"
@@ -25,9 +48,9 @@ export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
           required
           autoComplete="email"
           placeholder="Tu correo electrónico"
-          className="min-h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-cafe/60 focus:outline-none"
+          className="campo min-w-0 flex-1 bg-white"
         />
-        <button type="submit" disabled={enviando} className="etiqueta min-h-12 shrink-0 transition-opacity hover:opacity-60 disabled:opacity-40">
+        <button type="submit" disabled={enviando} className="btn-primario shrink-0">
           {enviando ? "Enviando…" : "Suscribirme"}
         </button>
       </div>

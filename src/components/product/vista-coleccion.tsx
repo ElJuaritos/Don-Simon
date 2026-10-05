@@ -86,7 +86,7 @@ export async function VistaColeccion({
       </header>
 
       <div className="mt-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <nav aria-label="Público" className="etiqueta flex gap-6">
+        <nav aria-label="Público" className="texto-nav flex gap-6">
           {PUBLICOS.map((p) => (
             <Link key={p.texto} href={conPara(rutaBase, p.valor)} aria-current={p.valor === para ? "page" : undefined} className={pestana(p.valor === para)}>
               {p.texto}

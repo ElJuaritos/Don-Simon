@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import type Stripe from "stripe";
 import { z } from "zod";
 import { getDb } from "@/db";
-import { mensajes, pedidos, productos, suscriptores, variantes } from "@/db/schema";
+import { mensajes, pedidos, productos, suscriptores, variantes, PREFERENCIAS_BOLETIN, type PreferenciaBoletin } from "@/db/schema";
 import { tienda } from "@/config/marca";
 import {
   detallarCarrito,
@@ -193,10 +193,14 @@ function crearSesionPago(
 export async function suscribir(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
   const email = z.email().safeParse(formData.get("email"));
   if (!email.success) return { error: "Escribe un correo válido." };
+  const cruda = String(formData.get("preferencia") ?? "ambos");
+  const preferencia: PreferenciaBoletin = PREFERENCIAS_BOLETIN.includes(cruda as PreferenciaBoletin)
+    ? (cruda as PreferenciaBoletin)
+    : "ambos";
   const db = await getDb();
   await db
     .insert(suscriptores)
-    .values({ email: email.data.toLowerCase(), origen: String(formData.get("origen") ?? "footer") })
+    .values({ email: email.data.toLowerCase(), origen: String(formData.get("origen") ?? "footer"), preferencia })
     .onConflictDoNothing();
   return { ok: true, mensaje: "¡Gracias! Te escribiremos pronto." };
 }

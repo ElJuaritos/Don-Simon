@@ -16,6 +16,8 @@ export const marca = {
   instagram: "",
   facebook: "",
   tiktok: "",
+  pinterest: "",
+  youtube: "",
 };
 
 const envioGratisDesde = 250000;
@@ -27,4 +29,6 @@ export const tienda = {
   envioGratisDesde,
   maxParesPorLinea: 5,
   anuncio: `Envío gratis a todo México en compras desde ${formatPrecio(envioGratisDesde)}`,
+  // OXXO y SPEI se muestran cuando se activen (docs/08 #2). La paquetería, cuando se defina (#8).
+  pagos: { visa: true, mastercard: true, amex: true, oxxo: false, spei: false } as const,
 };

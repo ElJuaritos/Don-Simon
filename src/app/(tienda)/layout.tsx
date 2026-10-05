@@ -1,6 +1,6 @@
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { BotonWhatsapp } from "@/components/layout/boton-whatsapp";
+import { BotonAyuda } from "@/components/layout/boton-ayuda";
 
 export default function TiendaLayout({ children }: LayoutProps<"/">) {
   return (
@@ -16,7 +16,7 @@ export default function TiendaLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <Footer />
-      <BotonWhatsapp />
+      <BotonAyuda />
     </>
   );
 }

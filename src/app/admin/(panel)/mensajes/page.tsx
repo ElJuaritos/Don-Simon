@@ -57,7 +57,9 @@ export default async function MensajesAdmin() {
               {subs.map((s) => (
                 <li key={s.id} className="flex justify-between gap-2">
                   <span className="truncate">{s.email}</span>
-                  <span className="shrink-0 text-cafe/85">{s.origen}</span>
+                  <span className="shrink-0 text-cafe/85">
+                    {s.preferencia === "hombre" ? "Hombre" : s.preferencia === "mujer" ? "Mujer" : "Ambos"}
+                  </span>
                 </li>
               ))}
             </ul>
