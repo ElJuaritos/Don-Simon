@@ -37,7 +37,7 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 - **Idioma**: todo lo que ve el usuario (textos y URLs) va en español de México, tuteando. Código, nombres de variables y commits pueden ir en inglés, pero las tablas y columnas de la BD siguen el español de [06-modelo-de-datos](docs/06-modelo-de-datos.md).
 - **Marca** ([02-identidad-de-marca](docs/02-identidad-de-marca.md)):
   - Colores solo mediante tokens: `cafe #5d3f24`, `crema #e7dac7`, `olivo #9e9268`, `terracota #a85f3e`.
-  - La base es neutra y cálida: fondos `hueso #faf7f2`, `arena #f0e9df` y `piedra #e3d9ca`. Café, olivo y terracota van solo como acentos (botones, badges, detalles), no como fondos de sección.
+  - La base es neutra y cálida: fondos `hueso #faf7f2`, `arena #f0e9df` y `piedra #e3d9ca`. Café, olivo y terracota van solo como acentos (botones, badges, detalles), no como fondos de sección. Única excepción: la barra de anuncio y la franja legal del footer van en café oscuro con texto crema.
   - Texto de cuerpo solo en café sobre crema o blanco. Blanco sobre terracota está bien. Sobre olivo, solo títulos grandes. Nunca café sobre terracota.
   - Tipografía: *The Seasons* (display, ≥32px) y *Quicksand* (todo lo demás).
   - Esquinas rectas o de radio mínimo, animaciones suaves, sin estética de plantilla.

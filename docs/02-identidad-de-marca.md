@@ -23,6 +23,8 @@
 
 **Base neutra (2026-09-26).** Siguiendo el PDF de estilo visual del dueño, el sitio usa fondos neutros cálidos y deja la paleta de marca como acento. Café se queda para texto y botones primarios; olivo y terracota, para detalles y ofertas. Ya no se usan como fondos de sección.
 
+**Excepción (2026-10-05).** La barra de anuncio de arriba y la franja legal al pie del footer van en **café oscuro (`#3f2a17`) con texto crema claro**, como las franjas negras de las referencias del dueño. Solo esas dos franjas delgadas; el resto de las secciones sigue con fondos neutros. Ver [09](09-plan-rediseno-mockups.md), D1.
+
 | Token | HEX | Uso |
 |-------|-----|-----|
 | `--color-hueso` | `#faf7f2` | Fondo general |

@@ -59,6 +59,25 @@ El dueño compartió un PDF de estilo visual con referencias (Jean Pierre, Gran 
 Hay que comprar la licencia web. Si no se consigue, alternativas gratuitas similares: *Cormorant Garamond Italic*, *Playfair Display Italic* o *Italiana*.
 **Decisión**: _pendiente_
 
+### 4c. Rediseño según los mockups del dueño
+El dueño mandó un segundo PDF (`Diseño Página WEB.pdf`) con la estructura que quiere, basada en Morjas y Myrqvist. El plan completo está en [09](09-plan-rediseno-mockups.md).
+**Decisiones (2026-10-05)**:
+- ✅ Barra de anuncio y franja legal del footer en **café oscuro con texto crema** (excepción a la regla de fondos, ver [02](02-identidad-de-marca.md)).
+- ✅ **Solo español** al lanzar; los otros idiomas se agregan después.
+- ✅ Portada **sin hero**: Hombre / Mujer a pantalla completa, Colección Hombre, Colección Mujer y un solo bloque editorial al final.
+- ✅ Páginas de aterrizaje **`/hombre`** y **`/mujer`**, con foto de categoría distinta por público.
+- ✅ Catálogo con **una tarjeta por color**.
+- ✅ **Lookbook desde ahora**, con fotos generadas con IA que el dueño reemplazará.
+- ✅ Checkout con **código postal primero** (autocompletado con SEPOMEX), **cupones desde Stripe** y prueba de **Embedded Checkout** (si no funciona en Workers, se queda el alojado).
+- ✅ **Una sola suela por modelo**: solo cambian los colores. La suela no es variante ni filtro.
+- ✅ Tallas en **MX** por defecto, con selector a US y EU.
+- ✅ **Reseñas** visibles a partir de ~10 aprobadas; todas las aprueba el dueño.
+- ✅ **Cuenta de cliente** con código o enlace por correo, sin contraseña. Se puede seguir comprando sin cuenta.
+- ✅ **Puntos en una segunda etapa**. Primero la cuenta con historial de pedidos.
+- _Pendiente_: reglas del programa de puntos (cuántos puntos por peso, valor, caducidad, cuándo se ganan).
+- _Pendiente_: qué **accesorios** se venderán y con qué tallas (bloquea accesorios y "Combínalo con").
+- _Pendiente_: si hay **taller o tienda física** que mostrar.
+
 ## Operación (antes del lanzamiento)
 
 ### 8. Envíos
