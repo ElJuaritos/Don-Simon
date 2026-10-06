@@ -1,6 +1,6 @@
 import { mensajesAnuncio } from "@/lib/anuncio";
 import { contarCarrito } from "@/lib/carrito";
-import { getCategoriasPara } from "@/lib/data/catalogo";
+import { fotoDeCategoria, getCategoriasPara } from "@/lib/data/catalogo";
 import { getBloques } from "@/lib/data/contenido";
 import { BarraAnuncio } from "./barra-anuncio";
 import { Cabecera } from "./cabecera";
@@ -35,17 +35,23 @@ export async function Header() {
     {
       tipo: "menu",
       id: "hombre",
-      href: "/coleccion?para=hombre",
+      href: "/hombre",
       texto: "Hombre",
-      columnas: columnasPublico("hombre", hombre),
+      columnas: columnasPublico(
+        "hombre",
+        hombre.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "hombre") })),
+      ),
       fotos: fotosDe(menus, ["menu-hombre-1", "menu-hombre-2", "menu-hombre-3"]),
     },
     {
       tipo: "menu",
       id: "mujer",
-      href: "/coleccion?para=mujer",
+      href: "/mujer",
       texto: "Mujer",
-      columnas: columnasPublico("mujer", mujer),
+      columnas: columnasPublico(
+        "mujer",
+        mujer.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "mujer") })),
+      ),
       fotos: fotosDe(menus, ["menu-mujer-1", "menu-mujer-2", "menu-mujer-3"]),
     },
     { tipo: "enlace", id: "lookbook", href: "/lookbook", texto: "Lookbook" },

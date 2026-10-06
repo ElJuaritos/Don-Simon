@@ -14,7 +14,9 @@ import {
   variantes,
   ESTADOS_PRODUCTO,
   PUBLICOS,
+  OCASIONES,
   type EstadoPedido,
+  type Ocasion,
 } from "@/db/schema";
 import { cerrarSesion, iniciarSesion, passwordCorrecta, requireAdmin } from "@/lib/auth";
 import { cancelarPedidoPendiente } from "@/lib/data/pedidos";
@@ -60,6 +62,7 @@ const productoSchema = z.object({
   suela: z.string().trim(),
   cuidado: z.string().trim(),
   hechoEn: z.string().trim(),
+  material: z.string().trim().max(80, "El material del filtro es muy largo. Usa una frase corta."),
   estado: z.enum(ESTADOS_PRODUCTO),
   publico: z.enum(PUBLICOS, "Elige para quién es el modelo."),
 });
@@ -86,6 +89,10 @@ export async function guardarProducto(_prev: EstadoForm, formData: FormData): Pr
     .where(id ? and(eq(productos.slug, slug), ne(productos.id, id)) : eq(productos.slug, slug));
   if (duplicado) return { error: `Ya existe otro producto con la dirección "${slug}". Cambia el nombre o la dirección.` };
 
+  const ocasiones = [...new Set(formData.getAll("ocasiones").map(String))].filter((o): o is Ocasion =>
+    (OCASIONES as readonly string[]).includes(o),
+  );
+
   const valores = {
     nombre: d.nombre,
     slug,
@@ -95,6 +102,8 @@ export async function guardarProducto(_prev: EstadoForm, formData: FormData): Pr
     precioComparacion,
     descripcion: d.descripcion,
     materiales: d.materiales,
+    material: d.material,
+    ocasiones,
     construccion: d.construccion,
     suela: d.suela,
     cuidado: d.cuidado,

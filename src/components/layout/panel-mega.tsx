@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { FotoConNombre } from "@/components/portada/foto-con-nombre";
 import type { EntradaNav } from "./navegacion";
 
@@ -19,7 +20,12 @@ export function PanelMega({ menu }: { menu: Extract<EntradaNav, { tipo: "menu" }
               <ul className="mt-4 space-y-1">
                 {col.enlaces.map((e) => (
                   <li key={`${col.titulo}-${e.texto}`}>
-                    <Link href={e.href} className="texto-nav block py-1.5 transition-opacity hover:opacity-60">
+                    <Link href={e.href} className="texto-nav flex items-center gap-3 py-1.5 transition-opacity hover:opacity-60">
+                      {e.imagen && (
+                        <span className="relative h-14 w-11 shrink-0">
+                          <Image src={e.imagen.url} alt="" fill sizes="44px" className="object-cover" />
+                        </span>
+                      )}
                       {e.texto}
                     </Link>
                   </li>

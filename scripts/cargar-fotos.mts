@@ -44,6 +44,10 @@ const BLOQUES = [
   "historia-galeria-1",
   "historia-galeria-2",
   "historia-galeria-3",
+  "hombre-hero-1",
+  "hombre-hero-2",
+  "mujer-hero-1",
+  "mujer-hero-2",
 ];
 
 /** Si no hay un archivo con el nombre del cuadro, se reutiliza otra foto de ejemplo. */
@@ -63,8 +67,23 @@ const ALIAS: Record<string, string> = {
   "menu-nosotros-1": "historia-intro",
   "menu-nosotros-2": "portada-oficio",
   "menu-nosotros-3": "portada-hormas",
+  "hombre-hero-1": "lookbook-01",
+  "hombre-hero-2": "lookbook-07",
+  "mujer-hero-1": "lookbook-05",
+  "mujer-hero-2": "lookbook-02",
+  "categoria-mocasines-hombre": "lookbook-01",
+  "categoria-mocasines-mujer": "lookbook-05",
+  "categoria-botas-hombre": "lookbook-06",
+  "categoria-botas-mujer": "lookbook-08",
+  "categoria-oxford-hombre": "lookbook-04",
+  "categoria-oxford-mujer": "lookbook-03",
 };
 
+const CATEGORIAS_PUBLICO: Record<string, { hombre: string; mujer: string }> = {
+  mocasines: { hombre: "categoria-mocasines-hombre", mujer: "categoria-mocasines-mujer" },
+  botas: { hombre: "categoria-botas-hombre", mujer: "categoria-botas-mujer" },
+  "oxford-y-derby": { hombre: "categoria-oxford-hombre", mujer: "categoria-oxford-mujer" },
+};
 const CATEGORIAS: Record<string, string> = {
   mocasines: "categoria-mocasines",
   botas: "categoria-botas",
@@ -74,7 +93,17 @@ const HORMAS: Record<string, string> = {
   "Horma Clásica": "horma-clasica",
   "Horma Amplia": "horma-amplia",
 };
-/** slug del producto → [archivo, color que muestra la foto] */
+/** Segunda foto de ejemplo, mismo color, para el cambio al pasar el cursor. */
+const SEGUNDA_FOTO: Record<string, string> = {
+  "mocasin-alameda": "lookbook-03",
+  "mocasin-olivar": "lookbook-04",
+  "bota-sierra": "lookbook-06",
+  "chelsea-encino": "lookbook-08",
+  "oxford-real": "lookbook-04",
+  "derby-campo": "lookbook-07",
+  "mocasin-lucia": "lookbook-05",
+  "botin-jacaranda": "lookbook-02",
+};
 const PRODUCTOS: Record<string, [string, string]> = {
   "mocasin-alameda": ["producto-alameda", "Café"],
   "mocasin-olivar": ["producto-olivar", "Negro"],
@@ -152,7 +181,19 @@ console.log("✓ Portada, menús y Nuestra historia");
 
 for (const [slug, archivo] of Object.entries(CATEGORIAS)) {
   const url = await publicar(archivo);
-  if (url) await db.update(categorias).set({ imagenUrl: url }).where(eq(categorias.slug, slug));
+  const publico = CATEGORIAS_PUBLICO[slug];
+  const hombre = publico ? await publicar(publico.hombre) : null;
+  const mujer = publico ? await publicar(publico.mujer) : null;
+  if (url || hombre || mujer) {
+    await db
+      .update(categorias)
+      .set({
+        ...(url ? { imagenUrl: url } : {}),
+        ...(hombre ? { imagenHombreUrl: hombre } : {}),
+        ...(mujer ? { imagenMujerUrl: mujer } : {}),
+      })
+      .where(eq(categorias.slug, slug));
+  }
 }
 console.log("✓ Categorías");
 
@@ -176,6 +217,17 @@ for (const [slug, [archivo, color]] of Object.entries(PRODUCTOS)) {
     alt: `${producto.nombre} en ${color.toLowerCase()}`,
     orden: 0,
   });
+  const nombreSegunda = SEGUNDA_FOTO[slug];
+  const segunda = nombreSegunda ? await publicar(nombreSegunda) : null;
+  if (segunda) {
+    await db.insert(imagenes).values({
+      productoId: producto.id,
+      color,
+      url: segunda,
+      alt: `${producto.nombre} en ${color.toLowerCase()}, otro ángulo`,
+      orden: 1,
+    });
+  }
 }
 console.log("✓ Productos");
 

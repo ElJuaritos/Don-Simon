@@ -69,6 +69,7 @@ export function Foto({
   className = "",
   sizes = "(min-width: 1024px) 25vw, 50vw",
   prioridad = false,
+  segunda = null,
   tono = "claro",
   nota,
   colorZapato,
@@ -85,6 +86,8 @@ export function Foto({
   encuadre?: string;
   sizes?: string;
   prioridad?: boolean;
+  /** Segunda foto del mismo encuadre. Se muestra al pasar el cursor sobre un `group`. */
+  segunda?: { url: string; alt: string } | null;
   tono?: Tono;
   nota?: string;
   colorZapato?: string;
@@ -116,8 +119,17 @@ export function Foto({
         sizes={sizes}
         priority={prioridad}
         fetchPriority={prioridad ? "high" : "auto"}
-        className={`object-cover ${encuadre} ${zoom}`}
+        className={`object-cover ${encuadre} ${zoom} ${segunda ? "transition-opacity duration-500 group-hover:opacity-0 motion-reduce:transition-none" : ""}`}
       />
+      {segunda && (
+        <Image
+          src={segunda.url}
+          alt=""
+          fill
+          sizes={sizes}
+          className={`object-cover ${encuadre} opacity-0 transition-opacity duration-500 group-hover:opacity-100 motion-reduce:transition-none`}
+        />
+      )}
     </div>
   );
 }
@@ -125,6 +137,7 @@ export function Foto({
 /** Foto de producto (4:5): igual que Foto, con la silueta del color del modelo mientras no hay foto. */
 export function FotoProducto(props: {
   imagen: { url: string; alt: string } | null;
+  segunda?: { url: string; alt: string } | null;
   colorZapato?: string;
   className?: string;
   sizes?: string;

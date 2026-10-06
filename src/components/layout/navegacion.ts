@@ -4,7 +4,7 @@ import { marca } from "@/config/marca";
 // Las páginas que todavía no existen (accesorios, reseñas, notas, rastreo)
 // no se enlazan, para no llevar a una página vacía.
 
-export type Enlace = { href: string; texto: string };
+export type Enlace = { href: string; texto: string; imagen?: { url: string; alt: string } | null };
 export type ColumnaNav = { titulo: string; enlaces: Enlace[] };
 export type FotoNav = {
   href: string;
@@ -25,11 +25,15 @@ export const AYUDA: Enlace[] = [
   { href: "/contacto", texto: "Contacto" },
 ];
 
-type CategoriaNav = { slug: string; nombre: string };
+type CategoriaNav = {
+  slug: string;
+  nombre: string;
+  imagen?: { url: string; alt: string } | null;
+};
 
 /**
  * Columnas del mega menú de Hombre o Mujer.
- * «Ocasión» apunta al catálogo con ?ocasion=; el filtro se aplica en la etapa B.
+ * «Ocasión» abre el catálogo con el filtro aplicado.
  * Cinturones, calcetines y piel pequeña esperan a que se definan los accesorios.
  */
 export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaNav[]): ColumnaNav[] {
@@ -37,7 +41,11 @@ export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaN
     {
       titulo: "Calzado",
       enlaces: [
-        ...categorias.map((c) => ({ href: `/coleccion/${c.slug}?para=${para}`, texto: c.nombre })),
+        ...categorias.map((c) => ({
+          href: `/coleccion/${c.slug}?para=${para}`,
+          texto: c.nombre,
+          imagen: c.imagen,
+        })),
         { href: `/coleccion?para=${para}`, texto: "Ver todo" },
       ],
     },
@@ -78,8 +86,8 @@ export function columnasFooter(): ColumnaNav[] {
     {
       titulo: "Tienda",
       enlaces: [
-        { href: "/coleccion?para=hombre", texto: "Hombre" },
-        { href: "/coleccion?para=mujer", texto: "Mujer" },
+        { href: "/hombre", texto: "Hombre" },
+        { href: "/mujer", texto: "Mujer" },
         { href: "/lookbook", texto: "Lookbook" },
         { href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" },
       ],

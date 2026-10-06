@@ -22,7 +22,7 @@ export default async function CategoriasAdmin() {
     <>
       <TituloAdmin>Categorías</TituloAdmin>
       <p className="mb-8 max-w-2xl text-cafe/85">
-        La foto de cada categoría aparece en los cuadros de la portada. Usa fotos verticales (3:4).
+        Cada categoría puede tener una foto para Hombre, otra para Mujer y una de respaldo por si falta alguna. Usa fotos verticales (3:4).
       </p>
       <div className="grid max-w-3xl gap-6">
         {cats.map((c) => (
@@ -43,7 +43,25 @@ export default async function CategoriasAdmin() {
               <Campo label="Descripción corta" ayuda="Aparece arriba de los productos de la categoría.">
                 <textarea name="descripcion" rows={2} defaultValue={c.descripcion} className="campo" />
               </Campo>
-              <CampoFoto id={c.id} actual={c.imagenUrl} alt={c.nombre} proporcion="Vertical 3:4" />
+              <CampoFoto id={`${c.id}-respaldo`} actual={c.imagenUrl} alt={c.nombre} proporcion="Vertical 3:4" titulo="Foto de respaldo" nota="se usa si falta la de Hombre o la de Mujer" />
+              <CampoFoto
+                id={`${c.id}-hombre`}
+                actual={c.imagenHombreUrl}
+                alt={`${c.nombre} para hombre`}
+                proporcion="Vertical 3:4"
+                name="archivoHombre"
+                quitar="quitarImagenHombre"
+                titulo="Foto para Hombre"
+              />
+              <CampoFoto
+                id={`${c.id}-mujer`}
+                actual={c.imagenMujerUrl}
+                alt={`${c.nombre} para mujer`}
+                proporcion="Vertical 3:4"
+                name="archivoMujer"
+                quitar="quitarImagenMujer"
+                titulo="Foto para Mujer"
+              />
             </FormAdmin>
           </Tarjeta>
         ))}

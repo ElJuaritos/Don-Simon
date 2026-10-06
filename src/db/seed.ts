@@ -1,6 +1,6 @@
 import { count } from "drizzle-orm";
 import type { Db } from "./index";
-import { categorias, hormas, lookbookFotos, productos, variantes, type Publico } from "./schema";
+import { categorias, hormas, lookbookFotos, productos, variantes, type Ocasion, type Publico } from "./schema";
 import { LOOKBOOK_EJEMPLO } from "../content/lookbook-ejemplo";
 
 // Datos de ejemplo para desarrollo. Solo se cargan si la base está vacía.
@@ -30,6 +30,8 @@ const MODELOS: {
   precio: number;
   precioComparacion?: number;
   colores: ColorKey[];
+  material: string;
+  ocasiones: Ocasion[];
   destacado: boolean;
   construccion: string;
   suela: string;
@@ -43,6 +45,8 @@ const MODELOS: {
     publico: "hombre",
     precio: 349000,
     colores: ["cafe", "conac"],
+    material: "Piel de becerro",
+    ocasiones: ["casual", "formal"],
     destacado: true,
     construccion: "Cosido Blake",
     suela: "Suela de cuero con tapa de goma",
@@ -58,6 +62,8 @@ const MODELOS: {
     precio: 329000,
     precioComparacion: 369000,
     colores: ["negro", "olivo"],
+    material: "Gamuza",
+    ocasiones: ["casual"],
     destacado: false,
     construccion: "Cosido Blake",
     suela: "Suela de cuero",
@@ -72,6 +78,8 @@ const MODELOS: {
     publico: "hombre",
     precio: 429000,
     colores: ["cafe", "conac"],
+    material: "Piel de becerro",
+    ocasiones: ["casual"],
     destacado: true,
     construccion: "Cosido Goodyear",
     suela: "Suela de goma con relieve",
@@ -86,6 +94,8 @@ const MODELOS: {
     publico: "unisex",
     precio: 399000,
     colores: ["negro", "cafe"],
+    material: "Piel de becerro",
+    ocasiones: ["casual", "formal"],
     destacado: true,
     construccion: "Cosido Blake",
     suela: "Suela de cuero con tapa de goma",
@@ -100,6 +110,8 @@ const MODELOS: {
     publico: "hombre",
     precio: 369000,
     colores: ["negro", "cafe"],
+    material: "Piel de becerro",
+    ocasiones: ["formal", "boda"],
     destacado: false,
     construccion: "Cosido Goodyear",
     suela: "Suela de cuero",
@@ -114,6 +126,8 @@ const MODELOS: {
     publico: "hombre",
     precio: 339000,
     colores: ["conac", "olivo"],
+    material: "Gamuza",
+    ocasiones: ["casual"],
     destacado: true,
     construccion: "Cosido Blake",
     suela: "Suela de goma ligera",
@@ -128,6 +142,8 @@ const MODELOS: {
     publico: "mujer",
     precio: 319000,
     colores: ["conac", "negro"],
+    material: "Piel de becerro",
+    ocasiones: ["casual", "formal"],
     destacado: true,
     construccion: "Cosido Blake",
     suela: "Suela de cuero con tapa de goma",
@@ -142,6 +158,8 @@ const MODELOS: {
     publico: "mujer",
     precio: 389000,
     colores: ["cafe", "negro"],
+    material: "Gamuza",
+    ocasiones: ["formal", "boda"],
     destacado: false,
     construccion: "Cosido Blake",
     suela: "Suela de cuero con tacón de 4 cm",
@@ -217,6 +235,8 @@ export async function seed(db: Db) {
         precio: m.precio,
         precioComparacion: m.precioComparacion ?? null,
         materiales: MATERIALES,
+        material: m.material,
+        ocasiones: [...m.ocasiones],
         construccion: m.construccion,
         suela: m.suela,
         cuidado: CUIDADO,

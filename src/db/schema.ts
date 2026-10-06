@@ -30,6 +30,10 @@ export const categorias = pgTable("categorias", {
   slug: text("slug").notNull().unique(),
   descripcion: text("descripcion").notNull().default(""),
   imagenUrl: text("imagen_url"),
+  /** Foto de la categoría en Hombre. Si falta, se usa imagen_url. */
+  imagenHombreUrl: text("imagen_hombre_url"),
+  /** Foto de la categoría en Mujer. Si falta, se usa imagen_url. */
+  imagenMujerUrl: text("imagen_mujer_url"),
   orden: integer("orden").notNull().default(0),
   ...timestamps,
 }).enableRLS();
@@ -47,6 +51,8 @@ export const hormas = pgTable("hormas", {
 }).enableRLS();
 
 export const ESTADOS_PRODUCTO = ["borrador", "activo", "archivado"] as const;
+export const OCASIONES = ["formal", "casual", "boda"] as const;
+export type Ocasion = (typeof OCASIONES)[number];
 // Unisex aparece tanto en Hombre como en Mujer
 export const PUBLICOS = ["hombre", "mujer", "unisex"] as const;
 export type Publico = (typeof PUBLICOS)[number];
@@ -63,7 +69,11 @@ export const productos = pgTable("productos", {
   descripcion: text("descripcion").notNull().default(""),
   precio: integer("precio").notNull(),
   precioComparacion: integer("precio_comparacion"),
+  /** Texto corto para el filtro del catálogo, p. ej. "Piel de becerro". */
+  material: text("material").notNull().default(""),
+  /** Descripción larga de materiales, en la ficha. */
   materiales: text("materiales").notNull().default(""),
+  ocasiones: text("ocasiones").array().notNull().default([]),
   construccion: text("construccion").notNull().default(""),
   suela: text("suela").notNull().default(""),
   cuidado: text("cuidado").notNull().default(""),

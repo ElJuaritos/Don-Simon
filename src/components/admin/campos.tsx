@@ -20,15 +20,24 @@ export function CampoFoto({
   proporcion,
   nota,
   id,
+  name = "archivo",
+  quitar = "quitarImagen",
+  titulo,
 }: {
   actual: string | null | undefined;
   alt?: string;
   proporcion?: string;
   nota?: string;
   id: string;
+  /** Nombre del input de archivo, por si el formulario sube varias fotos. */
+  name?: string;
+  quitar?: string;
+  titulo?: string;
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-[9rem_1fr] sm:items-start">
+    <div>
+      {titulo && <p className="campo-label mb-3">{titulo}</p>}
+      <div className="grid gap-4 sm:grid-cols-[9rem_1fr] sm:items-start">
       <div className="relative aspect-[4/5] w-36 overflow-hidden border border-cafe/15 bg-arena">
         {actual ? (
           <Image src={actual} alt={alt} fill sizes="144px" className="object-cover" />
@@ -43,7 +52,7 @@ export function CampoFoto({
           <span className="campo-label">{actual ? "Cambiar foto" : "Subir foto"}</span>
           <input
             id={`archivo-${id}`}
-            name="archivo"
+            name={name}
             type="file"
             accept="image/jpeg,image/png,image/webp,image/avif"
             className="campo py-2.5"
@@ -54,10 +63,11 @@ export function CampoFoto({
         </label>
         {actual && (
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="quitarImagen" className="h-4 w-4 accent-cafe" />
+            <input type="checkbox" name={quitar} className="h-4 w-4 accent-cafe" />
             Quitar la foto actual
           </label>
         )}
+      </div>
       </div>
     </div>
   );

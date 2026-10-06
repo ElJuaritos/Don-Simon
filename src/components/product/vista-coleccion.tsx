@@ -1,135 +1,174 @@
 import Link from "next/link";
-import type { Categoria } from "@/db/schema";
-import { getOpcionesFiltro, getProductos, type Orden } from "@/lib/data/catalogo";
-import { FormFiltros } from "./filtros-coleccion";
+import type { Categoria, Ocasion } from "@/db/schema";
+import { fotoDeCategoria, getCatalogo, type Orden } from "@/lib/data/catalogo";
+import {
+  ETIQUETA_OCASION,
+  POR_PAGINA,
+  etiquetaTalla,
+  hrefColeccion,
+  leerFiltros,
+  quitarValor,
+  type FiltrosUrl,
+} from "@/lib/filtros-coleccion";
+import { formatTalla } from "@/lib/formato";
+import { Foto } from "@/components/ui/foto";
+import { FormFiltros, type OpcionFiltro } from "./filtros-coleccion";
 import { ORDENES } from "./ordenes";
 import { RejillaProductos } from "./tarjeta-producto";
 
-// Listado de productos compartido por /coleccion y /coleccion/[categoria].
-// ?para=hombre|mujer filtra por público (los unisex aparecen en ambos).
+// Listado compartido por /coleccion y /coleccion/[categoria].
+// ?para=hombre|mujer incluye también los modelos unisex.
 
-export type FiltrosColeccion = { talla?: string; color?: string; orden?: string; para?: string };
-
-const PUBLICOS = [
-  { valor: undefined, texto: "Todo" },
-  { valor: "hombre", texto: "Hombre" },
-  { valor: "mujer", texto: "Mujer" },
-] as const;
-
-type Para = "hombre" | "mujer";
-
-/** Arma la URL conservando el público elegido. */
-function conPara(ruta: string, para?: Para) {
-  return para ? `${ruta}?para=${para}` : ruta;
-}
+type Crudo = Record<string, string | string[] | undefined>;
 
 export async function VistaColeccion({
   titulo,
   descripcion,
   categoria,
   categorias,
-  filtros,
-  rutaBase,
+  searchParams,
 }: {
   titulo: string;
   descripcion?: string;
   categoria?: Categoria;
   categorias: Categoria[];
-  filtros: FiltrosColeccion;
-  rutaBase: string;
+  searchParams: Crudo;
 }) {
-  const para: Para | undefined = filtros.para === "hombre" || filtros.para === "mujer" ? filtros.para : undefined;
-  const talla = filtros.talla ? Number(filtros.talla) : undefined;
+  const filtros = leerFiltros(searchParams, categoria?.slug);
   const orden = ORDENES.some((o) => o.valor === filtros.orden) ? (filtros.orden as Orden) : "destacados";
-  const [productos, opciones] = await Promise.all([
-    getProductos({
-      categoriaSlug: categoria?.slug,
-      para,
-      talla: Number.isFinite(talla) ? talla : undefined,
-      color: filtros.color || undefined,
-      orden,
-    }),
-    getOpcionesFiltro(),
-  ]);
+  const { tarjetas, opciones } = await getCatalogo({
+    para: filtros.para,
+    estilo: filtros.estilos,
+    talla: filtros.tallas.map(Number).filter((n) => Number.isFinite(n)),
+    color: filtros.colores,
+    material: filtros.materiales,
+    ocasion: filtros.ocasiones,
+    orden,
+  });
 
-  const nombrePara = PUBLICOS.find((p) => p.valor === para)?.texto;
-  const tituloFinal = para && !categoria ? nombrePara! : titulo;
-  const pestana = (activa: boolean) =>
-    `whitespace-nowrap border-b pb-1.5 transition-colors ${activa ? "border-cafe" : "border-transparent text-cafe/85 hover:text-cafe"}`;
+  const visibles = tarjetas.slice(0, filtros.pagina * POR_PAGINA);
+  const nombrePara = filtros.para === "hombre" ? "Hombre" : filtros.para === "mujer" ? "Mujer" : undefined;
+  const tituloFinal = nombrePara && !categoria ? nombrePara : titulo;
+  const foto = categoria ? fotoDeCategoria(categoria, filtros.para) : null;
+  const limpiar = hrefColeccion("/coleccion", { ...filtros, estilos: [], tallas: [], colores: [], materiales: [], ocasiones: [], orden: "destacados", pagina: 1 });
+  const chips = chipsDe(filtros, categorias);
+
+  const grupos = [
+    grupo("estilo", "Estilo", "estilo", opciones.estilos.map((e) => ({ valor: e.slug, texto: e.nombre })), filtros.estilos),
+    grupo("talla", "Talla", "talla", opciones.tallas.map((t) => ({ valor: String(t), texto: formatTalla(t) })), filtros.tallas),
+    grupo("color", "Color", "color", opciones.colores.map((c) => ({ valor: c, texto: c })), filtros.colores),
+    grupo("material", "Material", "material", opciones.materiales.map((m) => ({ valor: m, texto: m })), filtros.materiales),
+    grupo("ocasion", "Ocasión", "ocasion", opciones.ocasiones.map((o) => ({ valor: o, texto: ETIQUETA_OCASION[o] })), filtros.ocasiones),
+  ];
 
   return (
-    <div className="contenedor pt-8 pb-16 md:pt-12 md:pb-24">
-      <header className="max-w-2xl">
-        <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
-          <Link href="/" className="hover:text-cafe">
-            Inicio
-          </Link>
-          {(categoria || para) && (
-            <>
-              {" / "}
-              <Link href="/coleccion" className="hover:text-cafe">
-                Colección
+    <div className="pb-16 md:pb-24">
+      <FormFiltros
+        rutaBase="/coleccion"
+        para={filtros.para}
+        orden={orden}
+        grupos={grupos}
+        total={tarjetas.length}
+        llave={JSON.stringify(filtros)}
+      />
+
+      <div className="contenedor pt-8 md:pt-12">
+        {chips.length > 0 && (
+          <ul className="mb-6 flex flex-wrap items-center gap-2" aria-label="Filtros activos">
+            {chips.map((c) => (
+              <li key={c.texto}>
+                <Link href={c.href} scroll={false} className="texto-nav inline-flex min-h-11 items-center gap-2 border border-cafe/20 px-3">
+                  {c.texto}
+                  <span aria-hidden>×</span>
+                  <span className="sr-only">Quitar {c.texto}</span>
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link href={limpiar} scroll={false} className="enlace-nav min-h-11 py-3">
+                Limpiar todo
               </Link>
-            </>
-          )}
-          {categoria && para && (
-            <>
-              {" / "}
-              <Link href={conPara("/coleccion", para)} className="hover:text-cafe">
-                {nombrePara}
+            </li>
+          </ul>
+        )}
+
+        <header className="max-w-2xl">
+          <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
+            <Link href="/" className="hover:text-cafe">
+              Inicio
+            </Link>
+            {(categoria || filtros.para) && (
+              <>
+                {" / "}
+                <Link href={filtros.para ? `/coleccion?para=${filtros.para}` : "/coleccion"} className="hover:text-cafe">
+                  Colección
+                </Link>
+              </>
+            )}
+            {categoria && filtros.para && (
+              <>
+                {" / "}
+                <Link href={`/${filtros.para}`} className="hover:text-cafe">
+                  {nombrePara}
+                </Link>
+              </>
+            )}
+          </nav>
+          <div className={foto ? "mt-4 grid items-end gap-6 sm:grid-cols-[9rem_1fr]" : ""}>
+            {foto && (
+              <Foto imagen={foto} tono="piedra" sinIlustracion className="aspect-[3/4] w-full sm:w-36" sizes="144px" />
+            )}
+            <div>
+              <h1 className="titulo-display mt-3 text-5xl md:text-6xl">{tituloFinal}</h1>
+              {descripcion && <p className="mt-3 text-lg">{descripcion}</p>}
+            </div>
+          </div>
+        </header>
+
+        <div className="mt-8 md:mt-10">
+          {visibles.length > 0 ? (
+            <RejillaProductos productos={visibles} />
+          ) : (
+            <div className="py-24 text-center">
+              <p className="titulo-display text-3xl md:text-4xl">No encontramos modelos con esos filtros.</p>
+              <Link href={limpiar} className="btn-contorno mt-8">
+                Ver todo
               </Link>
-            </>
+            </div>
           )}
-        </nav>
-        <h1 className="titulo-display mt-3 text-5xl md:text-6xl">{tituloFinal}</h1>
-        {descripcion && <p className="mt-3 text-lg">{descripcion}</p>}
-      </header>
+        </div>
 
-      <div className="mt-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <nav aria-label="Público" className="texto-nav flex gap-6">
-          {PUBLICOS.map((p) => (
-            <Link key={p.texto} href={conPara(rutaBase, p.valor)} aria-current={p.valor === para ? "page" : undefined} className={pestana(p.valor === para)}>
-              {p.texto}
-            </Link>
-          ))}
-        </nav>
-        <nav aria-label="Categorías" className="-mx-4 flex gap-6 overflow-x-auto px-4 text-[0.9375rem] md:mx-0 md:px-0">
-          <Link href={conPara("/coleccion", para)} className={pestana(!categoria)}>
-            Todas
-          </Link>
-          {categorias.map((c) => (
-            <Link key={c.id} href={conPara(`/coleccion/${c.slug}`, para)} className={pestana(categoria?.id === c.id)}>
-              {c.nombre}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <div className="mt-6">
-        <FormFiltros
-          rutaBase={rutaBase}
-          para={para}
-          talla={filtros.talla}
-          color={filtros.color}
-          orden={orden}
-          opciones={opciones}
-          total={productos.length}
-          limpiarHref={conPara(rutaBase, para)}
-        />
-      </div>
-
-      <div className="mt-8 md:mt-10">
-        {productos.length > 0 ? (
-          <RejillaProductos productos={productos} />
-        ) : (
-          <div className="py-24 text-center">
-            <p className="titulo-display text-3xl md:text-4xl">No encontramos modelos con esos filtros.</p>
-            <Link href={conPara(rutaBase, para)} className="btn-contorno mt-8">
-              Ver todo
+        {tarjetas.length > visibles.length && (
+          <div className="mt-12 text-center">
+            <Link
+              href={hrefColeccion("/coleccion", { ...filtros, pagina: filtros.pagina + 1 })}
+              className="btn-contorno"
+            >
+              Cargar más
             </Link>
           </div>
         )}
       </div>
     </div>
   );
+}
+
+function grupo(id: string, etiqueta: string, nombre: string, opciones: OpcionFiltro[], activos: string[]) {
+  return { id, etiqueta, nombre, opciones, activos };
+}
+
+function chipsDe(filtros: FiltrosUrl, categorias: Categoria[]) {
+  const base = "/coleccion";
+  const nombreEstilo = (slug: string) => categorias.find((c) => c.slug === slug)?.nombre ?? slug;
+  const pieza = (clave: "estilos" | "tallas" | "colores" | "materiales" | "ocasiones", valor: string, texto: string) => ({
+    texto,
+    href: hrefColeccion(base, quitarValor(filtros, clave, valor)),
+  });
+  return [
+    ...filtros.estilos.map((v) => pieza("estilos", v, nombreEstilo(v))),
+    ...filtros.tallas.map((v) => pieza("tallas", v, `Talla ${etiquetaTalla(v)}`)),
+    ...filtros.colores.map((v) => pieza("colores", v, v)),
+    ...filtros.materiales.map((v) => pieza("materiales", v, v)),
+    ...filtros.ocasiones.map((v) => pieza("ocasiones", v, ETIQUETA_OCASION[v as Ocasion])),
+  ];
 }

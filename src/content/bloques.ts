@@ -6,7 +6,7 @@ import { marca, tienda } from "@/config/marca";
 // y tiene prioridad sobre estos valores.
 
 export type CampoBloque = "titulo" | "texto" | "enlace" | "imagen";
-export type GrupoBloque = "portada" | "historia" | "global" | "menus" | "lookbook";
+export type GrupoBloque = "portada" | "historia" | "global" | "menus" | "lookbook" | "publico";
 
 export type DefinicionBloque = {
   clave: string;
@@ -36,6 +36,7 @@ export const GRUPOS: Record<GrupoBloque, { nombre: string; ruta: string }> = {
   historia: { nombre: "Nuestra historia", ruta: "/nuestra-historia" },
   global: { nombre: "Aviso de arriba", ruta: "/" },
   menus: { nombre: "Fotos de los menús", ruta: "/" },
+  publico: { nombre: "Hombre y Mujer", ruta: "/hombre" },
   lookbook: { nombre: "Lookbook", ruta: "/lookbook" },
 };
 
@@ -104,6 +105,25 @@ const fotosMenu = (
     ),
   );
 
+function heroes(para: "hombre" | "mujer"): DefinicionBloque[] {
+  const etiqueta = para === "hombre" ? "Hombre" : "Mujer";
+  return [1, 2].map((n) => ({
+    clave: `${para}-hero-${n}`,
+    grupo: "publico" as const,
+    nombre: `${etiqueta} · cuadro ${n}`,
+    ayuda: `Cuadro grande ${n} de la página /${para}. El botón «Explorar» usa el enlace de abajo.`,
+    campos: ["imagen", "titulo", "enlace"],
+    proporcion: "Vertical, casi a pantalla completa",
+    notaFoto: `${etiqueta.toLowerCase()} con calzado de piel, luz de tarde`,
+    defecto: {
+      titulo: etiqueta,
+      enlaceTexto: "Explorar",
+      enlaceUrl: n === 1 ? `/coleccion/mocasines?para=${para}` : `/coleccion/botas?para=${para}`,
+      imagenAlt: `Calzado de ${etiqueta.toLowerCase()}`,
+    },
+  }));
+}
+
 export const BLOQUES: DefinicionBloque[] = [
   {
     clave: "global-anuncio",
@@ -125,7 +145,7 @@ export const BLOQUES: DefinicionBloque[] = [
     defecto: {
       titulo: "Hombre",
       enlaceTexto: "Explorar Hombre",
-      enlaceUrl: "/coleccion?para=hombre",
+      enlaceUrl: "/hombre",
       imagenAlt: "Hombre con mocasines de piel",
     },
   },
@@ -140,7 +160,7 @@ export const BLOQUES: DefinicionBloque[] = [
     defecto: {
       titulo: "Mujer",
       enlaceTexto: "Explorar Mujer",
-      enlaceUrl: "/coleccion?para=mujer",
+      enlaceUrl: "/mujer",
       imagenAlt: "Mujer con botines de piel",
     },
   },
@@ -172,12 +192,12 @@ export const BLOQUES: DefinicionBloque[] = [
     },
   },
   ...fotosMenu("hombre", [
-    { titulo: "Temporada", href: "/coleccion?para=hombre", nota: "calzado de hombre, luz de tarde" },
+    { titulo: "Temporada", href: "/hombre", nota: "calzado de hombre, luz de tarde" },
     { titulo: "Mocasines", href: "/coleccion/mocasines?para=hombre", nota: "mocasines de piel café" },
     { titulo: "Botas", href: "/coleccion/botas?para=hombre", nota: "botas de piel sobre madera" },
   ]),
   ...fotosMenu("mujer", [
-    { titulo: "Temporada", href: "/coleccion?para=mujer", nota: "calzado de mujer, luz natural" },
+    { titulo: "Temporada", href: "/mujer", nota: "calzado de mujer, luz natural" },
     { titulo: "Mocasines", href: "/coleccion/mocasines?para=mujer", nota: "mocasines coñac" },
     { titulo: "Botines", href: "/coleccion/botas?para=mujer", nota: "botines de piel" },
   ]),
@@ -186,6 +206,8 @@ export const BLOQUES: DefinicionBloque[] = [
     { titulo: "El oficio", href: "/nuestra-historia", nota: "manos cortando piel" },
     { titulo: "El taller", href: "/nuestras-hormas", nota: "hormas de madera en el taller" },
   ]),
+  ...heroes("hombre"),
+  ...heroes("mujer"),
   {
     clave: "lookbook-intro",
     grupo: "lookbook",

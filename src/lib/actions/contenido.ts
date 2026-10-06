@@ -27,14 +27,19 @@ function archivoDe(formData: FormData, campo = "archivo") {
  * Sube la foto nueva (si hay) o quita la actual (si se pidió) y borra el archivo anterior.
  * Devuelve la URL que debe guardarse, o undefined si la foto no cambia.
  */
-async function reemplazarFoto(formData: FormData, anterior: string | null | undefined) {
-  const nuevo = archivoDe(formData);
+async function reemplazarFoto(
+  formData: FormData,
+  anterior: string | null | undefined,
+  campo = "archivo",
+  quitar = "quitarImagen",
+) {
+  const nuevo = archivoDe(formData, campo);
   if (nuevo) {
     const url = await guardarImagen(nuevo);
     if (anterior) await borrarImagen(anterior);
     return url;
   }
-  if (formData.get("quitarImagen") === "on") {
+  if (formData.get(quitar) === "on") {
     if (anterior) await borrarImagen(anterior);
     return null;
   }
@@ -161,15 +166,24 @@ export async function guardarCategoria(_prev: EstadoForm, formData: FormData): P
   if (!actual) return { error: "Categoría no encontrada." };
 
   let imagenUrl;
+  let imagenHombreUrl;
+  let imagenMujerUrl;
   try {
     imagenUrl = await reemplazarFoto(formData, actual.imagenUrl);
+    imagenHombreUrl = await reemplazarFoto(formData, actual.imagenHombreUrl, "archivoHombre", "quitarImagenHombre");
+    imagenMujerUrl = await reemplazarFoto(formData, actual.imagenMujerUrl, "archivoMujer", "quitarImagenMujer");
   } catch (e) {
     return { error: e instanceof Error ? e.message : "No se pudo subir la foto." };
   }
   // El slug no cambia al renombrar, para no romper enlaces ya compartidos
   await db
     .update(categorias)
-    .set({ ...datos, ...(imagenUrl !== undefined && { imagenUrl }) })
+    .set({
+      ...datos,
+      ...(imagenUrl !== undefined && { imagenUrl }),
+      ...(imagenHombreUrl !== undefined && { imagenHombreUrl }),
+      ...(imagenMujerUrl !== undefined && { imagenMujerUrl }),
+    })
     .where(eq(categorias.id, id));
   refrescarTienda();
   return { ok: true, mensaje: "Categoría actualizada." };

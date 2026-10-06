@@ -30,7 +30,9 @@ paginas (contenido editable)    ajustes (clave/valor)
 | nombre | text | "Mocasines" |
 | slug | text, único | `mocasines` |
 | descripcion | text | Para SEO y encabezado |
-| imagen_url | text | Tarjeta en la portada |
+| imagen_url | text | Respaldo si falta la foto de un público |
+| imagen_hombre_url | text, nullable | Foto en Hombre, en el catálogo y en el menú |
+| imagen_mujer_url | text, nullable | Foto en Mujer, en el catálogo y en el menú |
 | orden | int | |
 
 ### `hormas`
@@ -53,7 +55,9 @@ paginas (contenido editable)    ajustes (clave/valor)
 | descripcion | text | Texto editorial |
 | precio | int (centavos) | IVA incluido |
 | precio_comparacion | int, nullable | Para mostrar ofertas |
-| materiales | text | |
+| materiales | text | Descripción larga, en la ficha |
+| material | text | Frase corta para el filtro, p. ej. "Piel de becerro" |
+| ocasiones | text[] | `formal`, `casual`, `boda`. Puede haber varias |
 | construccion | text | Blake / Goodyear / pegado |
 | suela | text | |
 | cuidado | text | |

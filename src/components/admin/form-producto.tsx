@@ -1,11 +1,15 @@
 import type { Categoria, Horma, Producto } from "@/db/schema";
+import { OCASIONES } from "@/db/schema";
 import { guardarProducto } from "@/lib/actions/admin";
+import { getMaterialesUsados } from "@/lib/data/catalogo";
 import { Campo } from "./campos";
 import { FormAdmin } from "./form-admin";
 
 const pesos = (centavos: number | null | undefined) => (centavos == null ? "" : String(centavos / 100));
 
-export function FormProducto({
+const ETIQUETA_OCASION = { formal: "Formal", casual: "Casual", boda: "Boda" } as const;
+
+export async function FormProducto({
   producto,
   categorias,
   hormas,
@@ -14,6 +18,7 @@ export function FormProducto({
   categorias: Categoria[];
   hormas: Horma[];
 }) {
+  const sugerencias = await getMaterialesUsados();
   return (
     <FormAdmin action={guardarProducto} boton={producto ? "Guardar cambios" : "Crear producto"} className="space-y-5">
       {producto && <input type="hidden" name="id" value={producto.id} />}
@@ -67,6 +72,17 @@ export function FormProducto({
       </Campo>
 
       <div className="grid gap-5 md:grid-cols-2">
+        <Campo
+          label="Material del filtro"
+          ayuda="Una frase corta, por ejemplo Piel de becerro o Gamuza. Sirve para filtrar en el catálogo. La descripción larga va en Materiales."
+        >
+          <input name="material" list="materiales-usados" defaultValue={producto?.material} className="campo" placeholder="Piel de becerro" />
+          <datalist id="materiales-usados">
+            {sugerencias.map((m) => (
+              <option key={m} value={m} />
+            ))}
+          </datalist>
+        </Campo>
         <Campo label="Materiales">
           <textarea name="materiales" rows={2} defaultValue={producto?.materiales} className="campo" placeholder="Piel de becerro curtida al vegetal…" />
         </Campo>
@@ -90,6 +106,25 @@ export function FormProducto({
           </select>
         </Campo>
       </div>
+
+      <fieldset className="space-y-3">
+        <legend className="campo-label">Ocasiones</legend>
+        <p className="text-xs text-cafe/85">Elige una o varias. Así el modelo aparece cuando filtran por ocasión.</p>
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
+          {OCASIONES.map((o) => (
+            <label key={o} className="flex min-h-11 items-center gap-2">
+              <input
+                type="checkbox"
+                name="ocasiones"
+                value={o}
+                defaultChecked={producto?.ocasiones.includes(o)}
+                className="h-5 w-5 accent-cafe"
+              />
+              {ETIQUETA_OCASION[o]}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       <label className="flex items-center gap-3">
         <input type="checkbox" name="destacado" defaultChecked={producto?.destacado} className="h-5 w-5 accent-cafe" />

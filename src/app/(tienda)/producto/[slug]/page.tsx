@@ -48,7 +48,12 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
   // Sugerencias del mismo público (hombre, mujer o unisex): primero la misma categoría
   // y se completa hasta 4 con modelos de otras categorías
   const para = producto.publico === "unisex" ? undefined : producto.publico;
-  const candidatos = (await getProductos({ para })).filter((p) => p.id !== producto.id);
+  const vistos = new Set<string>();
+  const candidatos = (await getProductos({ para })).filter((p) => {
+    if (p.id === producto.id || vistos.has(p.id)) return false;
+    vistos.add(p.id);
+    return true;
+  });
   const relacionados = [
     ...candidatos.filter((p) => p.categoria.slug === producto.categoria.slug),
     ...candidatos.filter((p) => p.categoria.slug !== producto.categoria.slug),

@@ -1,158 +1,202 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useId, useRef, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
 import type { Orden } from "@/lib/data/catalogo";
-import { formatTalla } from "@/lib/formato";
 import { ORDENES } from "./ordenes";
 
-// Filtros de talla, color y orden. Se aplican al elegir una opción, sin botón.
-// Sigue siendo un formulario GET: sin JavaScript funciona con el botón de <noscript>,
-// y los filtros quedan en la URL para poder compartirlos.
-// En celular se esconden detrás de un botón para que los zapatos se vean primero.
+// Barra de filtros del catálogo. Cada desplegable es un <details>, así funciona sin JavaScript.
+// Con JavaScript se aplican al elegir una casilla. En el celular se abren en un panel de pantalla completa.
+
+export type OpcionFiltro = { valor: string; texto: string };
 
 export function FormFiltros({
   rutaBase,
   para,
-  talla,
-  color,
   orden,
-  opciones,
+  grupos,
   total,
-  limpiarHref,
+  llave,
 }: {
   rutaBase: string;
   para?: string;
-  talla?: string;
-  color?: string;
   orden: Orden;
-  opciones: { tallas: number[]; colores: string[] };
+  grupos: { id: string; etiqueta: string; nombre: string; opciones: OpcionFiltro[]; activos: string[] }[];
   total: number;
-  limpiarHref: string;
+  llave: string;
 }) {
   const router = useRouter();
-  const [cargando, startTransition] = useTransition();
   const [abierto, setAbierto] = useState(false);
-  const activos = [talla, color].filter(Boolean).length + (orden !== "destacados" ? 1 : 0);
+  const [pendiente, startTransition] = useTransition();
+  const cerrarRef = useRef<HTMLButtonElement>(null);
+  const tituloId = useId();
+  const activos = grupos.reduce((n, g) => n + g.activos.length, 0);
+
+  useEffect(() => {
+    if (!abierto) return;
+    const antes = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    cerrarRef.current?.focus();
+    const angosto = window.matchMedia("(max-width: 1023px)").matches;
+    if (angosto) document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAbierto(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      antes?.focus();
+    };
+  }, [abierto]);
 
   function aplicar(e: FormEvent<HTMLFormElement>) {
     const params = new URLSearchParams();
     for (const [k, v] of new FormData(e.currentTarget)) {
-      // Se omiten los valores por defecto para que la URL quede limpia
-      if (v && !(k === "orden" && v === "destacados")) params.set(k, String(v));
+      if (!v || (k === "orden" && v === "destacados")) continue;
+      params.append(k, String(v));
     }
     const qs = params.toString();
     startTransition(() => router.push(qs ? `${rutaBase}?${qs}` : rutaBase, { scroll: false }));
   }
 
+  const panel = `bg-hueso lg:static lg:z-auto lg:flex lg:flex-row lg:items-center lg:justify-between lg:overflow-visible lg:bg-transparent ${
+    abierto ? "fixed inset-0 z-50 flex flex-col overflow-y-auto" : "hidden"
+  }`;
+
   return (
-    <div className="border-y border-cafe/10">
-      <div className="flex items-center justify-between py-3 md:hidden">
+    <div className="border-y border-cafe/15">
+      <noscript>
+        <style>{`.filtros-panel{display:flex !important;position:static !important;inset:auto !important;overflow:visible !important;}`}</style>
+      </noscript>
+      <div className="contenedor flex items-center justify-between py-3 lg:hidden">
         <button
           type="button"
-          onClick={() => setAbierto((a) => !a)}
+          onClick={() => setAbierto(true)}
           aria-expanded={abierto}
-          aria-controls="filtros"
-          className="etiqueta flex min-h-11 items-center gap-2"
+          aria-controls="panel-filtros"
+          className="texto-nav inline-flex min-h-11 items-center gap-2"
         >
           Filtrar y ordenar
           {activos > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-cafe px-1 text-[0.625rem] text-hueso">{activos}</span>
+            <span className="grid h-5 min-w-5 place-items-center bg-cafe px-1 text-[0.6875rem] text-crema-claro">{activos}</span>
           )}
-          <span aria-hidden className={`inline-block text-lg leading-none transition-transform ${abierto ? "rotate-45" : ""}`}>+</span>
         </button>
-        <Conteo total={total} cargando={cargando} />
+        <Conteo total={total} cargando={pendiente} />
       </div>
 
       <form
-        // Se vuelve a montar cuando cambian los filtros en la URL (p. ej. "Quitar filtros")
-        key={`${talla}|${color}|${orden}`}
-        id="filtros"
+        key={llave}
         method="get"
         action={rutaBase}
+        id="panel-filtros"
+        role={abierto ? "dialog" : undefined}
+        aria-modal={abierto ? true : undefined}
+        aria-labelledby={abierto ? tituloId : undefined}
         onChange={aplicar}
         onSubmit={(e) => {
           e.preventDefault();
-          aplicar(e);
+          setAbierto(false);
         }}
-        className={`${abierto ? "grid" : "hidden"} grid-cols-2 gap-3 pb-4 md:flex md:flex-wrap md:items-end md:py-4`}
+        className={`filtros-panel ${panel}`}
       >
-        {para && <input type="hidden" name="para" value={para} />}
-        <Selector id="f-talla" nombre="talla" etiqueta="Talla (MX)" valor={talla} ancho="md:min-w-28">
-          <option value="">Todas</option>
-          {opciones.tallas.map((t) => (
-            <option key={t} value={t}>
-              {formatTalla(t)}
-            </option>
+        <div className="flex items-center justify-between border-b border-cafe/15 px-4 py-3 lg:hidden">
+          <p id={tituloId} className="text-lg font-medium">
+            Filtrar y ordenar
+          </p>
+          <button ref={cerrarRef} type="button" onClick={() => setAbierto(false)} className="texto-nav min-h-11 px-2">
+            Cerrar
+          </button>
+        </div>
+
+        <div className="contenedor flex flex-1 flex-col lg:flex-none lg:flex-row lg:flex-wrap lg:items-center lg:gap-1 lg:px-10 lg:py-1">
+          {para && <input type="hidden" name="para" value={para} />}
+          {grupos.map((g) => (
+            <Desplegable key={g.id} {...g} />
           ))}
-        </Selector>
-        <Selector id="f-color" nombre="color" etiqueta="Color" valor={color} ancho="md:min-w-32">
-          <option value="">Todos</option>
-          {opciones.colores.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </Selector>
-        <div className="col-span-2 md:col-span-1">
-          <Selector id="f-orden" nombre="orden" etiqueta="Ordenar" valor={orden} ancho="md:min-w-48">
-            {ORDENES.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.texto}
-              </option>
-            ))}
-          </Selector>
+          <div className="mt-2 border-t border-cafe/10 py-4 lg:mt-0 lg:ml-auto lg:flex lg:items-center lg:gap-6 lg:border-0 lg:py-0">
+            <label className="texto-nav flex min-h-11 items-center gap-2">
+              <span>Ordenar</span>
+              <select name="orden" defaultValue={orden} className="bg-transparent py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cafe">
+                {ORDENES.map((o) => (
+                  <option key={o.valor} value={o.valor}>
+                    {o.texto}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="hidden lg:block">
+              <Conteo total={total} cargando={pendiente} />
+            </div>
+          </div>
+        </div>
+
+        <div className="sticky bottom-0 border-t border-cafe/15 bg-hueso p-4 lg:hidden">
+          <button type="submit" className="btn-primario w-full">
+            Ver {total} {total === 1 ? "modelo" : "modelos"}
+          </button>
         </div>
         <noscript>
-          <button type="submit" className="btn-primario min-h-11 px-5">
+          <button type="submit" className="btn-primario mx-4 mb-4 min-h-11 px-5 lg:mx-10">
             Aplicar
           </button>
         </noscript>
-        {(talla || color) && (
-          <Link href={limpiarHref} scroll={false} className="enlace col-span-2 self-center text-sm md:ml-1">
-            Quitar filtros
-          </Link>
-        )}
-        <div className="ml-auto hidden self-center md:block">
-          <Conteo total={total} cargando={cargando} />
-        </div>
       </form>
     </div>
   );
 }
 
+function Desplegable({
+  etiqueta,
+  nombre,
+  opciones,
+  activos,
+}: {
+  id: string;
+  etiqueta: string;
+  nombre: string;
+  opciones: OpcionFiltro[];
+  activos: string[];
+}) {
+  const [abierto, setAbierto] = useState(false);
+  const panelId = useId();
+  if (opciones.length < 2 && activos.length === 0) return null;
+
+  return (
+    <details
+      className="border-b border-cafe/10 lg:relative lg:border-0"
+      onToggle={(e) => setAbierto(e.currentTarget.open)}
+    >
+      <summary
+        aria-expanded={abierto}
+        aria-controls={panelId}
+        className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cafe lg:px-3 [&::-webkit-details-marker]:hidden"
+      >
+        <span className="texto-nav">{etiqueta}</span>
+        {activos.length > 0 && <span className="text-[0.75rem] text-cafe/70">{activos.length}</span>}
+      </summary>
+      <div id={panelId} className="flex flex-col gap-1 pb-3 lg:absolute lg:top-full lg:left-0 lg:z-20 lg:min-w-56 lg:border lg:border-cafe/15 lg:bg-hueso lg:p-3">
+        {opciones.map((o) => (
+          <label key={o.valor} className="flex min-h-11 cursor-pointer items-center gap-3 px-1 text-sm">
+            <input
+              type="checkbox"
+              name={nombre}
+              value={o.valor}
+              defaultChecked={activos.includes(o.valor)}
+              className="h-4 w-4 accent-cafe"
+            />
+            {o.texto}
+          </label>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 function Conteo({ total, cargando }: { total: number; cargando: boolean }) {
   return (
-    <p className="text-sm text-cafe/85" aria-live="polite">
+    <p className="texto-nav text-cafe/75" aria-live="polite">
       {cargando ? "Buscando…" : `${total} ${total === 1 ? "modelo" : "modelos"}`}
     </p>
   );
 }
 
-function Selector({
-  id,
-  nombre,
-  etiqueta,
-  valor,
-  ancho,
-  children,
-}: {
-  id: string;
-  nombre: string;
-  etiqueta: string;
-  valor?: string;
-  ancho: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="campo-label text-xs">
-        {etiqueta}
-      </label>
-      <select id={id} name={nombre} defaultValue={valor ?? ""} className={`campo w-full py-2 md:w-auto ${ancho}`}>
-        {children}
-      </select>
-    </div>
-  );
-}
