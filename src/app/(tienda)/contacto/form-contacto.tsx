@@ -31,6 +31,15 @@ export function FormContacto() {
         <input id="c-email" name="email" type="email" required autoComplete="email" className="campo" />
       </div>
       <div>
+        <label htmlFor="c-tipo" className="campo-label">
+          ¿De qué se trata?
+        </label>
+        <select id="c-tipo" name="tipo" defaultValue="contacto" className="campo">
+          <option value="contacto">Pregunta</option>
+          <option value="sugerencia">Sugerencia</option>
+        </select>
+      </div>
+      <div>
         <label htmlFor="c-mensaje" className="campo-label">Mensaje</label>
         <textarea id="c-mensaje" name="mensaje" rows={6} required minLength={10} className="campo" />
       </div>

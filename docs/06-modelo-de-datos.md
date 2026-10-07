@@ -20,6 +20,7 @@ productos 1───* resenas
 
 carritos 1───* carrito_lineas *───1 variantes
 suscriptores (newsletter)    lookbook_fotos *───0..1 productos
+pieles    notas    mensajes    intentos
 paginas (contenido editable)    ajustes (clave/valor)
 ```
 
@@ -180,7 +181,11 @@ pedido_id, paqueteria, numero_guia, url_rastreo, enviado_en, entregado_en.
 
 - **`cupones`** (fase 1.5): codigo, tipo (porcentaje / monto), valor, minimo_compra, usos_maximos, usos, vigencia.
 - **`suscriptores`**: email, origen (footer, popup), preferencia (`hombre` / `mujer` / `ambos`).
-- **`bloques`** (implementada): clave única, titulo, texto, enlace_texto, enlace_url, imagen_url, imagen_alt. Cada fila personaliza un cuadro de la portada, de los menús, del lookbook o de Nuestra historia. Los cuadros existentes y sus textos por defecto se definen en código (`src/content/bloques.ts`), así que la tabla solo guarda lo que el dueño cambió.
+- **`bloques`** (implementada): clave única, titulo, texto, enlace_texto, enlace_url, imagen_url, imagen_alt. Cada fila personaliza un cuadro de la portada, de los menús, del lookbook, de Nuestra historia o de El oficio. Los cuadros existentes y sus textos por defecto se definen en código (`src/content/bloques.ts`), así que la tabla solo guarda lo que el dueño cambió.
+- **`pieles`** (implementada): nombre, slug único, descripcion, cuidado, imagen_url, orden, activa. Página `/pieles` y admin `/admin/pieles`. Todavía no se ligan a los productos.
+- **`notas`** (implementada): titulo, slug único, resumen, cuerpo, imagen_url, imagen_alt, estado (`borrador` / `publicada`), publicada_en. Un borrador responde 404 en la tienda. `publicada_en` se llena la primera vez que se publica.
+- **`mensajes`** (implementada): tipo (`contacto` / `devolucion` / `sugerencia`, por defecto `contacto`), nombre, email, telefono, mensaje, leido. El folio de un cambio va dentro del mensaje, en la línea `Folio: DS-…`.
+- **`intentos`** (implementada): hash_ip (nunca la IP en claro), tipo (`rastrear` / `devolucion`), created_at. Límite de 10 intentos por IP cada 15 minutos. Se borran los de más de un día.
 - **`lookbook_fotos`** (implementada): imagen_url, alt, publico (`hombre` / `mujer` / `unisex`), producto_id opcional, orden, activa. La galería `/lookbook` se edita en `/admin/lookbook`.
 - **`paginas`**: slug, titulo, contenido (Markdown), seo. Para ayuda y legales.
 - **`ajustes`**: clave/valor, p. ej. `barra_anuncio`, `envio_gratis_minimo`, `costo_envio`, `whatsapp`.

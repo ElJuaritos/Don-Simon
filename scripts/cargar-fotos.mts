@@ -12,10 +12,11 @@ import { and, eq, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 import { LOOKBOOK_EJEMPLO } from "../src/content/lookbook-ejemplo";
+import { NOTAS_EJEMPLO, PIELES_EJEMPLO } from "../src/content/ejemplos-etapa-g";
 import * as schema from "../src/db/schema";
 import { seed } from "../src/db/seed";
 
-const { bloques, categorias, hormas, imagenes, lookbookFotos, productos } = schema;
+const { bloques, categorias, hormas, imagenes, lookbookFotos, notas, pieles, productos } = schema;
 
 const ORIGEN = path.join(process.cwd(), ".data", "fotos-ejemplo");
 const DESTINO = path.join(process.cwd(), ".data", "uploads");
@@ -44,6 +45,21 @@ const BLOQUES = [
   "historia-galeria-1",
   "historia-galeria-2",
   "historia-galeria-3",
+  "historia-filosofia",
+  "historia-valores",
+  "historia-sostenibilidad",
+  "oficio-intro",
+  "oficio-paso-1",
+  "oficio-paso-2",
+  "oficio-paso-3",
+  "oficio-paso-4",
+  "oficio-paso-5",
+  "oficio-construccion-1",
+  "oficio-construccion-2",
+  "oficio-construccion-3",
+  "oficio-galeria-1",
+  "oficio-galeria-2",
+  "oficio-galeria-3",
   "hombre-hero-1",
   "hombre-hero-2",
   "mujer-hero-1",
@@ -71,6 +87,26 @@ const ALIAS: Record<string, string> = {
   "hombre-hero-2": "lookbook-07",
   "mujer-hero-1": "lookbook-05",
   "mujer-hero-2": "lookbook-02",
+  "historia-filosofia": "lookbook-01",
+  "historia-valores": "lookbook-04",
+  "historia-sostenibilidad": "portada-oficio",
+  "oficio-intro": "portada-oficio",
+  "oficio-paso-1": "lookbook-03",
+  "oficio-paso-2": "lookbook-06",
+  "oficio-paso-3": "lookbook-04",
+  "oficio-paso-4": "lookbook-07",
+  "oficio-paso-5": "lookbook-08",
+  "oficio-construccion-1": "lookbook-04",
+  "oficio-construccion-2": "lookbook-03",
+  "oficio-construccion-3": "lookbook-07",
+  "oficio-galeria-1": "lookbook-06",
+  "oficio-galeria-2": "lookbook-03",
+  "oficio-galeria-3": "lookbook-08",
+  "piel-becerro": "lookbook-03",
+  "piel-gamuza": "lookbook-06",
+  "piel-grabada": "lookbook-04",
+  "nota-como-se-lee-un-par": "lookbook-01",
+  "nota-cuidar-la-piel-en-casa": "lookbook-05",
   "categoria-mocasines-hombre": "lookbook-01",
   "categoria-mocasines-mujer": "lookbook-05",
   "categoria-botas-hombre": "lookbook-06",
@@ -255,5 +291,36 @@ if (delDueno) {
   if (filas.length > 0) await db.insert(lookbookFotos).values(filas);
   console.log("✓ Lookbook");
 }
+
+const FOTO_PIEL: Record<string, string> = {
+  becerro: "piel-becerro",
+  gamuza: "piel-gamuza",
+  "piel-grabada": "piel-grabada",
+};
+for (const p of PIELES_EJEMPLO) {
+  const url = await publicar(FOTO_PIEL[p.slug] ?? p.slug);
+  const [existe] = await db.select().from(pieles).where(eq(pieles.slug, p.slug));
+  if (!existe) {
+    await db.insert(pieles).values({ ...p, activa: true, imagenUrl: url });
+  } else if (url && (!existe.imagenUrl || existe.imagenUrl.includes("/media/ejemplo-"))) {
+    await db.update(pieles).set({ imagenUrl: url }).where(eq(pieles.id, existe.id));
+  }
+}
+console.log("✓ Pieles de ejemplo");
+
+const FOTO_NOTA: Record<string, string> = {
+  "como-se-lee-un-par": "nota-como-se-lee-un-par",
+  "cuidar-la-piel-en-casa": "nota-cuidar-la-piel-en-casa",
+};
+for (const n of NOTAS_EJEMPLO) {
+  const url = await publicar(FOTO_NOTA[n.slug] ?? n.slug);
+  const [existe] = await db.select().from(notas).where(eq(notas.slug, n.slug));
+  if (!existe) {
+    await db.insert(notas).values({ ...n, estado: "publicada", publicadaEn: new Date(), imagenUrl: url });
+  } else if (url && (!existe.imagenUrl || existe.imagenUrl.includes("/media/ejemplo-"))) {
+    await db.update(notas).set({ imagenUrl: url }).where(eq(notas.id, existe.id));
+  }
+}
+console.log("✓ Notas de ejemplo");
 
 await client.close();

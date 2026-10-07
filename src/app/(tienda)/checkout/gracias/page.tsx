@@ -56,9 +56,14 @@ export default async function Gracias({ searchParams }: PageProps<"/checkout/gra
         </li>
       </ul>
 
-      <Link href="/coleccion" className="btn-contorno mt-10">
-        Seguir explorando
-      </Link>
+      <div className="mt-10 flex flex-col items-start gap-3 sm:flex-row">
+        <Link href="/rastrear" className="btn-primario">
+          Rastrear pedido
+        </Link>
+        <Link href="/coleccion" className="btn-contorno">
+          Seguir explorando
+        </Link>
+      </div>
     </div>
   );
 }

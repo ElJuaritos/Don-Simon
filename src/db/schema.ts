@@ -217,6 +217,12 @@ export const codigosPostales = pgTable("codigos_postales", {
 
 export const ESTADOS_RESENA = ["pendiente", "publicada", "rechazada"] as const;
 export type EstadoResena = (typeof ESTADOS_RESENA)[number];
+
+export const ESTADOS_NOTA = ["borrador", "publicada"] as const;
+export type EstadoNota = (typeof ESTADOS_NOTA)[number];
+
+export const TIPOS_MENSAJE = ["contacto", "devolucion", "sugerencia"] as const;
+export type TipoMensaje = (typeof TIPOS_MENSAJE)[number];
 export const ANCHOS_PIE = ["angosto", "normal", "ancho"] as const;
 export type AnchoPie = (typeof ANCHOS_PIE)[number];
 
@@ -253,6 +259,7 @@ export const resenas = pgTable(
 
 export const mensajes = pgTable("mensajes", {
   id: uuid("id").primaryKey().defaultRandom(),
+  tipo: text("tipo", { enum: TIPOS_MENSAJE }).notNull().default("contacto"),
   nombre: text("nombre").notNull(),
   email: text("email").notNull(),
   telefono: text("telefono").notNull().default(""),
@@ -260,6 +267,48 @@ export const mensajes = pgTable("mensajes", {
   leido: boolean("leido").notNull().default(false),
   ...timestamps,
 }).enableRLS();
+
+/** Pieles de la página /pieles. Todavía no se ligan a los productos. */
+export const pieles = pgTable("pieles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nombre: text("nombre").notNull(),
+  slug: text("slug").notNull().unique(),
+  descripcion: text("descripcion").notNull().default(""),
+  cuidado: text("cuidado").notNull().default(""),
+  imagenUrl: text("imagen_url"),
+  orden: integer("orden").notNull().default(0),
+  activa: boolean("activa").notNull().default(true),
+  ...timestamps,
+}).enableRLS();
+
+/** Notas (blog). Un borrador no se muestra en la tienda. */
+export const notas = pgTable("notas", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  titulo: text("titulo").notNull(),
+  slug: text("slug").notNull().unique(),
+  resumen: text("resumen").notNull().default(""),
+  cuerpo: text("cuerpo").notNull().default(""),
+  imagenUrl: text("imagen_url"),
+  imagenAlt: text("imagen_alt").notNull().default(""),
+  estado: text("estado", { enum: ESTADOS_NOTA }).notNull().default("borrador"),
+  publicadaEn: timestamp("publicada_en", { withTimezone: true }),
+  ...timestamps,
+}).enableRLS();
+
+/**
+ * Intentos de los formularios públicos (rastreo y cambios).
+ * Guarda un hash de la IP, nunca la IP en claro. Se borran al día.
+ */
+export const intentos = pgTable(
+  "intentos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    hashIp: text("hash_ip").notNull(),
+    tipo: text("tipo").notNull(),
+    ...timestamps,
+  },
+  (t) => [index("intentos_hash_tipo_idx").on(t.hashIp, t.tipo)],
+).enableRLS();
 
 // Cuadros editables de la portada y de las páginas de marca (foto + textos).
 // La lista de bloques y sus textos por defecto vive en src/content/bloques.ts;
@@ -286,3 +335,6 @@ export type PedidoLinea = typeof pedidoLineas.$inferSelect;
 export type Bloque = typeof bloques.$inferSelect;
 export type LookbookFoto = typeof lookbookFotos.$inferSelect;
 export type Resena = typeof resenas.$inferSelect;
+export type Mensaje = typeof mensajes.$inferSelect;
+export type Piel = typeof pieles.$inferSelect;
+export type Nota = typeof notas.$inferSelect;

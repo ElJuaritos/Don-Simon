@@ -4,6 +4,7 @@ import { marca } from "@/config/marca";
 import { getBloques } from "@/lib/data/contenido";
 import { EditorialDividido } from "@/components/portada/editorial-dividido";
 import { Galeria } from "@/components/portada/galeria";
+import { IndiceAnclas } from "@/components/tienda/indice-anclas";
 import { Foto } from "@/components/ui/foto";
 
 export const metadata: Metadata = {
@@ -34,6 +35,14 @@ export default async function NuestraHistoria() {
         {intro.texto && <p className="mx-auto mt-8 max-w-xl text-lg">{intro.texto}</p>}
       </section>
 
+      <IndiceAnclas
+        enlaces={[
+          { href: "#filosofia", texto: "Filosofía" },
+          { href: "#valores", texto: "Valores" },
+          { href: "#sostenibilidad", texto: "Sostenibilidad" },
+        ]}
+      />
+
       <div className="contenedor">
         <Foto
           imagen={intro.imagen}
@@ -46,7 +55,20 @@ export default async function NuestraHistoria() {
         />
       </div>
 
-      <div className="py-12 md:py-20">
+      <div className="py-8 md:py-12">
+        {(
+          [
+            ["filosofia", "historia-filosofia"],
+            ["valores", "historia-valores"],
+            ["sostenibilidad", "historia-sostenibilidad"],
+          ] as const
+        ).map(([id, clave], i) =>
+          b[clave]?.titulo ? (
+            <div key={id} id={id} className="scroll-mt-28">
+              <EditorialDividido bloque={b[clave]} invertido={i % 2 === 1} />
+            </div>
+          ) : null,
+        )}
         <EditorialDividido bloque={b["historia-quien"]} etiqueta="La casa" />
       </div>
 
@@ -55,6 +77,11 @@ export default async function NuestraHistoria() {
           <h2 id="titulo-proceso" className="titulo-display text-center text-4xl md:text-5xl">
             Paso a paso
           </h2>
+          <p className="mx-auto mt-4 max-w-md text-center">
+            <Link href="/el-oficio" className="enlace">
+              Conoce el oficio completo
+            </Link>
+          </p>
           <ol className="mt-16 grid gap-10 md:grid-cols-5 md:gap-8">
             {PASOS.map((p) => (
               <li key={p.n} className="revelar border-t border-cafe/25 pt-5">

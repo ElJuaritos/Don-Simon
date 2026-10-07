@@ -238,12 +238,17 @@ const contactoSchema = z.object({
   email: z.email("Escribe un correo válido."),
   telefono: z.string().trim().max(20).optional(),
   mensaje: z.string().trim().min(10, "Cuéntanos un poco más (mínimo 10 caracteres).").max(2000),
+  tipo: z.enum(["contacto", "sugerencia"]),
 });
 
 export async function enviarMensaje(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
-  const parsed = contactoSchema.safeParse(Object.fromEntries(formData));
+  const parsed = contactoSchema.safeParse({
+    ...Object.fromEntries(formData),
+    tipo: formData.get("tipo") === "sugerencia" ? "sugerencia" : "contacto",
+  });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const db = await getDb();
   await db.insert(mensajes).values({ ...parsed.data, telefono: parsed.data.telefono ?? "" });
+  revalidatePath("/admin/mensajes");
   return { ok: true, mensaje: "Recibimos tu mensaje. Te respondemos en menos de 24 horas hábiles." };
 }

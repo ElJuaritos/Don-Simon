@@ -4,6 +4,8 @@ import { IconoFacebook, IconoInstagram, IconoPinterest, IconoTiktok, IconoYoutub
 import { LogosPago } from "@/components/ui/logos-pago";
 import { FormNewsletter } from "./form-newsletter";
 import { seMuestranResenas } from "@/lib/data/resenas";
+import { hayNotasPublicadas } from "@/lib/data/notas";
+import { hayPielesActivas } from "@/lib/data/pieles";
 import { columnasFooter } from "./navegacion";
 
 const REDES = [
@@ -16,7 +18,8 @@ const REDES = [
 
 /** Footer: boletín primero en el celular, columnas en acordeón y franja legal en café oscuro. */
 export async function Footer() {
-  const columnas = columnasFooter(await seMuestranResenas());
+  const [resenas, pieles, notas] = await Promise.all([seMuestranResenas(), hayPielesActivas(), hayNotasPublicadas()]);
+  const columnas = columnasFooter({ resenas, pieles, notas });
   const anio = new Date().getFullYear();
 
   const lista = (enlaces: { href: string; texto: string }[]) => (

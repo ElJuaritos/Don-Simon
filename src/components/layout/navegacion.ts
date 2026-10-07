@@ -1,7 +1,7 @@
 import { marca } from "@/config/marca";
 
 // Enlaces compartidos por el header, el menú móvil y el footer.
-// Accesorios, notas y rastreo no se enlazan todavía. Reseñas solo cuando ya hay suficientes publicadas.
+// Pieles y notas solo se muestran cuando ya hay contenido. «Dónde encontrarnos» sigue fuera (D17).
 
 export type Enlace = { href: string; texto: string; imagen?: { url: string; alt: string } | null };
 export type ColumnaNav = { titulo: string; enlaces: Enlace[] };
@@ -19,6 +19,7 @@ export type EntradaNav =
 export const AYUDA: Enlace[] = [
   { href: "/ayuda/guia-de-tallas", texto: "Guía de tallas" },
   { href: "/ayuda/envios", texto: "Envíos" },
+  { href: "/rastrear", texto: "Rastrear pedido" },
   { href: "/ayuda/cambios-y-devoluciones", texto: "Cambios y devoluciones" },
   { href: "/ayuda/preguntas-frecuentes", texto: "Preguntas frecuentes" },
   { href: "/contacto", texto: "Contacto" },
@@ -63,27 +64,55 @@ export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaN
   ];
 }
 
-export function columnasNosotros(conResenas = false): ColumnaNav[] {
+export function columnasNosotros({
+  resenas = false,
+  pieles = false,
+  notas = false,
+}: {
+  resenas?: boolean;
+  pieles?: boolean;
+  notas?: boolean;
+} = {}): ColumnaNav[] {
   return [
     {
       titulo: "Nosotros",
       enlaces: [
         { href: "/nuestra-historia", texto: "Nuestra historia" },
+        { href: "/el-oficio", texto: "El oficio" },
         { href: "/nuestras-hormas", texto: "Nuestras hormas" },
+        ...(pieles ? [{ href: "/pieles", texto: "Pieles" }] : []),
       ],
     },
     {
       titulo: marca.nombre,
       enlaces: [
         { href: "/lookbook", texto: "Lookbook" },
-        ...(conResenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
+        ...(notas ? [{ href: "/notas", texto: "Notas" }] : []),
+        ...(resenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
       ],
     },
-    { titulo: "Ayuda", enlaces: AYUDA },
+    {
+      titulo: "Ayuda",
+      enlaces: [
+        { href: "/ayuda/preguntas-frecuentes", texto: "Preguntas frecuentes" },
+        { href: "/ayuda/guia-de-tallas", texto: "Guía de tallas" },
+        { href: "/rastrear", texto: "Rastrear pedido" },
+        { href: "/ayuda/cambios-y-devoluciones", texto: "Cambios y devoluciones" },
+        { href: "/contacto", texto: "Contacto" },
+      ],
+    },
   ];
 }
 
-export function columnasFooter(conResenas = false): ColumnaNav[] {
+export function columnasFooter({
+  resenas = false,
+  pieles = false,
+  notas = false,
+}: {
+  resenas?: boolean;
+  pieles?: boolean;
+  notas?: boolean;
+} = {}): ColumnaNav[] {
   return [
     {
       titulo: "Tienda",
@@ -99,9 +128,12 @@ export function columnasFooter(conResenas = false): ColumnaNav[] {
       titulo: marca.nombre,
       enlaces: [
         { href: "/nuestra-historia", texto: "Nuestra historia" },
+        { href: "/el-oficio", texto: "El oficio" },
         { href: "/nuestras-hormas", texto: "Nuestras hormas" },
+        ...(pieles ? [{ href: "/pieles", texto: "Pieles" }] : []),
         { href: "/lookbook", texto: "Lookbook" },
-        ...(conResenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
+        ...(notas ? [{ href: "/notas", texto: "Notas" }] : []),
+        ...(resenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
       ],
     },
     {

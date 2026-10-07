@@ -19,6 +19,14 @@ export function folio(numero: number) {
   return `DS-${10000 + numero}`;
 }
 
+/** Acepta el folio visible (DS-10034 o 10034) y también el número interno. */
+export function numeroDeFolio(texto: string): number | null {
+  const limpio = texto.trim().toUpperCase().replace(/\s/g, "").replace(/^DS-/, "");
+  if (!/^\d{1,6}$/.test(limpio)) return null;
+  const n = Number(limpio);
+  return n >= 10000 ? n - 10000 : n;
+}
+
 const fechaFmt = new Intl.DateTimeFormat("es-MX", {
   dateStyle: "medium",
   timeStyle: "short",
@@ -27,6 +35,16 @@ const fechaFmt = new Intl.DateTimeFormat("es-MX", {
 
 export function formatFecha(fecha: Date) {
   return fechaFmt.format(fecha);
+}
+
+const diaFmt = new Intl.DateTimeFormat("es-MX", {
+  dateStyle: "long",
+  timeZone: "America/Mexico_City",
+});
+
+/** Fecha sin hora, para las notas. */
+export function formatDia(fecha: Date) {
+  return diaFmt.format(fecha);
 }
 
 export function slugify(texto: string) {

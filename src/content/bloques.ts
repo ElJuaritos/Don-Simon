@@ -6,7 +6,7 @@ import { marca, tienda } from "@/config/marca";
 // y tiene prioridad sobre estos valores.
 
 export type CampoBloque = "titulo" | "texto" | "enlace" | "imagen";
-export type GrupoBloque = "portada" | "historia" | "global" | "menus" | "lookbook" | "publico";
+export type GrupoBloque = "portada" | "historia" | "oficio" | "global" | "menus" | "lookbook" | "publico";
 
 export type DefinicionBloque = {
   clave: string;
@@ -34,6 +34,7 @@ export type DefinicionBloque = {
 export const GRUPOS: Record<GrupoBloque, { nombre: string; ruta: string }> = {
   portada: { nombre: "Portada", ruta: "/" },
   historia: { nombre: "Nuestra historia", ruta: "/nuestra-historia" },
+  oficio: { nombre: "El oficio", ruta: "/el-oficio" },
   global: { nombre: "Aviso de arriba", ruta: "/" },
   menus: { nombre: "Fotos de los menús", ruta: "/" },
   publico: { nombre: "Hombre y Mujer", ruta: "/hombre" },
@@ -203,7 +204,7 @@ export const BLOQUES: DefinicionBloque[] = [
   ]),
   ...fotosMenu("nosotros", [
     { titulo: "Nuestra historia", href: "/nuestra-historia", nota: "vista del taller con luz natural" },
-    { titulo: "El oficio", href: "/nuestra-historia", nota: "manos cortando piel" },
+    { titulo: "El oficio", href: "/el-oficio", nota: "manos cortando piel" },
     { titulo: "El taller", href: "/nuestras-hormas", nota: "hormas de madera en el taller" },
   ]),
   ...heroes("hombre"),
@@ -248,10 +249,109 @@ export const BLOQUES: DefinicionBloque[] = [
       imagenAlt: "Retrato del fundador en el taller",
     },
   },
+  ...bloquesHistoria(),
   galeria(1, "hormas de madera y rollo de piel", "historia"),
   galeria(2, "pieles en coñac, café y olivo", "historia"),
   galeria(3, "par terminado sobre madera", "historia"),
+  ...bloquesOficio(),
 ];
+
+/** Filosofía, valores y sostenibilidad. Textos cortos para que el dueño los reemplace. */
+function bloquesHistoria(): DefinicionBloque[] {
+  const piezas: [string, string, string, string][] = [
+    [
+      "historia-filosofia",
+      "Filosofía",
+      "Un par que se usa de verdad",
+      "Hacemos calzado para el día a día: piel que se siente, horma que acompaña y un acabado que se ve mejor con el uso.\n\nLa idea es simple. Menos prisa, más oficio.",
+    ],
+    [
+      "historia-valores",
+      "Valores",
+      "Cuidado en cada paso",
+      "Elegimos materiales con calma y trabajamos cada par con atención. Preferimos decir poco y hacerlo bien.\n\nLo que prometemos cabe en una frase: un zapato honesto, hecho para durar.",
+    ],
+    [
+      "historia-sostenibilidad",
+      "Sostenibilidad",
+      "Hacer menos, y que dure",
+      "Un zapato que se repara y se usa por años pesa menos que uno que se cambia cada temporada.\n\nAquí irá cómo cuidamos los materiales y el taller, cuando esos datos estén listos.",
+    ],
+  ];
+  return piezas.map(([clave, nombre, titulo, texto]) => ({
+    clave,
+    grupo: "historia",
+    nombre,
+    ayuda: `Cuadro de ${nombre.toLowerCase()} en Nuestra historia. Foto y texto, uno al lado del otro.`,
+    campos: ["imagen", "titulo", "texto"],
+    proporcion: "Vertical 4:5",
+    notaFoto: `${nombre.toLowerCase()}, luz cálida de taller`,
+    defecto: { titulo, texto, imagenAlt: nombre },
+  }));
+}
+
+/** Pasos del oficio, tipos de construcción y galería. Si un título queda vacío, ese cuadro no se muestra. */
+function bloquesOficio(): DefinicionBloque[] {
+  const pasos: [string, string, string][] = [
+    ["Patrón", "El patrón", "El patrón marca la forma de cada pieza. Se traza sobre la piel según la horma y la talla."],
+    ["Corte", "El corte", "Se corta con cuidado para aprovechar la piel y respetar su dirección."],
+    ["Cosido", "El cosido", "Las piezas se unen a mano o a máquina, según el modelo, con hilo que aguante el uso."],
+    ["Montado", "El montado", "La piel se monta sobre la horma. Ahí el zapato toma su forma definitiva."],
+    ["Acabado", "El acabado", "Se pule, se tiñe el canto si hace falta y se revisa el par antes de salir del taller."],
+  ];
+  const construcciones: [string, string, string][] = [
+    [
+      "Goodyear",
+      "Goodyear",
+      "Una cinta de tela cose la parte de arriba con la suela. Se puede cambiar la suela sin desarmar el zapato.",
+    ],
+    ["Blake", "Blake", "Una sola costura une la parte de arriba, la plantilla y la suela. El par queda más flexible."],
+    ["Cementado", "Cementado", "La suela se pega. Es una construcción más ligera, útil en modelos de uso diario."],
+  ];
+  return [
+    {
+      clave: "oficio-intro",
+      grupo: "oficio",
+      nombre: "Encabezado",
+      ayuda: "Título y texto al inicio de El oficio.",
+      campos: ["imagen", "titulo", "texto"],
+      proporcion: "Horizontal 16:9",
+      notaFoto: "banco de trabajo con herramientas",
+      defecto: {
+        titulo: "De la piel al par",
+        texto: "Así se construye un zapato en el taller. Cada paso tiene su tiempo.",
+        imagenAlt: "Banco de trabajo del taller",
+      },
+    },
+    ...pasos.map(
+      ([nombre, titulo, texto], i): DefinicionBloque => ({
+        clave: `oficio-paso-${i + 1}`,
+        grupo: "oficio",
+        nombre: `Paso ${i + 1} · ${nombre}`,
+        ayuda: `Paso ${i + 1} del proceso. Si quitas el título, este paso deja de mostrarse.`,
+        campos: ["imagen", "titulo", "texto"],
+        proporcion: "Vertical 4:5",
+        notaFoto: `${nombre.toLowerCase()} en el taller`,
+        defecto: { titulo, texto, imagenAlt: nombre },
+      }),
+    ),
+    ...construcciones.map(
+      ([nombre, titulo, texto], i): DefinicionBloque => ({
+        clave: `oficio-construccion-${i + 1}`,
+        grupo: "oficio",
+        nombre: `Construcción · ${nombre}`,
+        ayuda: "Tipo de construcción en «Cómo se construye». Si el título queda vacío, no se muestra.",
+        campos: ["imagen", "titulo", "texto"],
+        proporcion: "Vertical 4:5",
+        notaFoto: `detalle de construcción ${nombre.toLowerCase()}`,
+        defecto: { titulo, texto, imagenAlt: nombre },
+      }),
+    ),
+    galeria(1, "detalle de costura", "oficio"),
+    galeria(2, "piel sobre la mesa de corte", "oficio"),
+    galeria(3, "par recién terminado", "oficio"),
+  ];
+}
 
 export function definicionBloque(clave: string) {
   return BLOQUES.find((b) => b.clave === clave);

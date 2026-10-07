@@ -12,6 +12,8 @@ const ENLACES = [
   { href: "/admin/lookbook", texto: "Lookbook" },
   { href: "/admin/categorias", texto: "Categorías" },
   { href: "/admin/hormas", texto: "Hormas" },
+  { href: "/admin/pieles", texto: "Pieles" },
+  { href: "/admin/notas", texto: "Notas" },
   { href: "/admin/mensajes", texto: "Mensajes" },
 ];
 

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getHormas } from "@/lib/data/contenido";
-import { Foto } from "@/components/ui/foto";
+import { FichaLateral } from "@/components/tienda/ficha-lateral";
 
 export const metadata: Metadata = {
   title: "Nuestras hormas",
   description: "La horma define cómo te queda un zapato. Conoce en qué horma está hecho cada modelo y qué talla pedir.",
 };
 
-// Hormas editables en /admin/hormas.
+// Hormas editables en /admin/hormas. El formato es el mismo de /pieles.
 
 export default async function NuestrasHormas() {
   const hormas = await getHormas();
@@ -26,21 +26,16 @@ export default async function NuestrasHormas() {
 
       <div className="contenedor space-y-16 pb-16 md:space-y-20 md:pb-24">
         {hormas.map((h, i) => (
-          <section key={h.id} className="revelar grid items-center gap-8 md:grid-cols-12 md:gap-6" aria-labelledby={`horma-${h.id}`}>
-            <Foto
-              imagen={h.imagenUrl ? { url: h.imagenUrl, alt: h.nombre } : null}
-              tono={i % 2 ? "claro" : "piedra"}
-              nota={`${h.nombre.toLowerCase()} en el taller`}
-              sinIlustracion
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className={`aspect-[4/5] md:col-span-6 md:aspect-square ${i % 2 ? "md:order-2 md:col-start-7" : ""}`}
-            />
-            <div className={`md:col-span-5 ${i % 2 ? "md:order-1 md:col-start-1" : "md:col-start-8"}`}>
-              <span className="etiqueta text-cafe/85">{String(i + 1).padStart(2, "0")}</span>
-              <h2 id={`horma-${h.id}`} className="titulo-display mt-3 text-4xl md:text-5xl">
-                {h.nombre}
-              </h2>
-              {h.descripcion && <p className="mt-6">{h.descripcion}</p>}
+          <FichaLateral
+            key={h.id}
+            id={`horma-${h.id}`}
+            etiqueta={String(i + 1).padStart(2, "0")}
+            titulo={h.nombre}
+            texto={h.descripcion}
+            imagen={h.imagenUrl ? { url: h.imagenUrl, alt: h.nombre } : null}
+            notaFoto={`${h.nombre.toLowerCase()} en el taller`}
+            invertido={i % 2 === 1}
+            extra={
               <dl className="mt-8 divide-y divide-cafe/10 border-y border-cafe/10 text-[0.9375rem]">
                 <div className="flex justify-between gap-6 py-3">
                   <dt className="font-semibold">Ancho</dt>
@@ -51,8 +46,8 @@ export default async function NuestrasHormas() {
                   <dd className="text-right">{h.recomendacion}</dd>
                 </div>
               </dl>
-            </div>
-          </section>
+            }
+          />
         ))}
       </div>
 

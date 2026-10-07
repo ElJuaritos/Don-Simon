@@ -57,7 +57,7 @@ export const paginasAyuda: Record<string, PaginaContenido> = {
         <h2>Devoluciones</h2>
         <p>Si prefieres una devolución, escríbenos dentro del mismo plazo. Una vez que recibamos y revisemos el producto, hacemos el reembolso al mismo método de pago.</p>
         <h2>Cómo solicitarlo</h2>
-        <p>Escríbenos desde <Link href="/contacto">contacto</Link> con tu número de pedido.</p>
+        <p>Usa el formulario de abajo con tu folio y el correo de la compra. Solo podemos registrarlo si el pedido ya salió o ya lo recibiste.</p>
       </>
     ),
   },
