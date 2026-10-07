@@ -43,6 +43,13 @@
       "when": 1791387009751,
       "tag": "0005_codigos_postales_descuento",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791388128199,
+      "tag": "0006_resenas",
+      "breakpoints": true
     }
   ]
 }

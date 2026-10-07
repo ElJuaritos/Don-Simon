@@ -3,8 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { cambiarEstadoPedido } from "@/lib/actions/admin";
+import { lineasConResena } from "@/lib/data/resenas";
 import { getPedido } from "@/lib/data/pedidos";
 import { folio, formatFecha, formatPrecio, formatTalla } from "@/lib/formato";
+import { firmarEnlaceResena } from "@/lib/resena-token";
+import { urlDelSitio } from "@/lib/sitio";
+import { EnlaceResena } from "@/components/admin/enlace-resena";
 import { FormAdmin } from "@/components/admin/form-admin";
 import { BadgeEstado, Tarjeta, TituloAdmin } from "@/components/admin/ui";
 
@@ -16,6 +20,16 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
   const pedido = await getPedido(id);
   if (!pedido) notFound();
   const d = pedido.direccion;
+  const yaResena = pedido.estado === "entregado" ? await lineasConResena(pedido.lineas.map((l) => l.id)) : new Set<string>();
+  const enlaces =
+    pedido.estado === "entregado"
+      ? await Promise.all(
+          pedido.lineas.map(async (l) => ({
+            linea: l,
+            url: yaResena.has(l.id) ? null : `${urlDelSitio()}/resena/${await firmarEnlaceResena(l.id)}`,
+          })),
+        )
+      : [];
 
   return (
     <>
@@ -56,6 +70,32 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
               <div className="flex justify-between text-lg font-semibold"><dt>Total</dt><dd>{formatPrecio(pedido.total)}</dd></div>
             </dl>
           </Tarjeta>
+
+          {enlaces.length > 0 && (
+            <Tarjeta titulo="Pedir reseña">
+              {/* TODO: correo automático con Resend cuando el pedido lleve unos días entregado. */}
+              <p className="text-sm text-cafe/80">
+                El correo se enviará solo cuando conectemos el correo. Mientras tanto, comparte el enlace de cada par.
+              </p>
+              <ul className="mt-4 divide-y divide-cafe/10">
+                {enlaces.map(({ linea, url }) => (
+                  <li key={linea.id} className="py-4">
+                    <p className="font-semibold">
+                      {linea.nombreProducto}
+                      <span className="block text-sm font-normal text-cafe/75">
+                        {linea.color} · Talla {formatTalla(linea.talla)}
+                      </span>
+                    </p>
+                    {url ? (
+                      <EnlaceResena url={url} nombre={pedido.nombre} producto={linea.nombreProducto} telefono={pedido.telefono} />
+                    ) : (
+                      <p className="mt-2 text-sm text-cafe/75">Este par ya tiene reseña.</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Tarjeta>
+          )}
 
           <Tarjeta titulo="Siguiente paso">
             <SiguientePaso pedidoId={pedido.id} estado={pedido.estado} />

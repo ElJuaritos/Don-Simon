@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { logout } from "@/lib/actions/admin";
 import { requireAdmin } from "@/lib/auth";
+import { contarPorEstado } from "@/lib/data/resenas";
 import { Logo } from "@/components/ui/logo";
 import { NavAdmin } from "@/components/admin/nav-admin";
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   await requireAdmin();
+  const conteo = await contarPorEstado();
   return (
     <div className="flex min-h-dvh flex-col bg-white md:flex-row">
       <aside className="border-b border-cafe/10 bg-crema-claro md:sticky md:top-0 md:h-dvh md:w-60 md:shrink-0 md:border-b-0 md:border-r">
@@ -24,7 +26,7 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
             Ver tienda
           </Link>
         </div>
-        <NavAdmin />
+        <NavAdmin pendientes={conteo.pendiente} />
         <div className="hidden px-5 py-6 md:block">
           <Link href="/" target="_blank" className="enlace block text-sm">
             Ver tienda ↗

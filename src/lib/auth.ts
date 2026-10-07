@@ -27,9 +27,12 @@ export function passwordCorrecta(intento: string) {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+const AUDIENCIA_ADMIN = "admin";
+
 export async function iniciarSesion() {
   const token = await new SignJWT({ rol: "admin" })
     .setProtectedHeader({ alg: "HS256" })
+    .setAudience(AUDIENCIA_ADMIN)
     .setIssuedAt()
     .setExpirationTime(`${DURACION_S}s`)
     .sign(secreto());
@@ -50,7 +53,7 @@ export async function esAdmin() {
   const token = (await cookies()).get(COOKIE_SESION)?.value;
   if (!token) return false;
   try {
-    await jwtVerify(token, secreto());
+    await jwtVerify(token, secreto(), { audience: AUDIENCIA_ADMIN });
     return true;
   } catch {
     return false;

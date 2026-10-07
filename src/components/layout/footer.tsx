@@ -3,6 +3,7 @@ import { marca } from "@/config/marca";
 import { IconoFacebook, IconoInstagram, IconoPinterest, IconoTiktok, IconoYoutube } from "@/components/ui/iconos-redes";
 import { LogosPago } from "@/components/ui/logos-pago";
 import { FormNewsletter } from "./form-newsletter";
+import { seMuestranResenas } from "@/lib/data/resenas";
 import { columnasFooter } from "./navegacion";
 
 const REDES = [
@@ -14,8 +15,8 @@ const REDES = [
 ].filter((r) => r.href);
 
 /** Footer: boletín primero en el celular, columnas en acordeón y franja legal en café oscuro. */
-export function Footer() {
-  const columnas = columnasFooter();
+export async function Footer() {
+  const columnas = columnasFooter(await seMuestranResenas());
   const anio = new Date().getFullYear();
 
   const lista = (enlaces: { href: string; texto: string }[]) => (

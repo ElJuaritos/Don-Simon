@@ -28,6 +28,8 @@ export const tienda = {
   costoEnvio: 19900,
   envioGratisDesde,
   maxParesPorLinea: 5,
+  /** La tienda no muestra reseñas hasta tener al menos esta cantidad publicadas. */
+  resenasMinimas: 10,
   anuncio: `Envío gratis a todo México en compras desde ${formatPrecio(envioGratisDesde)}`,
   // OXXO y SPEI se muestran cuando se activen (docs/08 #2). La paquetería, cuando se defina (#8).
   pagos: { visa: true, mastercard: true, amex: true, oxxo: false, spei: false } as const,

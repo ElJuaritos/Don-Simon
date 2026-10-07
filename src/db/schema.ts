@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   jsonb,
   numeric,
@@ -214,6 +215,42 @@ export const codigosPostales = pgTable("codigos_postales", {
   colonias: text("colonias").array().notNull().default([]),
 }).enableRLS();
 
+export const ESTADOS_RESENA = ["pendiente", "publicada", "rechazada"] as const;
+export type EstadoResena = (typeof ESTADOS_RESENA)[number];
+export const ANCHOS_PIE = ["angosto", "normal", "ancho"] as const;
+export type AnchoPie = (typeof ANCHOS_PIE)[number];
+
+/** Reseñas de producto. Entran pendientes y solo se publican si el dueño las aprueba. */
+export const resenas = pgTable(
+  "resenas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productoId: uuid("producto_id")
+      .notNull()
+      .references(() => productos.id, { onDelete: "cascade" }),
+    pedidoId: uuid("pedido_id").references(() => pedidos.id, { onDelete: "set null" }),
+    /** Una sola reseña por par (línea de pedido). Vacío si el dueño la capturó a mano. */
+    pedidoLineaId: uuid("pedido_linea_id")
+      .unique()
+      .references(() => pedidoLineas.id, { onDelete: "set null" }),
+    nombre: text("nombre").notNull(),
+    ciudad: text("ciudad"),
+    calificacion: integer("calificacion").notNull(),
+    titulo: text("titulo").notNull(),
+    texto: text("texto").notNull(),
+    /** −2 muy chico, 0 fiel a la talla, 2 muy grande. */
+    ajuste: integer("ajuste").notNull(),
+    anchoPie: text("ancho_pie", { enum: ANCHOS_PIE }).notNull(),
+    estado: text("estado", { enum: ESTADOS_RESENA }).notNull().default("pendiente"),
+    /** True solo si el enlace salió de un pedido entregado. */
+    verificada: boolean("verificada").notNull().default(false),
+    respuesta: text("respuesta"),
+    respondidaEn: timestamp("respondida_en", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("resenas_producto_idx").on(t.productoId), index("resenas_estado_idx").on(t.estado)],
+).enableRLS();
+
 export const mensajes = pgTable("mensajes", {
   id: uuid("id").primaryKey().defaultRandom(),
   nombre: text("nombre").notNull(),
@@ -248,3 +285,4 @@ export type Pedido = typeof pedidos.$inferSelect;
 export type PedidoLinea = typeof pedidoLineas.$inferSelect;
 export type Bloque = typeof bloques.$inferSelect;
 export type LookbookFoto = typeof lookbookFotos.$inferSelect;
+export type Resena = typeof resenas.$inferSelect;

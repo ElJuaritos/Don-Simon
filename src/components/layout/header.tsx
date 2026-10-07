@@ -1,3 +1,4 @@
+import { seMuestranResenas } from "@/lib/data/resenas";
 import { mensajesAnuncio } from "@/lib/anuncio";
 import { fotoDeCategoria, getCategoriasPara } from "@/lib/data/catalogo";
 import { getBloques } from "@/lib/data/contenido";
@@ -22,11 +23,12 @@ function fotosDe(
 
 /** Barra de aviso y header. Los textos y las fotos salen de los cuadros editables. */
 export async function Header() {
-  const [hombre, mujer, menus, global] = await Promise.all([
+  const [hombre, mujer, menus, global, conResenas] = await Promise.all([
     getCategoriasPara("hombre"),
     getCategoriasPara("mujer"),
     getBloques("menus"),
     getBloques("global"),
+    seMuestranResenas(),
   ]);
 
   const entradas: EntradaNav[] = [
@@ -58,9 +60,10 @@ export async function Header() {
       id: "nosotros",
       href: "/nuestra-historia",
       texto: "Nosotros",
-      columnas: columnasNosotros(),
+      columnas: columnasNosotros(conResenas),
       fotos: fotosDe(menus, ["menu-nosotros-1", "menu-nosotros-2", "menu-nosotros-3"]),
     },
+    ...(conResenas ? [{ tipo: "enlace" as const, id: "resenas", href: "/resenas", texto: "Reseñas" }] : []),
   ];
 
   return (

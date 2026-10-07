@@ -1,8 +1,7 @@
 import { marca } from "@/config/marca";
 
 // Enlaces compartidos por el header, el menú móvil y el footer.
-// Las páginas que todavía no existen (accesorios, reseñas, notas, rastreo)
-// no se enlazan, para no llevar a una página vacía.
+// Accesorios, notas y rastreo no se enlazan todavía. Reseñas solo cuando ya hay suficientes publicadas.
 
 export type Enlace = { href: string; texto: string; imagen?: { url: string; alt: string } | null };
 export type ColumnaNav = { titulo: string; enlaces: Enlace[] };
@@ -64,7 +63,7 @@ export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaN
   ];
 }
 
-export function columnasNosotros(): ColumnaNav[] {
+export function columnasNosotros(conResenas = false): ColumnaNav[] {
   return [
     {
       titulo: "Nosotros",
@@ -75,13 +74,16 @@ export function columnasNosotros(): ColumnaNav[] {
     },
     {
       titulo: marca.nombre,
-      enlaces: [{ href: "/lookbook", texto: "Lookbook" }],
+      enlaces: [
+        { href: "/lookbook", texto: "Lookbook" },
+        ...(conResenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
+      ],
     },
     { titulo: "Ayuda", enlaces: AYUDA },
   ];
 }
 
-export function columnasFooter(): ColumnaNav[] {
+export function columnasFooter(conResenas = false): ColumnaNav[] {
   return [
     {
       titulo: "Tienda",
@@ -99,6 +101,7 @@ export function columnasFooter(): ColumnaNav[] {
         { href: "/nuestra-historia", texto: "Nuestra historia" },
         { href: "/nuestras-hormas", texto: "Nuestras hormas" },
         { href: "/lookbook", texto: "Lookbook" },
+        ...(conResenas ? [{ href: "/resenas", texto: "Reseñas" }] : []),
       ],
     },
     {

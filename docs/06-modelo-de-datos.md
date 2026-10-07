@@ -16,6 +16,7 @@ clientes 1───* direcciones
               │
               ├───* pagos
               └───* envios
+productos 1───* resenas
 
 carritos 1───* carrito_lineas *───1 variantes
 suscriptores (newsletter)    lookbook_fotos *───0..1 productos
@@ -146,6 +147,28 @@ Catálogo de SEPOMEX para autocompletar el envío. **No va en el seed ni en el r
 | cp | text, pk | 5 dígitos |
 | estado, municipio, ciudad | text | `ciudad` puede ir vacía |
 | colonias | text[] | Asentamientos de ese código |
+
+### `resenas` (implementada)
+
+Entran como `pendiente` y solo se publican si el dueño las aprueba. La tienda no las muestra hasta tener al menos `tienda.resenasMinimas` publicadas (hoy 10). Una línea de pedido solo puede tener una reseña. RLS activo, sin políticas. Las de ejemplo no van en el seed: las carga `npm run db:resenas-ejemplo` y solo en la base local.
+
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| producto_id | fk | |
+| pedido_id | fk, nullable | Vacío si se capturó a mano |
+| pedido_linea_id | fk, nullable, único | Una reseña por par comprado |
+| nombre | text | El que se muestra, p. ej. "Ana L." |
+| ciudad | text, nullable | |
+| calificacion | int | 1 a 5 |
+| titulo, texto | text | Texto plano, sin HTML |
+| ajuste | int | −2 muy chico, 0 fiel a la talla, 2 muy grande |
+| ancho_pie | text | `angosto`, `normal`, `ancho` |
+| estado | text | `pendiente`, `publicada`, `rechazada` |
+| verificada | bool | True solo si el enlace salió de un pedido entregado |
+| respuesta | text, nullable | Respuesta de la tienda |
+| respondida_en | timestamptz, nullable | |
+
+Índices por `producto_id` y `estado`.
 
 ### `pagos`
 pedido_id, proveedor (stripe), proveedor_id (checkout session / payment intent), metodo (tarjeta, oxxo, spei), estado, monto, respuesta (jsonb), pagado_en.

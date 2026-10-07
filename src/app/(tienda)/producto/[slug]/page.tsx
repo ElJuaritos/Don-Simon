@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marca } from "@/config/marca";
 import { disponibles, getProducto, getProductos } from "@/lib/data/catalogo";
+import { listarPublicadasProducto, resumenProducto, seMuestranResenas } from "@/lib/data/resenas";
+import { formatPromedio } from "@/lib/resenas-texto";
 import { urlDelSitio } from "@/lib/sitio";
 import { CombinarloCon } from "@/components/product/combinarlo-con";
 import { GaleriaProducto } from "@/components/product/galeria-producto";
@@ -11,6 +13,8 @@ import { PestanasProducto, type PestanaProducto } from "@/components/product/pes
 import { Precio } from "@/components/product/precio";
 import { SelectorCompra } from "@/components/product/selector-compra";
 import { RejillaProductos } from "@/components/product/tarjeta-producto";
+import { Estrellas } from "@/components/resenas/estrellas";
+import { SeccionResenas } from "@/components/resenas/seccion-resenas";
 import { FotoProducto } from "@/components/ui/foto";
 
 export async function generateMetadata({ params }: PageProps<"/producto/[slug]">): Promise<Metadata> {
@@ -86,6 +90,11 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     ] as (PestanaProducto | false | null | undefined)[]
   ).filter((p): p is PestanaProducto => Boolean(p && p.texto.trim()));
 
+  const mostrarResenas = await seMuestranResenas();
+  const resumen = mostrarResenas ? await resumenProducto(producto.id) : null;
+  const resenas = resumen && resumen.total > 0 ? await listarPublicadasProducto(producto.id) : [];
+  const conResenas = Boolean(resumen && resumen.total > 0);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -100,6 +109,23 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
       availability: hayStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `${urlDelSitio()}/producto/${producto.slug}`,
     },
+    ...(conResenas && resumen
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: formatPromedio(resumen.promedio),
+            reviewCount: resumen.total,
+          },
+          review: resenas.slice(0, 5).map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.nombre },
+            datePublished: r.fecha.slice(0, 10),
+            name: r.titulo,
+            reviewBody: r.texto,
+            reviewRating: { "@type": "Rating", ratingValue: String(r.calificacion), bestRating: "5" },
+          })),
+        }
+      : {}),
   };
 
   return (
@@ -128,6 +154,14 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
               <Precio precio={producto.precio} comparacion={producto.precioComparacion} className="shrink-0 text-lg" />
             </div>
             <p className="mt-1 text-right text-xs text-cafe/70">IVA incluido</p>
+            {conResenas && resumen && (
+              <a href="#resenas" className="mt-3 inline-flex items-center gap-2 text-sm">
+                <Estrellas valor={resumen.promedio} />
+                <span>
+                  {resumen.total} {resumen.total === 1 ? "reseña" : "reseñas"}
+                </span>
+              </a>
+            )}
 
             {color && (
               <div className="mt-8">
@@ -170,6 +204,8 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
       </div>
 
       <CombinarloCon productos={[]} />
+
+      {conResenas && resumen && <SeccionResenas resumen={resumen} resenas={resenas} />}
 
       {relacionados.length > 0 && (
         <section className="border-t border-cafe/10 bg-arena/50 py-16 md:py-24" aria-labelledby="titulo-relacionados">

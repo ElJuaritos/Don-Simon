@@ -7,6 +7,7 @@ const ENLACES = [
   { href: "/admin", texto: "Inicio" },
   { href: "/admin/productos", texto: "Productos" },
   { href: "/admin/pedidos", texto: "Pedidos" },
+  { href: "/admin/resenas", texto: "Reseñas" },
   { href: "/admin/contenido", texto: "Textos y fotos" },
   { href: "/admin/lookbook", texto: "Lookbook" },
   { href: "/admin/categorias", texto: "Categorías" },
@@ -14,7 +15,7 @@ const ENLACES = [
   { href: "/admin/mensajes", texto: "Mensajes" },
 ];
 
-export function NavAdmin() {
+export function NavAdmin({ pendientes = 0 }: { pendientes?: number }) {
   const pathname = usePathname();
   return (
     <nav aria-label="Panel" className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:px-3 md:pb-0">
@@ -30,6 +31,9 @@ export function NavAdmin() {
             }`}
           >
             {e.texto}
+            {e.href === "/admin/resenas" && pendientes > 0 && (
+              <span className="ml-2 inline-grid min-w-5 place-items-center bg-terracota px-1 text-xs text-white">{pendientes}</span>
+            )}
           </Link>
         );
       })}
