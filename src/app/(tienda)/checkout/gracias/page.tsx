@@ -44,6 +44,12 @@ export default async function Gracias({ searchParams }: PageProps<"/checkout/gra
             <span>{formatPrecio(l.precioUnitario * l.cantidad)}</span>
           </li>
         ))}
+        {(pedido.descuento > 0 || pedido.codigoDescuento) && (
+          <li className="flex justify-between py-4">
+            <span>Descuento{pedido.codigoDescuento ? ` (${pedido.codigoDescuento})` : ""}</span>
+            <span>−{formatPrecio(pedido.descuento)}</span>
+          </li>
+        )}
         <li className="flex justify-between py-4 font-semibold">
           <span>Total</span>
           <span>{formatPrecio(pedido.total)}</span>

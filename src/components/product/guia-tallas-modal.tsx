@@ -1,43 +1,59 @@
 "use client";
 
-import { useRef } from "react";
-import { IconoCerrar } from "@/components/ui/iconos";
-import { TablaTallas } from "./tabla-tallas";
+import { useCallback, useState } from "react";
+import Link from "next/link";
+import { PanelLateral } from "@/components/ui/panel-lateral";
+import { TablaTallas, type PublicoTalla } from "./tabla-tallas";
 
-export function GuiaTallasModal({ recomendacion }: { recomendacion?: string }) {
-  const ref = useRef<HTMLDialogElement>(null);
+/** Guía de tallas en panel lateral: equivalencias, cómo medir y la horma del modelo. */
+export function GuiaTallasPanel({
+  publico,
+  horma,
+  recomendacion,
+}: {
+  publico: PublicoTalla;
+  horma?: string | null;
+  recomendacion?: string | null;
+}) {
+  const [abierto, setAbierto] = useState(false);
+  const cerrar = useCallback(() => setAbierto(false), []);
+
   return (
     <>
-      <button type="button" onClick={() => ref.current?.showModal()} className="enlace text-sm">
-        Guía de tallas
+      <button type="button" onClick={() => setAbierto(true)} className="enlace text-sm">
+        Abrir guía de tallas
       </button>
-      <dialog
-        ref={ref}
-        aria-labelledby="titulo-guia"
-        onClick={(e) => e.target === ref.current && ref.current?.close()}
-        className="m-auto w-[min(40rem,calc(100%-2rem))] bg-hueso p-0 text-cafe backdrop:bg-cafe-oscuro/50"
-      >
-        <div className="p-6 md:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <h2 id="titulo-guia" className="titulo-display text-3xl">
-              Guía de tallas
-            </h2>
-            <button type="button" onClick={() => ref.current?.close()} aria-label="Cerrar" className="-mr-2 p-2">
-              <IconoCerrar />
-            </button>
-          </div>
-          {recomendacion && (
-            <p className="mt-3 bg-arena px-4 py-3 text-sm">
-              <strong>Para este modelo:</strong> {recomendacion}
-            </p>
-          )}
-          <TablaTallas className="mt-5" />
-          <p className="mt-4 text-sm">
-            ¿Cómo medir? Pon tu pie sobre una hoja, marca el talón y la punta del dedo más largo y mide en
-            centímetros. Esa medida es tu talla MX.
+      <PanelLateral abierto={abierto} onCerrar={cerrar} tituloId="titulo-guia-tallas" titulo="Guía de tallas">
+        <div className="space-y-6 py-6 text-[0.9375rem]">
+          <section>
+            <h3 className="font-medium">Cómo medir tu pie</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>Hazlo por la tarde, cuando el pie está un poco más hinchado.</li>
+              <li>Pon una hoja en el piso, pegada a la pared, y apoya el talón.</li>
+              <li>Marca la punta del dedo más largo y mide en centímetros.</li>
+              <li>Mide ambos pies y quédate con el más grande.</li>
+            </ul>
+            <p className="mt-2 text-sm text-cafe/80">Esa medida en centímetros es tu talla MX.</p>
+          </section>
+
+          <TablaTallas publico={publico} />
+
+          <p className="text-sm text-cafe/75">
+            Equivalencias de referencia. Si estás entre dos tallas, sigue la recomendación de la horma.
           </p>
+
+          {(horma || recomendacion) && (
+            <section>
+              <h3 className="font-medium">Horma de este modelo</h3>
+              {horma && <p className="mt-2">{horma}</p>}
+              {recomendacion && <p className="mt-1">{recomendacion}</p>}
+              <Link href="/nuestras-hormas" className="enlace mt-3 inline-block text-sm">
+                Nuestras hormas
+              </Link>
+            </section>
+          )}
         </div>
-      </dialog>
+      </PanelLateral>
     </>
   );
 }

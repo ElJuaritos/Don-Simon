@@ -1,9 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { iniciarCheckout } from "@/lib/actions/tienda";
+import { consultarCp, localidadCp } from "@/lib/cp";
+import { formatPrecio } from "@/lib/formato";
+import { useCarrito } from "@/components/cart/proveedor-carrito";
+import { LogosPago } from "@/components/ui/logos-pago";
 
-const ESTADOS_MX = [
+const ESTADOS = [
   "Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua",
   "Ciudad de México", "Coahuila", "Colima", "Durango", "Estado de México", "Guanajuato", "Guerrero",
   "Hidalgo", "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla",
@@ -16,7 +20,7 @@ function Campo({
   label,
   className = "",
   ...props
-}: { nombre: string; label: string; className?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+}: { nombre: string; label: string; className?: string } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className={className}>
       <label htmlFor={nombre} className="campo-label">
@@ -27,63 +31,190 @@ function Campo({
   );
 }
 
-export function FormCheckout() {
-  const [estado, accion, enviando] = useActionState(iniciarCheckout, undefined);
+function Paso({ n, titulo, children }: { n: number; titulo: string; children: ReactNode }) {
+  return (
+    <section aria-labelledby={`paso-${n}`} className="border-t border-cafe/10 py-8 first:border-0 first:pt-0">
+      <h2 id={`paso-${n}`} className="flex items-center gap-3 font-sans text-lg font-medium">
+        <span className="grid h-8 w-8 shrink-0 place-items-center border border-cafe text-sm" aria-hidden>
+          {n}
+        </span>
+        {titulo}
+      </h2>
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+/** Un solo formulario: contacto, envío (el CP va primero), método y el paso de pago. */
+export function FormCheckout({ modoDemo, sinPagos }: { modoDemo: boolean; sinPagos: boolean }) {
+  const [estadoForm, accion, enviando] = useActionState(iniciarCheckout, undefined);
+  const { carrito } = useCarrito();
+  const [cp, setCp] = useState("");
+  const [estado, setEstado] = useState("");
+  const [ciudad, setCiudad] = useState("");
+  const [colonias, setColonias] = useState<string[]>([]);
+  const [colonia, setColonia] = useState("");
+  const [avisoCp, setAvisoCp] = useState("");
+  const pedido = useRef(0);
+  const otra = colonia === "__otra";
+  const estados = estado && !ESTADOS.includes(estado) ? [estado, ...ESTADOS] : ESTADOS;
+
+  async function alCp(valor: string) {
+    const limpio = valor.replace(/\D/g, "").slice(0, 5);
+    setCp(limpio);
+    if (limpio.length !== 5) {
+      setAvisoCp("");
+      return;
+    }
+    const n = ++pedido.current;
+    const fila = await consultarCp(limpio);
+    if (n !== pedido.current) return;
+    if (!fila) {
+      setColonias([]);
+      setAvisoCp("No encontramos este código postal. Llena el estado, la ciudad y la colonia.");
+      return;
+    }
+    setEstado(fila.estado);
+    setCiudad(localidadCp(fila));
+    setColonias(fila.colonias);
+    setColonia(fila.colonias[0] ?? "");
+    setAvisoCp("");
+  }
+
+  const metodos = [{ id: "estandar", nombre: "Estándar", detalle: "A todo México", costo: carrito.envio }];
 
   return (
-    <form action={accion} className="space-y-10">
-      <fieldset className="grid gap-4 sm:grid-cols-2">
-        <legend className="etiqueta mb-4">Contacto</legend>
-        <Campo nombre="email" label="Correo electrónico" type="email" autoComplete="email" required className="sm:col-span-2" />
-        <Campo nombre="nombre" label="Nombre completo" autoComplete="name" required />
-        <Campo nombre="telefono" label="Teléfono" type="tel" autoComplete="tel" inputMode="tel" required placeholder="10 dígitos" />
-      </fieldset>
-
-      <fieldset className="grid gap-4 sm:grid-cols-6">
-        <legend className="etiqueta mb-4">Dirección de envío</legend>
-        <Campo nombre="calle" label="Calle" autoComplete="address-line1" required className="sm:col-span-6" />
-        <Campo nombre="numeroExt" label="Núm. exterior" required className="sm:col-span-3" />
-        <Campo nombre="numeroInt" label="Núm. interior (opcional)" className="sm:col-span-3" />
-        <Campo nombre="colonia" label="Colonia" required className="sm:col-span-4" />
-        <Campo nombre="codigoPostal" label="Código postal" autoComplete="postal-code" inputMode="numeric" pattern="\d{5}" maxLength={5} required className="sm:col-span-2" />
-        <Campo nombre="ciudad" label="Ciudad o municipio" autoComplete="address-level2" required className="sm:col-span-3" />
-        <div className="sm:col-span-3">
-          <label htmlFor="estado" className="campo-label">
-            Estado
+    <form
+      action={accion}
+      className="lg:order-1"
+      onReset={(e) => e.preventDefault()}
+    >
+      <Paso n={1} titulo="Contacto">
+        <div className="grid gap-4">
+          <Campo nombre="email" label="Correo electrónico" type="email" autoComplete="email" required />
+          <Campo nombre="telefono" label="Celular" type="tel" autoComplete="tel" inputMode="tel" required placeholder="10 dígitos" />
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="novedades" className="mt-1 accent-cafe" />
+            Quiero recibir novedades
           </label>
-          <select id="estado" name="estado" required defaultValue="" autoComplete="address-level1" className="campo">
-            <option value="" disabled>
-              Elige tu estado
-            </option>
-            {ESTADOS_MX.map((e) => (
-              <option key={e}>{e}</option>
-            ))}
-          </select>
         </div>
-        <Campo nombre="referencias" label="Referencias (opcional)" placeholder="Entre calles, color de fachada…" className="sm:col-span-6" />
-      </fieldset>
+      </Paso>
 
-      <div>
-        <label htmlFor="notas" className="campo-label">
-          Notas del pedido (opcional)
-        </label>
-        <textarea id="notas" name="notas" rows={3} className="campo" placeholder="¿Es un regalo? Cuéntanos." />
-      </div>
+      <Paso n={2} titulo="Envío">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label htmlFor="codigoPostal" className="campo-label">
+              Código postal
+            </label>
+            <input
+              id="codigoPostal"
+              name="codigoPostal"
+              className="campo max-w-[10rem]"
+              inputMode="numeric"
+              autoComplete="postal-code"
+              pattern="\d{5}"
+              maxLength={5}
+              required
+              value={cp}
+              onChange={(e) => alCp(e.target.value)}
+            />
+            {avisoCp && <p className="mt-2 text-sm text-cafe/80">{avisoCp}</p>}
+          </div>
 
-      {estado?.error && (
-        <p role="alert" className="border-l-4 border-terracota bg-arena px-4 py-3">
-          {estado.error}
-        </p>
-      )}
+          <div>
+            <label htmlFor="estado" className="campo-label">
+              Estado
+            </label>
+            <select id="estado" name="estado" required autoComplete="address-level1" className="campo" value={estado} onChange={(e) => setEstado(e.target.value)}>
+              <option value="" disabled>
+                Elige tu estado
+              </option>
+              {estados.map((e) => (
+                <option key={e}>{e}</option>
+              ))}
+            </select>
+          </div>
+          <Campo nombre="ciudad" label="Ciudad o municipio" autoComplete="address-level2" required value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
 
-      <div>
-        <button type="submit" disabled={enviando} className="btn-primario w-full sm:w-auto">
-          {enviando ? "Procesando…" : "Ir a pagar"}
+          <div className="sm:col-span-2">
+            <label htmlFor="colonia" className="campo-label">
+              Colonia
+            </label>
+            {colonias.length > 0 ? (
+              <>
+                <select
+                  id="colonia"
+                  name={otra ? undefined : "colonia"}
+                  required={!otra}
+                  className="campo"
+                  value={colonia}
+                  onChange={(e) => setColonia(e.target.value)}
+                >
+                  {colonias.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                  <option value="__otra">Otra</option>
+                </select>
+                {otra && (
+                  <input
+                    name="colonia"
+                    required
+                    className="campo mt-3"
+                    placeholder="Escribe tu colonia"
+                    autoComplete="address-level3"
+                    aria-label="Escribe tu colonia"
+                  />
+                )}
+              </>
+            ) : (
+              <input id="colonia" name="colonia" required className="campo" autoComplete="address-level3" />
+            )}
+          </div>
+
+          <Campo nombre="nombre" label="Nombre" autoComplete="given-name" required />
+          <Campo nombre="apellidos" label="Apellidos" autoComplete="family-name" required />
+          <Campo nombre="calle" label="Calle" autoComplete="address-line1" required className="sm:col-span-2" />
+          <Campo nombre="numeroExt" label="Número exterior" required />
+          <Campo nombre="numeroInt" label="Número interior (opcional)" autoComplete="address-line2" />
+          <Campo nombre="referencias" label="Referencias (opcional)" placeholder="Entre calles, color de fachada…" className="sm:col-span-2" />
+        </div>
+      </Paso>
+
+      <Paso n={3} titulo="Método de envío">
+        <div className="space-y-3" role="radiogroup" aria-label="Método de envío">
+          {metodos.map((m) => (
+            <label key={m.id} className="flex cursor-pointer items-center justify-between gap-4 border border-cafe/20 px-4 py-3 has-[:checked]:border-cafe">
+              <span className="flex items-center gap-3">
+                <input type="radio" name="metodoEnvio" value={m.id} defaultChecked className="accent-cafe" />
+                <span>
+                  {m.nombre}
+                  <span className="mt-0.5 block text-sm text-cafe/70">{m.detalle}</span>
+                </span>
+              </span>
+              <span className="text-sm font-medium">{m.costo === 0 ? "Gratis" : formatPrecio(m.costo)}</span>
+            </label>
+          ))}
+        </div>
+      </Paso>
+
+      <Paso n={4} titulo="Pago">
+        {estadoForm?.error && (
+          <p role="alert" className="mb-4 border-l-4 border-terracota bg-arena px-4 py-3">
+            {estadoForm.error}
+          </p>
+        )}
+        <button type="submit" disabled={enviando || sinPagos} className="btn-primario w-full sm:w-auto">
+          {enviando ? "Procesando…" : modoDemo ? "Confirmar pedido" : "Pagar ahora"}
         </button>
-        <p className="mt-3 text-sm text-cafe/85">
-          Serás redirigido a la página segura de Stripe para completar tu pago. No guardamos los datos de tu tarjeta.
+        <p className="mt-3 text-sm text-cafe/80">
+          {modoDemo
+            ? "El pedido se registra, pero no se cobra mientras Stripe no esté configurado."
+            : "Vas a continuar en la página segura de Stripe. No guardamos los datos de tu tarjeta."}
         </p>
-      </div>
+        <LogosPago className="mt-5 text-cafe/80" />
+      </Paso>
     </form>
   );
 }

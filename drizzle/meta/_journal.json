@@ -36,6 +36,13 @@
       "when": 1791244838761,
       "tag": "0004_etapa_b_catalogo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791387009751,
+      "tag": "0005_codigos_postales_descuento",
+      "breakpoints": true
     }
   ]
 }

@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { CarritoLateral } from "@/components/cart/carrito-lateral";
+import { ProveedorCarrito } from "@/components/cart/proveedor-carrito";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { getCarritoDetallado } from "@/lib/carrito";
 
-export default function NoEncontrado() {
+export default async function NoEncontrado() {
+  const carrito = await getCarritoDetallado();
   return (
-    <>
+    <ProveedorCarrito carrito={carrito}>
       <Header />
       <main className="contenedor flex-1 py-28 text-center">
         <p className="etiqueta text-terracota-oscuro">Error 404</p>
@@ -15,6 +19,7 @@ export default function NoEncontrado() {
         </Link>
       </main>
       <Footer />
-    </>
+      <CarritoLateral />
+    </ProveedorCarrito>
   );
 }

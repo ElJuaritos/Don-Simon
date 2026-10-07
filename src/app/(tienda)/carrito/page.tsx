@@ -16,9 +16,14 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
       <div className="contenedor py-24 text-center">
         <h1 className="titulo-display text-5xl">Tu carrito está vacío</h1>
         <p className="mt-4">Encuentra el par que te va a acompañar muchos años.</p>
-        <Link href="/coleccion" className="btn-primario mt-8">
-          Ver colección
-        </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/hombre" className="btn-primario">
+            Hombre
+          </Link>
+          <Link href="/mujer" className="btn-contorno">
+            Mujer
+          </Link>
+        </div>
       </div>
     );
   }

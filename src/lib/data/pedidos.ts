@@ -112,12 +112,22 @@ async function moverInventario(
 }
 
 /** Solo debe llamarse desde el webhook verificado de Stripe */
-export function confirmarPago(pedidoId: string, metodoPago: string | null) {
+export function confirmarPago(
+  pedidoId: string,
+  metodoPago: string | null,
+  ajuste?: { descuento: number; codigoDescuento: string | null; total?: number },
+) {
   return moverInventario(
     pedidoId,
     "pendiente_pago",
     "pagado",
-    { pagadoEn: new Date(), metodoPago },
+    {
+      pagadoEn: new Date(),
+      metodoPago,
+      descuento: ajuste?.descuento ?? 0,
+      codigoDescuento: ajuste?.codigoDescuento ?? null,
+      ...(ajuste?.total != null ? { total: ajuste.total } : {}),
+    },
     true,
   );
 }

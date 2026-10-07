@@ -12,7 +12,8 @@
     "db:migrar": "tsx scripts/migrar.mts",
     "db:fotos": "tsx scripts/cargar-fotos.mts",
     "db:subir-fotos": "tsx --env-file=.env.local scripts/subir-fotos.mts",
-    "db:reiniciar": "node -e \"require('fs').rmSync('.data/pglite',{recursive:true,force:true})\""
+    "db:reiniciar": "node -e \"require('fs').rmSync('.data/pglite',{recursive:true,force:true})\"",
+    "cp:generar": "tsx scripts/generar-cp.mts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

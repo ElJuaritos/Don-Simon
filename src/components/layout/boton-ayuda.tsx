@@ -8,7 +8,7 @@ import { IconoCorreo, IconoWhatsapp } from "@/components/ui/iconos";
 
 /**
  * Botón fijo de ayuda. Se esconde al llegar a la franja legal del footer
- * y, en la ficha de producto, también en el celular para no tapar «Agregar al carrito».
+ * y en la ficha de producto, para no tapar «Comprar ahora».
  */
 export function BotonAyuda() {
   const [abierto, setAbierto] = useState(false);
@@ -46,10 +46,10 @@ export function BotonAyuda() {
     };
   }, [abierto]);
 
-  if (sobreFooter) return null;
+  if (sobreFooter || enFicha) return null;
 
   return (
-    <div ref={ref} className={`fixed right-4 bottom-4 z-30 ${enFicha ? "max-lg:hidden" : ""}`}>
+    <div ref={ref} className="fixed right-4 bottom-4 z-30">
       {abierto && (
         <div id={panelId} role="region" aria-label="Opciones de ayuda" className="mb-2 w-64 border border-cafe/15 bg-hueso p-2">
           <ul>

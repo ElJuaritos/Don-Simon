@@ -120,8 +120,8 @@ cliente_id, nombre_destinatario, calle, numero_ext, numero_int, colonia, codigo_
 | cliente_id | fk | |
 | email, telefono | text | Copia al momento de la compra |
 | direccion_envio | jsonb | Copia de la dirección (no una referencia, para que no cambie después) |
-| subtotal, descuento, envio, total | int (centavos) | |
-| cupon_codigo | text, nullable | |
+| subtotal, descuento, envio, total | int (centavos) | `descuento` default 0. El webhook lo llena con el cupón de Stripe y ajusta `total` a lo cobrado. `subtotal` y `envio` no cambian |
+| codigo_descuento | text, nullable | Código del cupón, si se usó |
 | estado | enum | ver abajo |
 | notas | text | Regalo, indicaciones |
 | requiere_factura | bool | |
@@ -136,6 +136,16 @@ pendiente_pago ──▶ pagado ──▶ en_preparacion ──▶ enviado ─�
 
 ### `pedido_lineas`
 pedido_id, variante_id, nombre_producto, color, talla, sku, precio_unitario, cantidad. Guardan una **copia** de los datos al momento de la compra, así el pedido no cambia si luego se edita el producto.
+
+### `codigos_postales` (implementada)
+
+Catálogo de SEPOMEX para autocompletar el envío. **No va en el seed ni en el repositorio**: la licencia no permite distribuirlo. Se carga en local con `npm run cp:generar` (servidor detenido) y la tienda solo pide un código, en `GET /api/cp/[cp]`. RLS activo, sin políticas.
+
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| cp | text, pk | 5 dígitos |
+| estado, municipio, ciudad | text | `ciudad` puede ir vacía |
+| colonias | text[] | Asentamientos de ese código |
 
 ### `pagos`
 pedido_id, proveedor (stripe), proveedor_id (checkout session / payment intent), metodo (tarjeta, oxxo, spei), estado, monto, respuesta (jsonb), pagado_en.

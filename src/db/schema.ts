@@ -147,6 +147,9 @@ export const pedidos = pgTable("pedidos", {
   telefono: text("telefono").notNull(),
   direccion: jsonb("direccion").$type<DireccionEnvio>().notNull(),
   subtotal: integer("subtotal").notNull(),
+  /** Centavos descontados por un cupón de Stripe. Lo escribe el webhook al confirmar el pago. */
+  descuento: integer("descuento").notNull().default(0),
+  codigoDescuento: text("codigo_descuento"),
   envio: integer("envio").notNull(),
   total: integer("total").notNull(),
   estado: text("estado", { enum: ESTADOS_PEDIDO }).notNull().default("pendiente_pago"),
@@ -197,6 +200,18 @@ export const lookbookFotos = pgTable("lookbook_fotos", {
   orden: integer("orden").notNull().default(0),
   activa: boolean("activa").notNull().default(true),
   ...timestamps,
+}).enableRLS();
+
+/**
+ * Catálogo de SEPOMEX. No va en el seed ni en el repositorio: lo carga `npm run cp:generar`.
+ * La tienda solo consulta un código a la vez.
+ */
+export const codigosPostales = pgTable("codigos_postales", {
+  cp: text("cp").primaryKey(),
+  estado: text("estado").notNull(),
+  municipio: text("municipio").notNull(),
+  ciudad: text("ciudad").notNull().default(""),
+  colonias: text("colonias").array().notNull().default([]),
 }).enableRLS();
 
 export const mensajes = pgTable("mensajes", {

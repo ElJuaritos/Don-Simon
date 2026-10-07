@@ -1,6 +1,7 @@
 "use server";
 
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type Stripe from "stripe";
 import { z } from "zod";
@@ -56,16 +57,27 @@ export async function agregarAlCarrito(_prev: EstadoAgregar, formData: FormData)
   if (existente) existente.q = nueva;
   else items.push({ v: varianteId.data, q: 1 });
   await guardarCarrito(items);
+  revalidatePath("/", "layout");
+  if (formData.get("destino") === "checkout") redirect("/checkout");
   return { ok: true, mensaje: "Agregado al carrito", carrito: await detallarCarrito(items), agregadoId: varianteId.data };
 }
 
 export async function cambiarCantidad(formData: FormData) {
-  const v = String(formData.get("varianteId"));
+  const id = z.uuid().safeParse(formData.get("varianteId"));
   const q = Number(formData.get("cantidad"));
+  if (!id.success) return;
   let items = await leerCarrito();
-  if (!Number.isInteger(q) || q <= 0) items = items.filter((i) => i.v !== v);
-  else items = items.map((i) => (i.v === v ? { ...i, q: Math.min(q, tienda.maxParesPorLinea) } : i));
+  if (!Number.isInteger(q) || q <= 0) {
+    items = items.filter((i) => i.v !== id.data);
+  } else {
+    const db = await getDb();
+    const [fila] = await db.select().from(variantes).where(eq(variantes.id, id.data));
+    const tope = fila ? Math.min(tienda.maxParesPorLinea, disponibles(fila)) : 0;
+    if (tope <= 0) items = items.filter((i) => i.v !== id.data);
+    else items = items.map((i) => (i.v === id.data ? { ...i, q: Math.min(q, tope) } : i));
+  }
   await guardarCarrito(items);
+  revalidatePath("/", "layout");
 }
 
 export async function limpiarCarrito() {
@@ -76,7 +88,8 @@ export async function limpiarCarrito() {
 
 const checkoutSchema = z.object({
   email: z.email("Escribe un correo válido."),
-  nombre: z.string().trim().min(3, "Escribe tu nombre completo."),
+  nombre: z.string().trim().min(2, "Escribe tu nombre."),
+  apellidos: z.string().trim().min(2, "Escribe tus apellidos."),
   telefono: z
     .string()
     .trim()
@@ -97,6 +110,18 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const d = parsed.data;
 
+  if (formData.get("novedades") === "on") {
+    try {
+      const db = await getDb();
+      await db
+        .insert(suscriptores)
+        .values({ email: d.email.toLowerCase(), origen: "checkout", preferencia: "ambos" })
+        .onConflictDoNothing();
+    } catch (e) {
+      console.error("No se pudo guardar la suscripción del checkout", e);
+    }
+  }
+
   const stripe = getStripe();
   if (!stripe && !esModoDemo()) {
     return { error: "Los pagos no están disponibles en este momento. Intenta más tarde." };
@@ -110,7 +135,7 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
   try {
     pedido = await crearPedido({
       email: d.email,
-      nombre: d.nombre,
+      nombre: `${d.nombre} ${d.apellidos}`,
       telefono: d.telefono,
       direccion: {
         calle: d.calle,
@@ -167,6 +192,9 @@ function crearSesionPago(
   return stripe.checkout.sessions.create({
     mode: "payment",
     locale: "es",
+    // Los cupones se crean en el panel de Stripe. El Checkout embebido pide una llave
+    // pública (pk_) que todavía no tenemos, así que el pago sigue en la página de Stripe.
+    allow_promotion_codes: true,
     customer_email: email,
     client_reference_id: pedido.id,
     metadata: { pedidoId: pedido.id, folio: folio(pedido.numero) },

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useCarrito } from "@/components/cart/proveedor-carrito";
 import { IconoBolsa, IconoBuscar, IconoPersona } from "@/components/ui/iconos";
 import { Logo } from "@/components/ui/logo";
 import { MenuMovil } from "./menu-movil";
@@ -14,7 +15,9 @@ import { PanelMega } from "./panel-mega";
  * En computadora: páginas a la izquierda, logo al centro, ayuda y cuenta a la derecha.
  * En celular: menú, logo, buscar y carrito.
  */
-export function Cabecera({ entradas, cantidad }: { entradas: EntradaNav[]; cantidad: number }) {
+export function Cabecera({ entradas }: { entradas: EntradaNav[] }) {
+  const { carrito, abrir } = useCarrito();
+  const cantidad = carrito.cantidad;
   const [abierto, setAbierto] = useState<string | null>(null);
   const cerrarTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
@@ -106,6 +109,11 @@ export function Cabecera({ entradas, cantidad }: { entradas: EntradaNav[]; canti
           <Link
             href="/carrito"
             aria-label={`Carrito, ${cantidad} ${cantidad === 1 ? "par" : "pares"}`}
+            aria-haspopup="dialog"
+            onClick={(e) => {
+              e.preventDefault();
+              abrir();
+            }}
             className="relative -mr-2 p-2 transition-opacity hover:opacity-60"
           >
             <IconoBolsa />

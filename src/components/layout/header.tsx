@@ -1,5 +1,4 @@
 import { mensajesAnuncio } from "@/lib/anuncio";
-import { contarCarrito } from "@/lib/carrito";
 import { fotoDeCategoria, getCategoriasPara } from "@/lib/data/catalogo";
 import { getBloques } from "@/lib/data/contenido";
 import { BarraAnuncio } from "./barra-anuncio";
@@ -23,8 +22,7 @@ function fotosDe(
 
 /** Barra de aviso y header. Los textos y las fotos salen de los cuadros editables. */
 export async function Header() {
-  const [cantidad, hombre, mujer, menus, global] = await Promise.all([
-    contarCarrito(),
+  const [hombre, mujer, menus, global] = await Promise.all([
     getCategoriasPara("hombre"),
     getCategoriasPara("mujer"),
     getBloques("menus"),
@@ -68,7 +66,7 @@ export async function Header() {
   return (
     <>
       <BarraAnuncio mensajes={mensajesAnuncio(global["global-anuncio"]?.texto ?? "")} />
-      <Cabecera entradas={entradas} cantidad={cantidad} />
+      <Cabecera entradas={entradas} />
     </>
   );
 }

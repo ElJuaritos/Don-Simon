@@ -47,6 +47,12 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
             <dl className="mt-4 space-y-1 border-t border-cafe/15 pt-4 text-[0.9375rem]">
               <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatPrecio(pedido.subtotal)}</dd></div>
               <div className="flex justify-between"><dt>Envío</dt><dd>{pedido.envio ? formatPrecio(pedido.envio) : "Gratis"}</dd></div>
+              {(pedido.descuento > 0 || pedido.codigoDescuento) && (
+                <div className="flex justify-between">
+                  <dt>Descuento{pedido.codigoDescuento ? ` (${pedido.codigoDescuento})` : ""}</dt>
+                  <dd>−{formatPrecio(pedido.descuento)}</dd>
+                </div>
+              )}
               <div className="flex justify-between text-lg font-semibold"><dt>Total</dt><dd>{formatPrecio(pedido.total)}</dd></div>
             </dl>
           </Tarjeta>
