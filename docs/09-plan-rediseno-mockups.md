@@ -423,3 +423,71 @@ Registradas también en `docs/08-decisiones-pendientes.md`.
 - Admin simple, en lenguaje claro y usable desde el celular.
 
 Al terminar todo: actualizar `docs/03-arquitectura-de-informacion.md` (mapa del sitio y navegación), `docs/04-funcionalidades.md`, `docs/06-modelo-de-datos.md`, `docs/07-roadmap.md` y la sección de arquitectura de `CLAUDE.md`.
+
+---
+
+## 14. Cambio a Varen y respuestas del dueño (2026-10-08)
+
+El dueño contestó las preguntas pendientes y cambió el nombre de la marca a **Varen**, con logotipo y paleta nuevos. Las decisiones están en [08](08-decisiones-pendientes.md) (#0, #2, #4b, #7, #8, #9 y 4c). Esta sección dice cómo se traducen al código.
+
+### 14.1 Identidad de Varen
+
+**Logotipo**: `public/marca/varen-negro.png` y `public/marca/varen-blanco.png` (PNG con fondo transparente, ya recortados). Son provisionales: hay que pedir el SVG. El componente `Logo` usa la imagen (negra sobre fondo claro, blanca sobre fondo oscuro), con `alt` = `marca.nombre`. El monograma "SS" de Don Simon desaparece. El favicon se hace con la "V" del logotipo.
+
+**Paleta** (la "Propuesta gama y uso de colores" del dueño). Reemplaza a hueso, arena, piedra, café, crema, olivo y terracota:
+
+| Token | HEX | Uso | Texto encima (contraste) |
+|---|---|---|---|
+| `blanco` | `#ffffff` | Fondo principal, cuerpo de las páginas | Negro 21:1 |
+| `niebla` | `#f2f0f0` | Fondos alternos, espacio detrás del zapato, cuadros de imagen | Negro 18:1 |
+| `topo` | `#aa9d92` | Cuadros de imagen, separadores y detalles | Solo negro (8:1). **Nunca texto blanco (2.6:1) ni texto topo sobre blanco (2.6:1)** |
+| `pizarra` | `#3d516b` | Footer, acentos (barra de progreso, enlace activo, foco), botón de acento | Solo blanco (8.1:1). **Nunca texto negro (2.6:1)** |
+| `pizarra-oscuro` | `#2e3d52` (derivado) | Hover del botón de acento | Blanco |
+| `negro` | `#000000` | Texto, barra de menú, botón primario | Blanco 21:1 |
+
+Texto secundario: negro al 70 % (`text-negro/70`, 8:1 sobre blanco). No usar `topo` ni opacidades menores al 60 % para texto.
+
+**Composición de la propuesta**: logo sobre blanco, barra de menú negra con texto blanco, cuadros de imagen en topo y niebla, cuerpo blanco y footer azul pizarra con texto claro. Traducción (decisión D18, pendiente de confirmar con el dueño al verlo):
+- **Header en escritorio**: fila del logotipo al centro sobre blanco (con buscar, cuenta y carrito a la derecha) y debajo una **barra negra** con el menú (Hombre, Mujer, Accesorios, Lookbook, Nosotros y Reseñas) en texto blanco. El mega menú se abre debajo de la barra negra.
+- **Barra de anuncio**: arriba de todo en **pizarra** con texto blanco, para no tener dos franjas negras.
+- **Móvil**: igual que hoy (menú hamburguesa, logo al centro, buscar y carrito). Sin barra negra.
+- **Footer**: fondo pizarra con texto blanco; la franja legal en el mismo azul, separada con una línea blanca al 20 %.
+- **Botones**: primario negro con texto blanco; secundario con contorno negro; sobre foto, contorno blanco. Estrellas de reseñas en negro.
+
+**Tipografía**: el dueño mandará la definitiva. Provisional: **Montserrat** para todo el texto (es la que usa la propuesta del dueño) y **Cormorant Garamond sin cursiva** para títulos de 32 px o más. Se quitan Quicksand, la cursiva de los títulos y Pinyon Script.
+
+### 14.2 Cambios de contenido
+
+- `marca.nombre = "Varen"`. El dominio nuevo no se ha elegido: `marca.dominio` queda vacío con un TODO (hoy no se muestra en ningún lado).
+- Cambios y devoluciones **gratis durante 30 días** después de la entrega: ayuda, pestaña de la ficha, términos y aviso de la página de gracias.
+- **Construcción por producto**: `productos.construccion` pasa a ser un texto largo (varios párrafos) en el admin, con la ayuda "Explica cómo está construido este modelo"; se muestra en la pestaña Detalles. En El oficio solo queda Goodyear Welt con texto por defecto; los demás tipos quedan sin título (ocultos) hasta que el dueño los escriba.
+- "Dónde encontrarnos" sale del plan: no hay tienda física.
+- La etiqueta "Nuevo" se queda automática.
+
+### 14.3 Pagos (D19)
+
+- **Tarjeta de crédito y débito** con Stripe, como hoy.
+- **Meses sin intereses solo en promociones**: un interruptor en el admin ("Meses sin intereses activos") que, encendido, manda `payment_method_options.card.installments.enabled = true` al crear la sesión. Stripe solo los ofrece con tarjetas de crédito mexicanas, en MXN y desde $300; el negocio paga una comisión extra por plazo (desde 5 % a 3 meses), y los plazos y montos mínimos se configuran en el panel de Stripe. Fuente: [Stripe, meses sin intereses](https://docs.stripe.com/payments/mx-installments).
+- **PayPal**: Stripe no lo procesa para cuentas de México ([solo negocios en Europa](https://docs.stripe.com/payments/paypal)). Opciones:
+  - (a) **PayPal directo** (recomendado): botón "Pagar con PayPal" en el checkout con la API de órdenes de PayPal. El pedido se crea igual (precio y stock en el servidor, stock apartado) y pasa a `pagado` solo cuando el servidor captura el pago y el webhook verificado de PayPal lo confirma. Necesita una cuenta PayPal Business del dueño. Más código: un segundo webhook y los reembolsos se hacen en PayPal.
+  - (b) [PayPal como método personalizado de Stripe](https://docs.stripe.com/payments/payment-methods/custom-payment-methods/paypal): un solo checkout, pero está en vista previa, hay que pedir acceso, alojar el adaptador de Stripe y pagar una comisión extra a Stripe además de la de PayPal.
+  - (c) Lanzar solo con tarjeta y agregar PayPal después.
+
+### 14.4 Puntos (reglas del dueño)
+
+- 1 punto por cada peso. Tres cupones: **10 % con 5,000 puntos, 20 % con 10,000 y 30 % con 30,000**. No caducan.
+- Se acreditan **30 días después de la entrega**. Diseño sin tareas programadas: cada pedido entregado genera un movimiento con `acreditar_en = entregado_en + 30 días`; el saldo disponible solo suma los movimientos cuya fecha ya pasó. Si el pedido se devuelve o cancela antes, se agrega un movimiento que lo revierte.
+- Al canjear, se descuentan los puntos y se aplica el descuento en Stripe. Detalle técnico: una sesión de Stripe Checkout acepta **un solo descuento**, así que un cupón de puntos no se puede combinar con otro código. Para que el porcentaje no se aplique al envío, el envío pasa de línea de producto a `shipping_options`.
+- Pendiente con el dueño (recomendación entre paréntesis): ¿los puntos se cuentan sobre lo pagado en productos? (sí, sin envío y después de descuentos); ¿el cupón se combina con otros? (no); ¿el cupón canjeado tiene vigencia? (no).
+
+### 14.5 Etapas nuevas
+
+| Etapa | Qué incluye | Depende de |
+|---|---|---|
+| **H · Marca Varen** | Nombre, logotipo, paleta, tipografía provisional, header y footer de la propuesta, textos de 30 días, construcción por producto | Nada. El SVG y la tipografía definitiva se cambian después |
+| **C2 · Accesorios** | §8 completo: `categorias.tipo`, talla opcional, página `/accesorios`, "Combínalo con" en la ficha y "No olvides agregar" al final del carrito | Nada. Los accesorios reales se cargan desde el admin |
+| **I · Pagos** | Interruptor de meses sin intereses y PayPal según D19 | Decidir D19, cuenta PayPal Business y llaves de prueba de Stripe |
+| **E · Cuenta de cliente** | Supabase Auth con código por correo, `/cuenta` con pedidos y datos | Dominio nuevo (Resend) y retomar Supabase |
+| **F · Puntos** | §14.4 | E y las 3 respuestas pendientes |
+
+Orden sugerido: H → C2 → I → E → F.
