@@ -8,6 +8,7 @@ import {
   type DireccionEnvio,
   type EstadoPedido,
 } from "@/db/schema";
+import { textoDeTalla } from "@/lib/formato";
 import type { LineaCarrito } from "@/lib/carrito";
 
 // Flujo de inventario (docs/05-stack-tecnico.md):
@@ -16,8 +17,8 @@ import type { LineaCarrito } from "@/lib/carrito";
 // 3. Si el pago vence o falla, se liberan (apartado -= cantidad).
 
 export class SinStockError extends Error {
-  constructor(public linea: Pick<LineaCarrito, "nombre" | "color" | "talla">) {
-    super(`Ya no hay suficientes pares de ${linea.nombre} (${linea.color}, talla ${linea.talla}).`);
+  constructor(public linea: Pick<LineaCarrito, "nombre" | "color" | "talla" | "etiquetaTalla">) {
+    super(`Ya no hay suficientes de ${linea.nombre} (${linea.color}, ${textoDeTalla(linea)}).`);
   }
 }
 
@@ -70,6 +71,7 @@ export async function crearPedido(datos: {
         nombreProducto: l.nombre,
         color: l.color,
         talla: l.talla,
+        etiquetaTalla: l.etiquetaTalla,
         sku: l.sku,
         precioUnitario: l.precioUnitario,
         cantidad: l.cantidad,

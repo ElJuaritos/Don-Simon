@@ -5,7 +5,7 @@ import { z } from "zod";
 import { cambiarEstadoPedido } from "@/lib/actions/admin";
 import { lineasConResena } from "@/lib/data/resenas";
 import { getPedido } from "@/lib/data/pedidos";
-import { folio, formatFecha, formatPrecio, formatTalla } from "@/lib/formato";
+import { folio, formatFecha, formatPrecio, textoDeTalla } from "@/lib/formato";
 import { firmarEnlaceResena } from "@/lib/resena-token";
 import { urlDelSitio } from "@/lib/sitio";
 import { EnlaceResena } from "@/components/admin/enlace-resena";
@@ -51,7 +51,7 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
                       {l.cantidad} × {l.nombreProducto}
                     </span>
                     <span className="block text-sm text-negro/85">
-                      {l.color} · Talla {formatTalla(l.talla)} · SKU {l.sku}
+                      {l.color} · {textoDeTalla(l)} · SKU {l.sku}
                     </span>
                   </span>
                   <span>{formatPrecio(l.precioUnitario * l.cantidad)}</span>
@@ -83,7 +83,7 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
                     <p className="font-semibold">
                       {linea.nombreProducto}
                       <span className="block text-sm font-normal text-negro/75">
-                        {linea.color} · Talla {formatTalla(linea.talla)}
+                        {linea.color} · {textoDeTalla(linea)}
                       </span>
                     </p>
                     {url ? (

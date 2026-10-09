@@ -81,7 +81,9 @@ export const ETIQUETA_OCASION: Record<Ocasion, string> = {
   boda: "Boda",
 };
 
+/** Texto del filtro: "Talla 25.5", "Talla 85 cm" o "Talla única". */
 export function etiquetaTalla(valor: string) {
+  if (valor === "Única") return "Talla única";
   const n = Number(valor);
-  return Number.isFinite(n) ? formatTalla(n) : valor;
+  return Number.isFinite(n) && valor.trim() !== "" ? `Talla ${formatTalla(n)}` : `Talla ${valor}`;
 }

@@ -153,6 +153,7 @@ const categoriaSchema = z.object({
   nombre: z.string().trim().min(2, "Escribe el nombre de la categoría."),
   descripcion: z.string().trim().max(500),
   orden: z.coerce.number().int().min(0).max(999),
+  tipo: z.enum(["calzado", "accesorio"], "Elige si es calzado o accesorio."),
 });
 
 export async function guardarCategoria(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {

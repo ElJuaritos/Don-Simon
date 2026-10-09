@@ -17,8 +17,9 @@ import {
   type CarritoDetallado,
 } from "@/lib/carrito";
 import { disponibles } from "@/lib/data/catalogo";
+import { sugerenciasDeCarrito } from "@/lib/data/complementarios";
 import { cancelarPedidoPendiente, crearPedido, SinStockError } from "@/lib/data/pedidos";
-import { folio } from "@/lib/formato";
+import { folio, textoDeTalla } from "@/lib/formato";
 import { esModoDemo, getStripe, urlDelSitio } from "@/lib/stripe";
 
 export type EstadoForm = { ok?: boolean; error?: string; mensaje?: string } | undefined;
@@ -52,7 +53,7 @@ export async function agregarAlCarrito(_prev: EstadoAgregar, formData: FormData)
   const nueva = (existente?.q ?? 0) + 1;
   const max = Math.min(disponibles(fila.variante), tienda.maxParesPorLinea);
   if (nueva > max) {
-    return { error: max === 0 ? "Esta talla está agotada." : "No hay más pares disponibles en esta talla." };
+    return { error: max === 0 ? "Esta opción está agotada." : "No hay más piezas disponibles." };
   }
   if (existente) existente.q = nueva;
   else items.push({ v: varianteId.data, q: 1 });
@@ -82,6 +83,11 @@ export async function cambiarCantidad(formData: FormData) {
 
 export async function limpiarCarrito() {
   await vaciarCarrito();
+}
+
+export async function obtenerSugerenciasCarrito() {
+  const carrito = await getCarritoDetallado();
+  return sugerenciasDeCarrito([...new Set(carrito.lineas.map((l) => l.productoId))]);
 }
 
 // ---------- Checkout ----------
@@ -205,7 +211,7 @@ function crearSesionPago(
         price_data: {
           currency: "mxn",
           unit_amount: l.precioUnitario,
-          product_data: { name: `${l.nombre} · ${l.color} · Talla ${l.talla}` },
+          product_data: { name: `${l.nombre} · ${l.color} · ${textoDeTalla(l)}` },
         },
       })),
       ...envio,

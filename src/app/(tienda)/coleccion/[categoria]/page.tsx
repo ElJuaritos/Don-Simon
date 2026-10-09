@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { getCategoria, getCategorias } from "@/lib/data/catalogo";
 import { VistaColeccion } from "@/components/product/vista-coleccion";
 
@@ -12,6 +12,7 @@ export default async function ColeccionCategoria({ params, searchParams }: PageP
   const [{ categoria: slug }, filtros] = await Promise.all([params, searchParams]);
   const [categoria, categorias] = await Promise.all([getCategoria(slug), getCategorias()]);
   if (!categoria) notFound();
+  if (categoria.tipo === "accesorio") redirect(`/accesorios?estilo=${categoria.slug}`);
 
   return (
     <VistaColeccion

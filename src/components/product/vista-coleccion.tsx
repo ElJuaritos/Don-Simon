@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Categoria, Ocasion } from "@/db/schema";
+import type { Categoria, Ocasion, TipoCategoria } from "@/db/schema";
 import { fotoDeCategoria, getCatalogo, type Orden } from "@/lib/data/catalogo";
 import {
   ETIQUETA_OCASION,
@@ -10,7 +10,6 @@ import {
   quitarValor,
   type FiltrosUrl,
 } from "@/lib/filtros-coleccion";
-import { formatTalla } from "@/lib/formato";
 import { Foto } from "@/components/ui/foto";
 import { FormFiltros, type OpcionFiltro } from "./filtros-coleccion";
 import { ORDENES } from "./ordenes";
@@ -27,44 +26,53 @@ export async function VistaColeccion({
   categoria,
   categorias,
   searchParams,
+  tipo = "calzado",
+  rutaBase = "/coleccion",
 }: {
   titulo: string;
   descripcion?: string;
   categoria?: Categoria;
   categorias: Categoria[];
   searchParams: Crudo;
+  tipo?: TipoCategoria;
+  rutaBase?: string;
 }) {
   const filtros = leerFiltros(searchParams, categoria?.slug);
   const orden = ORDENES.some((o) => o.valor === filtros.orden) ? (filtros.orden as Orden) : "destacados";
   const { tarjetas, opciones } = await getCatalogo({
+    tipo,
     para: filtros.para,
     estilo: filtros.estilos,
-    talla: filtros.tallas.map(Number).filter((n) => Number.isFinite(n)),
+    talla: filtros.tallas,
     color: filtros.colores,
     material: filtros.materiales,
-    ocasion: filtros.ocasiones,
+    ocasion: tipo === "accesorio" ? undefined : filtros.ocasiones,
     orden,
   });
 
   const visibles = tarjetas.slice(0, filtros.pagina * POR_PAGINA);
   const nombrePara = filtros.para === "hombre" ? "Hombre" : filtros.para === "mujer" ? "Mujer" : undefined;
-  const tituloFinal = nombrePara && !categoria ? nombrePara : titulo;
+  const tituloFinal = tipo === "calzado" && nombrePara && !categoria ? nombrePara : titulo;
   const foto = categoria ? fotoDeCategoria(categoria, filtros.para) : null;
-  const limpiar = hrefColeccion("/coleccion", { ...filtros, estilos: [], tallas: [], colores: [], materiales: [], ocasiones: [], orden: "destacados", pagina: 1 });
-  const chips = chipsDe(filtros, categorias);
+  const vacios = { estilos: [], tallas: [], colores: [], materiales: [], ocasiones: [] as Ocasion[], orden: "destacados", pagina: 1, para: filtros.para };
+  const limpiar = hrefColeccion(rutaBase, { ...filtros, ...vacios });
+  const chips = chipsDe(filtros, categorias, rutaBase);
+  const tallasVisibles = opciones.tallas.some((t) => t !== "Única") ? opciones.tallas : [];
 
   const grupos = [
     grupo("estilo", "Estilo", "estilo", opciones.estilos.map((e) => ({ valor: e.slug, texto: e.nombre })), filtros.estilos),
-    grupo("talla", "Talla", "talla", opciones.tallas.map((t) => ({ valor: String(t), texto: formatTalla(t) })), filtros.tallas),
+    grupo("talla", "Talla", "talla", tallasVisibles.map((t) => ({ valor: t, texto: etiquetaTalla(t) })), filtros.tallas),
     grupo("color", "Color", "color", opciones.colores.map((c) => ({ valor: c, texto: c })), filtros.colores),
     grupo("material", "Material", "material", opciones.materiales.map((m) => ({ valor: m, texto: m })), filtros.materiales),
-    grupo("ocasion", "Ocasión", "ocasion", opciones.ocasiones.map((o) => ({ valor: o, texto: ETIQUETA_OCASION[o] })), filtros.ocasiones),
+    ...(tipo === "accesorio"
+      ? []
+      : [grupo("ocasion", "Ocasión", "ocasion", opciones.ocasiones.map((o) => ({ valor: o, texto: ETIQUETA_OCASION[o] })), filtros.ocasiones)]),
   ];
 
   return (
     <div className="pb-16 md:pb-24">
       <FormFiltros
-        rutaBase="/coleccion"
+        rutaBase={rutaBase}
         para={filtros.para}
         orden={orden}
         grupos={grupos}
@@ -100,8 +108,8 @@ export async function VistaColeccion({
             {(categoria || filtros.para) && (
               <>
                 {" / "}
-                <Link href={filtros.para ? `/coleccion?para=${filtros.para}` : "/coleccion"} className="hover:text-negro">
-                  Colección
+                <Link href={filtros.para ? `${rutaBase}?para=${filtros.para}` : rutaBase} className="hover:text-negro">
+                  {tipo === "accesorio" ? "Accesorios" : "Colección"}
                 </Link>
               </>
             )}
@@ -141,7 +149,7 @@ export async function VistaColeccion({
         {tarjetas.length > visibles.length && (
           <div className="mt-12 text-center">
             <Link
-              href={hrefColeccion("/coleccion", { ...filtros, pagina: filtros.pagina + 1 })}
+              href={hrefColeccion(rutaBase, { ...filtros, pagina: filtros.pagina + 1 })}
               className="btn-contorno"
             >
               Cargar más
@@ -157,8 +165,7 @@ function grupo(id: string, etiqueta: string, nombre: string, opciones: OpcionFil
   return { id, etiqueta, nombre, opciones, activos };
 }
 
-function chipsDe(filtros: FiltrosUrl, categorias: Categoria[]) {
-  const base = "/coleccion";
+function chipsDe(filtros: FiltrosUrl, categorias: Categoria[], base: string) {
   const nombreEstilo = (slug: string) => categorias.find((c) => c.slug === slug)?.nombre ?? slug;
   const pieza = (clave: "estilos" | "tallas" | "colores" | "materiales" | "ocasiones", valor: string, texto: string) => ({
     texto,
@@ -166,7 +173,7 @@ function chipsDe(filtros: FiltrosUrl, categorias: Categoria[]) {
   });
   return [
     ...filtros.estilos.map((v) => pieza("estilos", v, nombreEstilo(v))),
-    ...filtros.tallas.map((v) => pieza("tallas", v, `Talla ${etiquetaTalla(v)}`)),
+    ...filtros.tallas.map((v) => pieza("tallas", v, etiquetaTalla(v))),
     ...filtros.colores.map((v) => pieza("colores", v, v)),
     ...filtros.materiales.map((v) => pieza("materiales", v, v)),
     ...filtros.ocasiones.map((v) => pieza("ocasiones", v, ETIQUETA_OCASION[v as Ocasion])),

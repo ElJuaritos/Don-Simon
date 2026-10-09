@@ -50,7 +50,8 @@ export type LineaCarrito = {
   slug: string;
   nombre: string;
   color: string;
-  talla: number;
+  talla: number | null;
+  etiquetaTalla: string | null;
   sku: string;
   precioUnitario: number;
   cantidad: number;
@@ -103,6 +104,7 @@ export async function detallarCarrito(items: ItemCookie[]) {
         color: v.color,
         colorHex: v.colorHex,
         talla: v.talla,
+        etiquetaTalla: v.etiquetaTalla,
         sku: v.sku,
         precioUnitario: p.precio,
         cantidad: item.q,

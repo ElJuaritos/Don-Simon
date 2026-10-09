@@ -78,7 +78,7 @@ export function Cabecera({ entradas }: { entradas: EntradaNav[] }) {
           </Link>
           <Link
             href="/carrito"
-            aria-label={`Carrito, ${cantidad} ${cantidad === 1 ? "par" : "pares"}`}
+            aria-label={`Carrito, ${cantidad} ${cantidad === 1 ? "artículo" : "artículos"}`}
             aria-haspopup="dialog"
             onClick={(e) => {
               e.preventDefault();

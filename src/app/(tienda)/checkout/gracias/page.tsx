@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { tienda } from "@/config/marca";
 import { getPedido } from "@/lib/data/pedidos";
-import { folio, formatPrecio, formatTalla } from "@/lib/formato";
+import { folio, formatPrecio, textoDeTalla } from "@/lib/formato";
 import { VaciarCarrito } from "./vaciar-carrito";
 
 export const metadata: Metadata = { title: "Gracias por tu compra", robots: { index: false } };
@@ -42,7 +42,7 @@ export default async function Gracias({ searchParams }: PageProps<"/checkout/gra
             <span>
               {l.cantidad} × {l.nombreProducto}
               <span className="block text-sm text-negro/85">
-                {l.color} · Talla {formatTalla(l.talla)}
+                {l.color} · {textoDeTalla(l)}
               </span>
             </span>
             <span>{formatPrecio(l.precioUnitario * l.cantidad)}</span>

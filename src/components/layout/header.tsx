@@ -2,7 +2,7 @@ import { seMuestranResenas } from "@/lib/data/resenas";
 import { hayNotasPublicadas } from "@/lib/data/notas";
 import { hayPielesActivas } from "@/lib/data/pieles";
 import { mensajesAnuncio } from "@/lib/anuncio";
-import { fotoDeCategoria, getCategoriasPara } from "@/lib/data/catalogo";
+import { fotoDeCategoria, getCategoriasPara, hayAccesoriosActivos } from "@/lib/data/catalogo";
 import { getBloques } from "@/lib/data/contenido";
 import { BarraAnuncio } from "./barra-anuncio";
 import { Cabecera } from "./cabecera";
@@ -25,15 +25,19 @@ function fotosDe(
 
 /** Barra de aviso y header. Los textos y las fotos salen de los cuadros editables. */
 export async function Header() {
-  const [hombre, mujer, menus, global, conResenas, conPieles, conNotas] = await Promise.all([
-    getCategoriasPara("hombre"),
-    getCategoriasPara("mujer"),
-    getBloques("menus"),
-    getBloques("global"),
-    seMuestranResenas(),
-    hayPielesActivas(),
-    hayNotasPublicadas(),
-  ]);
+  const [hombre, mujer, accesoriosHombre, accesoriosMujer, menus, global, conResenas, conPieles, conNotas, conAccesorios] =
+    await Promise.all([
+      getCategoriasPara("hombre"),
+      getCategoriasPara("mujer"),
+      getCategoriasPara("hombre", "accesorio"),
+      getCategoriasPara("mujer", "accesorio"),
+      getBloques("menus"),
+      getBloques("global"),
+      seMuestranResenas(),
+      hayPielesActivas(),
+      hayNotasPublicadas(),
+      hayAccesoriosActivos(),
+    ]);
 
   const entradas: EntradaNav[] = [
     {
@@ -44,6 +48,7 @@ export async function Header() {
       columnas: columnasPublico(
         "hombre",
         hombre.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "hombre") })),
+        accesoriosHombre.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "hombre") })),
       ),
       fotos: fotosDe(menus, ["menu-hombre-1", "menu-hombre-2", "menu-hombre-3"]),
     },
@@ -55,9 +60,11 @@ export async function Header() {
       columnas: columnasPublico(
         "mujer",
         mujer.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "mujer") })),
+        accesoriosMujer.map((c) => ({ slug: c.slug, nombre: c.nombre, imagen: fotoDeCategoria(c, "mujer") })),
       ),
       fotos: fotosDe(menus, ["menu-mujer-1", "menu-mujer-2", "menu-mujer-3"]),
     },
+    ...(conAccesorios ? [{ tipo: "enlace" as const, id: "accesorios", href: "/accesorios", texto: "Accesorios" }] : []),
     { tipo: "enlace", id: "lookbook", href: "/lookbook", texto: "Lookbook" },
     {
       tipo: "menu",

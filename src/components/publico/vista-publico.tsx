@@ -9,7 +9,7 @@ import { TopCategorias } from "./top-categorias";
 export async function VistaPublico({ para }: { para: "hombre" | "mujer" }) {
   const [bloques, destacados, categorias] = await Promise.all([
     getBloques("publico"),
-    getProductos({ para, soloDestacados: true }),
+    getProductos({ para, tipo: "calzado", soloDestacados: true }),
     getCategoriasPara(para),
   ]);
   const primero = bloques[`${para}-hero-1`];

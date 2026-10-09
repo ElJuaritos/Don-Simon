@@ -15,6 +15,7 @@ import { LOOKBOOK_EJEMPLO } from "../src/content/lookbook-ejemplo";
 import { NOTAS_EJEMPLO, PIELES_EJEMPLO } from "../src/content/ejemplos-etapa-g";
 import * as schema from "../src/db/schema";
 import { seed } from "../src/db/seed";
+import { asegurarAccesoriosEjemplo } from "../src/db/accesorios-ejemplo";
 
 const { bloques, categorias, hormas, imagenes, lookbookFotos, notas, pieles, productos } = schema;
 
@@ -113,6 +114,11 @@ const ALIAS: Record<string, string> = {
   "categoria-botas-mujer": "lookbook-08",
   "categoria-oxford-hombre": "lookbook-04",
   "categoria-oxford-mujer": "lookbook-03",
+  "cinturon-herradura": "lookbook-03",
+  "cinturon-herradura-negro": "lookbook-04",
+  "calcetines-diario": "lookbook-05",
+  "horma-cedro": "lookbook-08",
+  "kit-limpieza": "lookbook-07",
 };
 
 const CATEGORIAS_PUBLICO: Record<string, { hombre: string; mujer: string }> = {
@@ -149,6 +155,10 @@ const PRODUCTOS: Record<string, [string, string]> = {
   "derby-campo": ["producto-campo", "Coñac"],
   "mocasin-lucia": ["producto-lucia", "Coñac"],
   "botin-jacaranda": ["producto-jacaranda", "Café"],
+  "cinturon-herradura": ["cinturon-herradura", "Café"],
+  "calcetines-diario": ["calcetines-diario", "Gris"],
+  "horma-cedro": ["horma-cedro", "Natural"],
+  "kit-limpieza": ["kit-limpieza", "Clásico"],
 };
 
 if (!existsSync(ORIGEN)) {
@@ -204,6 +214,7 @@ const client = new PGlite(path.join(process.cwd(), ".data", "pglite"));
 const db = drizzle(client, { schema });
 await migrate(db, { migrationsFolder: "drizzle" });
 await seed(db);
+await asegurarAccesoriosEjemplo(db);
 
 for (const clave of BLOQUES) {
   const url = await publicar(clave);
@@ -266,6 +277,24 @@ for (const [slug, [archivo, color]] of Object.entries(PRODUCTOS)) {
   }
 }
 console.log("✓ Productos");
+
+const urlNegro = await publicar("cinturon-herradura-negro");
+const [cinturon] = await db.select().from(productos).where(eq(productos.slug, "cinturon-herradura"));
+if (urlNegro && cinturon) {
+  const [ya] = await db
+    .select({ id: imagenes.id })
+    .from(imagenes)
+    .where(and(eq(imagenes.productoId, cinturon.id), eq(imagenes.color, "Negro")));
+  if (!ya) {
+    await db.insert(imagenes).values({
+      productoId: cinturon.id,
+      color: "Negro",
+      url: urlNegro,
+      alt: "Cinturón Herradura en negro",
+      orden: 0,
+    });
+  }
+}
 
 const actuales = await db.select().from(lookbookFotos);
 const delDueno = actuales.some((f) => f.imagenUrl && !f.imagenUrl.includes("/media/ejemplo-"));

@@ -2,7 +2,7 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { pedidoLineas, pedidos, type EstadoPedido } from "@/db/schema";
-import { folio, formatTalla, numeroDeFolio } from "@/lib/formato";
+import { folio, numeroDeFolio, textoDeTalla } from "@/lib/formato";
 
 export type LineaPublica = { etiqueta: string };
 
@@ -46,6 +46,7 @@ export async function buscarPedidoPublico(folioTexto: string, email: string): Pr
       nombreProducto: pedidoLineas.nombreProducto,
       color: pedidoLineas.color,
       talla: pedidoLineas.talla,
+      etiquetaTalla: pedidoLineas.etiquetaTalla,
       cantidad: pedidoLineas.cantidad,
     })
     .from(pedidoLineas)
@@ -59,7 +60,7 @@ export async function buscarPedidoPublico(folioTexto: string, email: string): Pr
     paqueteria: pedido.paqueteria,
     numeroGuia: pedido.numeroGuia,
     lineas: lineas.map((l) => ({
-      etiqueta: `${l.cantidad > 1 ? `${l.cantidad} × ` : ""}${l.nombreProducto} · ${l.color} · Talla ${formatTalla(l.talla)}`,
+      etiqueta: `${l.cantidad > 1 ? `${l.cantidad} × ` : ""}${l.nombreProducto} · ${l.color} · ${textoDeTalla(l)}`,
     })),
   };
 }

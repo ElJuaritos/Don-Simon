@@ -15,6 +15,32 @@ export function formatTalla(talla: number) {
   return Number.isInteger(talla) ? String(talla) : talla.toFixed(1);
 }
 
+type ConTalla = { talla: number | string | null; etiquetaTalla?: string | null };
+
+function tallaNumero(talla: number | string | null | undefined) {
+  if (talla == null || talla === "") return null;
+  const n = typeof talla === "number" ? talla : Number(talla);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Talla de calzado ("25.5"), etiqueta de accesorio ("85 cm") o "Talla única".
+ * Sirve en la ficha, el carrito, el pedido y el admin.
+ */
+export function etiquetaDeTalla(item: ConTalla) {
+  const etiqueta = item.etiquetaTalla?.trim();
+  if (etiqueta) return etiqueta;
+  const talla = tallaNumero(item.talla);
+  if (talla != null) return formatTalla(talla);
+  return "Talla única";
+}
+
+/** "Talla 25.5", "Talla 85 cm" o "Talla única", para ponerla junto al color. */
+export function textoDeTalla(item: ConTalla) {
+  const etiqueta = etiquetaDeTalla(item);
+  return etiqueta === "Talla única" ? etiqueta : `Talla ${etiqueta}`;
+}
+
 export function folio(numero: number) {
   return `DS-${10000 + numero}`;
 }

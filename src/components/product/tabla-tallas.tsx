@@ -1,4 +1,4 @@
-// Equivalencias de referencia. Confirmar con la horma real del taller antes de publicarlas como definitivas.
+import { etiquetaDeTalla } from "@/lib/formato";
 // Hombre y mujer no comparten la misma tabla. Unisex muestra las dos.
 
 export type FilaTalla = { mx: string; us: string; eu: string; uk: string; cm: string };
@@ -43,10 +43,11 @@ function buscar(tabla: FilaTalla[], talla: number) {
  * Unisex usa la tabla de hombre cuando la talla está ahí: esos modelos se numeran como calzado de hombre.
  * La guía muestra las dos tablas.
  */
-export function etiquetaTalla(talla: number, sistema: SistemaTalla, publico: PublicoTalla) {
+export function etiquetaTalla(talla: number | null, sistema: SistemaTalla, publico: PublicoTalla) {
+  if (talla == null) return etiquetaDeTalla({ talla: null });
   const orden = publico === "mujer" ? (["mujer"] as const) : (["hombre", "mujer"] as const);
   const fila = orden.map((p) => buscar(TABLAS[p], talla)).find(Boolean);
-  if (!fila) return Number.isInteger(talla) ? String(talla) : talla.toFixed(1);
+  if (!fila) return etiquetaDeTalla({ talla });
   return fila[sistema];
 }
 

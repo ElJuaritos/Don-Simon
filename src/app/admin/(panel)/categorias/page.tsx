@@ -27,9 +27,10 @@ export default async function CategoriasAdmin() {
       <div className="grid max-w-3xl gap-6">
         {cats.map((c) => (
           <Tarjeta key={c.id} titulo={c.nombre} className="bg-white">
-            <p className="-mt-3 mb-5 text-sm text-negro/85">
-              /coleccion/{c.slug} · {conteos.find((x) => x.id === c.id)?.n ?? 0} productos activos
-            </p>
+              <p className="-mt-3 mb-5 text-sm text-negro/85">
+                {c.tipo === "accesorio" ? "Accesorio" : "Calzado"} · /{c.tipo === "accesorio" ? "accesorios" : `coleccion/${c.slug}`} ·{" "}
+                {conteos.find((x) => x.id === c.id)?.n ?? 0} productos activos
+              </p>
             <FormAdmin action={guardarCategoria} boton="Guardar" className="space-y-5">
               <input type="hidden" name="id" value={c.id} />
               <div className="grid gap-5 sm:grid-cols-[1fr_7rem]">
@@ -40,6 +41,12 @@ export default async function CategoriasAdmin() {
                   <input name="orden" type="number" min={0} defaultValue={c.orden} className="campo" />
                 </Campo>
               </div>
+              <Campo label="Tipo" ayuda="El calzado va en Colección. Los accesorios, en su propia página.">
+                <select name="tipo" defaultValue={c.tipo} className="campo">
+                  <option value="calzado">Calzado</option>
+                  <option value="accesorio">Accesorio</option>
+                </select>
+              </Campo>
               <Campo label="Descripción corta" ayuda="Aparece arriba de los productos de la categoría.">
                 <textarea name="descripcion" rows={2} defaultValue={c.descripcion} className="campo" />
               </Campo>
@@ -70,6 +77,12 @@ export default async function CategoriasAdmin() {
           <FormAdmin action={crearCategoria} boton="Crear categoría" className="space-y-4">
             <Campo label="Nombre">
               <input name="nombre" required className="campo" placeholder="Sandalias" />
+            </Campo>
+            <Campo label="Tipo" ayuda="El calzado va en Colección. Los accesorios, en su propia página.">
+              <select name="tipo" defaultValue="calzado" className="campo">
+                <option value="calzado">Calzado</option>
+                <option value="accesorio">Accesorio</option>
+              </select>
             </Campo>
             <Campo label="Descripción corta">
               <textarea name="descripcion" rows={2} className="campo" />

@@ -6,6 +6,7 @@ import { FormNewsletter } from "./form-newsletter";
 import { seMuestranResenas } from "@/lib/data/resenas";
 import { hayNotasPublicadas } from "@/lib/data/notas";
 import { hayPielesActivas } from "@/lib/data/pieles";
+import { hayAccesoriosActivos } from "@/lib/data/catalogo";
 import { columnasFooter } from "./navegacion";
 
 const REDES = [
@@ -18,8 +19,13 @@ const REDES = [
 
 /** Footer en pizarra: enlaces claros, boletín con campo blanco y franja legal en el mismo azul. */
 export async function Footer() {
-  const [resenas, pieles, notas] = await Promise.all([seMuestranResenas(), hayPielesActivas(), hayNotasPublicadas()]);
-  const columnas = columnasFooter({ resenas, pieles, notas });
+  const [resenas, pieles, notas, accesorios] = await Promise.all([
+    seMuestranResenas(),
+    hayPielesActivas(),
+    hayNotasPublicadas(),
+    hayAccesoriosActivos(),
+  ]);
+  const columnas = columnasFooter({ resenas, pieles, notas, accesorios });
   const anio = new Date().getFullYear();
 
   const lista = (enlaces: { href: string; texto: string }[]) => (

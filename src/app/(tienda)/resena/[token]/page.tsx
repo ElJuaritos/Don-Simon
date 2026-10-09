@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { formatTalla } from "@/lib/formato";
+import { textoDeTalla } from "@/lib/formato";
 import { prepararResena } from "@/lib/data/resenas";
 import { leerTokenResena } from "@/lib/resena-token";
 import { nombreParaMostrar } from "@/lib/resenas-texto";
@@ -48,7 +48,7 @@ export default async function PaginaResena({ params, searchParams }: PageProps<"
         <div>
           <h1 className="font-sans text-2xl font-medium">{p.nombre}</h1>
           <p className="mt-1 text-sm text-negro/75">
-            {p.color} · Talla {formatTalla(p.talla)}
+            {p.color} · {textoDeTalla(p)}
           </p>
         </div>
       </div>

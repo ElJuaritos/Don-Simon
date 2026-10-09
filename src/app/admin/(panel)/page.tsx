@@ -2,7 +2,7 @@ import Link from "next/link";
 import { and, count, eq, gte, inArray, sql, sum } from "drizzle-orm";
 import { getDb } from "@/db";
 import { mensajes, pedidos, productos, variantes } from "@/db/schema";
-import { folio, formatFecha, formatPrecio, formatTalla } from "@/lib/formato";
+import { folio, formatFecha, formatPrecio, textoDeTalla } from "@/lib/formato";
 import { BadgeEstado, Tarjeta, TituloAdmin } from "@/components/admin/ui";
 
 const PAGADOS = ["pagado", "en_preparacion", "enviado", "entregado"] as const;
@@ -98,7 +98,7 @@ export default async function InicioAdmin() {
                   <li key={v.id}>
                     <Link href={`/admin/productos/${producto.id}#inventario`} className="flex justify-between gap-4 py-2.5 hover:bg-blanco">
                       <span>
-                        {producto.nombre} · {v.color} · {formatTalla(v.talla)}
+                        {producto.nombre} · {v.color} · {textoDeTalla(v)}
                       </span>
                       <span className={libres <= 0 ? "font-semibold text-pizarra-oscuro" : ""}>
                         {libres <= 0 ? "Agotada" : "Queda 1"}

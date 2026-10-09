@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marca, tienda } from "@/config/marca";
 import { disponibles, getProducto, getProductos } from "@/lib/data/catalogo";
+import { tarjetasParaCombinar } from "@/lib/data/complementarios";
 import { listarPublicadasProducto, resumenProducto, seMuestranResenas } from "@/lib/data/resenas";
 import { formatPromedio } from "@/lib/resenas-texto";
 import { urlDelSitio } from "@/lib/sitio";
@@ -53,9 +54,10 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
   }));
   const colorPedido = typeof sp.color === "string" ? sp.color : undefined;
   const color = colores.find((c) => c.nombre === colorPedido) ?? colores[0];
+  const esAccesorio = producto.categoria.tipo === "accesorio";
   const tallas = producto.variantes
     .filter((v) => v.color === color?.nombre)
-    .map((v) => ({ varianteId: v.id, talla: v.talla, disponibles: disponibles(v) }));
+    .map((v) => ({ varianteId: v.id, talla: v.talla, etiquetaTalla: v.etiquetaTalla, disponibles: disponibles(v) }));
   const imagenesColor = producto.imagenes
     .filter((i) => !i.color || i.color === color?.nombre)
     .map((i) => ({ url: i.url, alt: i.alt }));
@@ -63,7 +65,8 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
 
   const para = producto.publico === "unisex" ? undefined : producto.publico;
   const vistos = new Set<string>();
-  const candidatos = (await getProductos({ para })).filter((p) => {
+  const tipo = esAccesorio ? "accesorio" : "calzado";
+  const candidatos = (await getProductos({ para, tipo })).filter((p) => {
     if (p.id === producto.id || vistos.has(p.id)) return false;
     vistos.add(p.id);
     return true;
@@ -77,7 +80,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     [
       { id: "descripcion", titulo: "Descripción", texto: producto.descripcion },
       { id: "detalles", titulo: "Detalles", texto: textoDetalles(producto) },
-      producto.horma && {
+      !esAccesorio && producto.horma && {
         id: "ajuste",
         titulo: "Ajuste",
         texto: `${producto.horma.nombre}. ${producto.horma.recomendacion}`,
@@ -140,7 +143,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
             Inicio
           </Link>
           {" / "}
-          <Link href={`/coleccion/${producto.categoria.slug}`} className="hover:text-negro">
+          <Link href={esAccesorio ? `/accesorios?estilo=${producto.categoria.slug}` : `/coleccion/${producto.categoria.slug}`} className="hover:text-negro">
             {producto.categoria.nombre}
           </Link>
           {" / "}
@@ -197,16 +200,18 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
               </div>
             )}
 
-            <div className="mt-6 flex justify-end">
-              <GuiaTallasPanel publico={producto.publico} horma={producto.horma?.nombre} recomendacion={producto.horma?.recomendacion} />
-            </div>
+            {!esAccesorio && (
+              <div className="mt-6 flex justify-end">
+                <GuiaTallasPanel publico={producto.publico} horma={producto.horma?.nombre} recomendacion={producto.horma?.recomendacion} />
+              </div>
+            )}
             <SelectorCompra key={color?.nombre} tallas={tallas} publico={producto.publico} />
             <PestanasProducto pestanas={pestanas} />
           </div>
         </div>
       </div>
 
-      <CombinarloCon productos={[]} />
+      <CombinarloCon productos={await tarjetasParaCombinar(producto)} />
 
       {conResenas && resumen && <SeccionResenas resumen={resumen} resenas={resenas} />}
 

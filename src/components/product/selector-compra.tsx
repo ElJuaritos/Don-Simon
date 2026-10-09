@@ -3,11 +3,11 @@
 import { useActionState, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { tienda } from "@/config/marca";
 import { agregarAlCarrito, type EstadoAgregar } from "@/lib/actions/tienda";
-import { formatPrecio } from "@/lib/formato";
+import { formatPrecio, etiquetaDeTalla } from "@/lib/formato";
 import { useCarrito } from "@/components/cart/proveedor-carrito";
 import { etiquetaTalla, type PublicoTalla, type SistemaTalla } from "./tabla-tallas";
 
-export type OpcionTalla = { varianteId: string; talla: number; disponibles: number };
+export type OpcionTalla = { varianteId: string; talla: number | null; etiquetaTalla: string | null; disponibles: number };
 
 const CLAVE = "ds-sistema-talla";
 const SISTEMAS: { id: SistemaTalla; etiqueta: string }[] = [
@@ -59,6 +59,8 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
   const agregarRef = useRef<HTMLButtonElement>(null);
   const hayStock = tallas.some((t) => t.disponibles > 0);
   const elegida = tallas.find((t) => t.varianteId === seleccion);
+  const accesorio = tallas.length > 0 && tallas.every((t) => t.talla == null);
+  const unica = accesorio && tallas.length === 1 && etiquetaDeTalla(tallas[0]) === "Talla única";
 
   useEffect(() => {
     if (!estado?.ok || !estado.carrito || estado === visto.current) return;
@@ -67,72 +69,82 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
   }, [estado, abrir]);
 
   function alEnviar(e: React.FormEvent<HTMLFormElement>) {
-    if (seleccion) return;
+    if (unica || seleccion) return;
     e.preventDefault();
     setAviso("Elige una talla para continuar.");
   }
 
+  const pieza = accesorio ? "pieza" : "par";
+
   return (
     <form action={accion} onSubmit={alEnviar} className="mt-8">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p id="etiqueta-tallas" className="text-sm font-medium">
-          Talla
-        </p>
-        <div className="flex border border-negro/20 text-xs" role="group" aria-label="Sistema de tallas">
-          {SISTEMAS.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              aria-pressed={sistema === s.id}
-              onClick={() => setSistema(s.id)}
-              className={`px-2.5 py-1 ${sistema === s.id ? "bg-negro text-blanco" : "hover:bg-niebla"}`}
-            >
-              {s.etiqueta}
-            </button>
-          ))}
-        </div>
-      </div>
+      {unica ? (
+        <input type="hidden" name="varianteId" value={tallas[0].varianteId} />
+      ) : (
+        <>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p id="etiqueta-tallas" className="text-sm font-medium">
+              Talla
+            </p>
+            {!accesorio && (
+              <div className="flex border border-negro/20 text-xs" role="group" aria-label="Sistema de tallas">
+                {SISTEMAS.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    aria-pressed={sistema === s.id}
+                    onClick={() => setSistema(s.id)}
+                    className={`px-2.5 py-1 ${sistema === s.id ? "bg-negro text-blanco" : "hover:bg-niebla"}`}
+                  >
+                    {s.etiqueta}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
-      <div role="radiogroup" aria-labelledby="etiqueta-tallas" aria-describedby={aviso ? "aviso-talla" : undefined} className="grid grid-cols-5 gap-2">
-        {tallas.map((t) => {
-          const agotada = t.disponibles === 0;
-          const marcada = seleccion === t.varianteId;
-          return (
-            <label
-              key={t.varianteId}
-              className={`relative grid h-11 cursor-pointer place-items-center border text-sm font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-pizarra ${
-                agotada
-                  ? "cursor-not-allowed border-negro/10 text-negro/60 line-through"
-                  : marcada
-                    ? "border-negro bg-negro text-blanco"
-                    : "border-negro/25 hover:border-negro"
-              }`}
-            >
-              <input
-                type="radio"
-                name="varianteId"
-                value={t.varianteId}
-                disabled={agotada}
-                className="sr-only"
-                checked={marcada}
-                onChange={() => {
-                  setSeleccion(t.varianteId);
-                  setAviso("");
-                }}
-              />
-              {etiquetaTalla(t.talla, sistema, publico)}
-              {agotada && <span className="sr-only">, agotada</span>}
-            </label>
-          );
-        })}
-      </div>
+          <div role="radiogroup" aria-labelledby="etiqueta-tallas" aria-describedby={aviso ? "aviso-talla" : undefined} className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+            {tallas.map((t) => {
+              const agotada = t.disponibles === 0;
+              const marcada = seleccion === t.varianteId;
+              return (
+                <label
+                  key={t.varianteId}
+                  className={`relative grid h-11 cursor-pointer place-items-center border px-1 text-center text-sm font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-pizarra ${
+                    agotada
+                      ? "cursor-not-allowed border-negro/10 text-negro/60 line-through"
+                      : marcada
+                        ? "border-negro bg-negro text-blanco"
+                        : "border-negro/25 hover:border-negro"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="varianteId"
+                    value={t.varianteId}
+                    disabled={agotada}
+                    className="sr-only"
+                    checked={marcada}
+                    onChange={() => {
+                      setSeleccion(t.varianteId);
+                      setAviso("");
+                    }}
+                  />
+                  {accesorio ? etiquetaDeTalla(t) : etiquetaTalla(t.talla, sistema, publico)}
+                  {agotada && <span className="sr-only">, agotada</span>}
+                </label>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       <p id="aviso-talla" className="mt-2 min-h-5 text-sm text-pizarra-oscuro" role="alert">
         {aviso || estado?.error || ""}
       </p>
-      {elegida && elegida.disponibles > 0 && elegida.disponibles <= 2 && (
+      {(unica ? tallas[0] : elegida) && (unica ? tallas[0] : elegida)!.disponibles > 0 && (unica ? tallas[0] : elegida)!.disponibles <= 2 && (
         <p className="text-sm text-pizarra-oscuro">
-          {elegida.disponibles === 1 ? "Queda 1 par." : `Quedan ${elegida.disponibles} pares.`}
+          {(unica ? tallas[0] : elegida)!.disponibles === 1 ? `Queda 1 ${pieza}.` : `Quedan ${(unica ? tallas[0] : elegida)!.disponibles} ${pieza === "par" ? "pares" : "piezas"}.`}
         </p>
       )}
 

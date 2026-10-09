@@ -3,6 +3,7 @@ import { OCASIONES } from "@/db/schema";
 import { guardarProducto } from "@/lib/actions/admin";
 import { getMaterialesUsados } from "@/lib/data/catalogo";
 import { Campo } from "./campos";
+import { CamposCategoria } from "./campos-categoria";
 import { FormAdmin } from "./form-admin";
 
 const pesos = (centavos: number | null | undefined) => (centavos == null ? "" : String(centavos / 100));
@@ -30,33 +31,12 @@ export async function FormProducto({
         <Campo label="Dirección web" ayuda="Se genera sola a partir del nombre si la dejas vacía.">
           <input name="slug" defaultValue={producto?.slug} className="campo" placeholder="mocasin-alameda" />
         </Campo>
-        <Campo label="Categoría">
-          <select name="categoriaId" required defaultValue={producto?.categoriaId ?? ""} className="campo">
-            <option value="" disabled>
-              Elige una
-            </option>
-            {categorias.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre}
-              </option>
-            ))}
-          </select>
-        </Campo>
+        <CamposCategoria categorias={categorias} hormas={hormas} producto={producto} />
         <Campo label="¿Para quién es?" ayuda="Unisex aparece tanto en Hombre como en Mujer.">
           <select name="publico" required defaultValue={producto?.publico ?? "hombre"} className="campo">
             <option value="hombre">Hombre</option>
             <option value="mujer">Mujer</option>
             <option value="unisex">Unisex</option>
-          </select>
-        </Campo>
-        <Campo label="Horma" ayuda="Define la recomendación de talla que ve el cliente.">
-          <select name="hormaId" defaultValue={producto?.hormaId ?? ""} className="campo">
-            <option value="">Sin especificar</option>
-            {hormas.map((h) => (
-              <option key={h.id} value={h.id}>
-                {h.nombre} — {h.recomendacion}
-              </option>
-            ))}
           </select>
         </Campo>
         <Campo label="Precio (MXN, con IVA)">

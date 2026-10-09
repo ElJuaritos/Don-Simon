@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, ne } from "drizzle-orm";
+import { and, asc, eq, ilike, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -11,6 +11,7 @@ import {
   mensajes,
   pedidos,
   productos,
+  productosComplementarios,
   variantes,
   ESTADOS_PRODUCTO,
   PUBLICOS,
@@ -20,7 +21,7 @@ import {
 } from "@/db/schema";
 import { cerrarSesion, iniciarSesion, passwordCorrecta, requireAdmin } from "@/lib/auth";
 import { cancelarPedidoPendiente } from "@/lib/data/pedidos";
-import { pesosACentavos, slugify } from "@/lib/formato";
+import { pesosACentavos, slugify, textoDeTalla } from "@/lib/formato";
 import { borrarImagen, guardarImagen } from "@/lib/storage";
 import { expirarSesion } from "@/lib/stripe";
 import type { EstadoForm } from "./tienda";
@@ -93,11 +94,14 @@ export async function guardarProducto(_prev: EstadoForm, formData: FormData): Pr
     (OCASIONES as readonly string[]).includes(o),
   );
 
+  const [categoria] = await db.select({ tipo: categorias.tipo }).from(categorias).where(eq(categorias.id, d.categoriaId));
+  if (!categoria) return { error: "Elige una categoría." };
+
   const valores = {
     nombre: d.nombre,
     slug,
     categoriaId: d.categoriaId,
-    hormaId: d.hormaId || null,
+    hormaId: categoria.tipo === "accesorio" ? null : d.hormaId || null,
     precio,
     precioComparacion,
     descripcion: d.descripcion,
@@ -134,6 +138,18 @@ const variantesSchema = z.object({
 
 export async function agregarVariantes(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
   await requireAdmin();
+  const productoId = z.uuid().safeParse(formData.get("productoId"));
+  if (!productoId.success) return { error: "Producto no encontrado." };
+
+  const db = await getDb();
+  const [fila] = await db
+    .select({ producto: productos, tipo: categorias.tipo })
+    .from(productos)
+    .innerJoin(categorias, eq(productos.categoriaId, categorias.id))
+    .where(eq(productos.id, productoId.data));
+  if (!fila) return { error: "Producto no encontrado." };
+  if (fila.tipo === "accesorio") return agregarAccesorio(formData, fila.producto);
+
   const parsed = variantesSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: parsed.error.issues[0].message };
   const d = parsed.data;
@@ -143,22 +159,17 @@ export async function agregarVariantes(_prev: EstadoForm, formData: FormData): P
   const tallas: number[] = [];
   for (let t = d.tallaDesde; t <= d.tallaHasta + 0.001; t += paso) tallas.push(Math.round(t * 10) / 10);
 
-  const db = await getDb();
-  const [producto] = await db.select().from(productos).where(eq(productos.id, d.productoId));
-  if (!producto) return { error: "Producto no encontrado." };
-
-  const codigo = slugify(producto.nombre).replace(/-/g, "").slice(0, 3).toUpperCase().padEnd(3, "X");
+  const codigo = slugify(fila.producto.nombre).replace(/-/g, "").slice(0, 3).toUpperCase().padEnd(3, "X");
   const colorCod = slugify(d.color).replace(/-/g, "").slice(0, 3).toUpperCase().padEnd(3, "X");
   const creadas = await db
     .insert(variantes)
     .values(
       tallas.map((talla) => ({
-        productoId: producto.id,
+        productoId: fila.producto.id,
         color: d.color,
         colorHex: d.colorHex,
         talla,
-        // El sufijo corto evita choques entre productos con las mismas iniciales
-        sku: `DS-${codigo}-${colorCod}-${talla * 10}-${producto.id.slice(0, 4).toUpperCase()}`,
+        sku: `DS-${codigo}-${colorCod}-${talla * 10}-${fila.producto.id.slice(0, 4).toUpperCase()}`,
         stock: d.stock,
       })),
     )
@@ -173,6 +184,53 @@ export async function agregarVariantes(_prev: EstadoForm, formData: FormData): P
   };
 }
 
+async function agregarAccesorio(
+  formData: FormData,
+  producto: { id: string; nombre: string },
+): Promise<EstadoForm> {
+  const color = String(formData.get("color") ?? "").trim();
+  const colorHex = String(formData.get("colorHex") ?? "");
+  const stock = Number(formData.get("stock"));
+  const unica = formData.get("unica") === "on";
+  const lineas = String(formData.get("etiquetas") ?? "")
+    .split(/\n/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!color) return { error: "Escribe el color." };
+  if (!/^#[0-9a-fA-F]{6}$/.test(colorHex)) return { error: "Elige el color de la muestra." };
+  if (!Number.isInteger(stock) || stock < 0 || stock > 999) return { error: "Escribe cuántas piezas hay." };
+  if (unica && lineas.length > 0) return { error: "Marca talla única o escribe las tallas, no las dos." };
+  if (!unica && lineas.length === 0) return { error: "Marca talla única o escribe al menos una talla, por ejemplo 85 cm." };
+  if (lineas.some((l) => l.length > 20)) return { error: "Cada talla debe ser corta, por ejemplo 85 cm." };
+
+  const etiquetas = unica ? [null] : lineas;
+  const codigo = slugify(producto.nombre).replace(/-/g, "").slice(0, 3).toUpperCase().padEnd(3, "X");
+  const colorCod = slugify(color).replace(/-/g, "").slice(0, 3).toUpperCase().padEnd(3, "X");
+  const db = await getDb();
+  const creadas = await db
+    .insert(variantes)
+    .values(
+      etiquetas.map((etiqueta) => ({
+        productoId: producto.id,
+        color,
+        colorHex,
+        talla: null,
+        etiquetaTalla: etiqueta,
+        sku: `DS-${codigo}-${colorCod}-${slugify(etiqueta ?? "unica").replace(/-/g, "").slice(0, 6).toUpperCase() || "U"}-${producto.id.slice(0, 4).toUpperCase()}`,
+        stock,
+      })),
+    )
+    .onConflictDoNothing()
+    .returning({ id: variantes.id });
+
+  refrescarTienda();
+  const omitidas = etiquetas.length - creadas.length;
+  return {
+    ok: true,
+    mensaje: `Se agregó ${creadas.length === 1 ? "1 opción" : `${creadas.length} opciones`} en ${color}.${omitidas ? ` ${omitidas} ya existían.` : ""}`,
+  };
+}
+
 export async function guardarInventario(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
   await requireAdmin();
   const productoId = z.uuid().parse(formData.get("productoId"));
@@ -181,10 +239,10 @@ export async function guardarInventario(_prev: EstadoForm, formData: FormData): 
 
   for (const v of propias) {
     const stock = Number(formData.get(`stock_${v.id}`));
-    if (!Number.isInteger(stock) || stock < 0) return { error: `Stock inválido en ${v.color} talla ${v.talla}.` };
+    if (!Number.isInteger(stock) || stock < 0) return { error: `Stock inválido en ${v.color}, ${textoDeTalla(v)}.` };
     // No se puede bajar el stock por debajo de lo que ya está apartado en pedidos pendientes
     if (stock < v.stockApartado) {
-      return { error: `${v.color} talla ${v.talla} tiene ${v.stockApartado} pares apartados en pedidos pendientes.` };
+      return { error: `${v.color}, ${textoDeTalla(v)}: hay ${v.stockApartado} apartados en pedidos pendientes.` };
     }
     const activo = formData.get(`activo_${v.id}`) === "on";
     if (stock !== v.stock || activo !== v.activo) {
@@ -248,6 +306,38 @@ export async function hacerPrincipal(formData: FormData) {
   refrescarTienda();
 }
 
+export async function buscarParaCombinar(consulta: string, productoId: string) {
+  await requireAdmin();
+  const texto = consulta.trim().replace(/[%_]/g, "");
+  if (texto.length < 2 || !z.uuid().safeParse(productoId).success) return [];
+  const db = await getDb();
+  return db
+    .select({ id: productos.id, nombre: productos.nombre })
+    .from(productos)
+    .where(and(ne(productos.id, productoId), ilike(productos.nombre, `%${texto}%`)))
+    .orderBy(asc(productos.nombre))
+    .limit(8);
+}
+
+export async function guardarComplementarios(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
+  await requireAdmin();
+  const productoId = z.uuid().safeParse(formData.get("productoId"));
+  if (!productoId.success) return { error: "Producto no encontrado." };
+  const ids = [...new Set(formData.getAll("complementarioId").map(String))]
+    .filter((id) => z.uuid().safeParse(id).success && id !== productoId.data)
+    .slice(0, 6);
+
+  const db = await getDb();
+  await db.delete(productosComplementarios).where(eq(productosComplementarios.productoId, productoId.data));
+  if (ids.length > 0) {
+    await db.insert(productosComplementarios).values(
+      ids.map((complementarioId, orden) => ({ productoId: productoId.data, complementarioId, orden })),
+    );
+  }
+  refrescarTienda();
+  return { ok: true, mensaje: ids.length === 0 ? "Se quitaron las sugerencias." : "Combínalo con actualizado." };
+}
+
 // ---------- Categorías ----------
 
 export async function crearCategoria(_prev: EstadoForm, formData: FormData): Promise<EstadoForm> {
@@ -255,10 +345,11 @@ export async function crearCategoria(_prev: EstadoForm, formData: FormData): Pro
   const nombre = String(formData.get("nombre") ?? "").trim();
   const descripcion = String(formData.get("descripcion") ?? "").trim();
   if (nombre.length < 2) return { error: "Escribe el nombre de la categoría." };
+  const tipo = formData.get("tipo") === "accesorio" ? "accesorio" : "calzado";
   const db = await getDb();
   const creada = await db
     .insert(categorias)
-    .values({ nombre, descripcion, slug: slugify(nombre), orden: 99 })
+    .values({ nombre, descripcion, slug: slugify(nombre), orden: 99, tipo })
     .onConflictDoNothing()
     .returning();
   if (creada.length === 0) return { error: "Ya existe una categoría con ese nombre." };

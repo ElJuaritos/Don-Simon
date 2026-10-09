@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { tienda } from "@/config/marca";
-import { formatPrecio, formatTalla } from "@/lib/formato";
+import { formatPrecio, textoDeTalla } from "@/lib/formato";
 import { useCarrito } from "@/components/cart/proveedor-carrito";
 
 /** Resumen del pedido. En el celular empieza plegado; en escritorio se queda fijo. */
@@ -35,14 +35,14 @@ export function ResumenCheckout() {
                 <div>
                   <p className="font-medium">{l.nombre}</p>
                   <p className="text-sm text-negro/75">
-                    {l.color} · Talla {formatTalla(l.talla)}
+                    {l.color} · {textoDeTalla(l)}
                   </p>
                   <div className="mt-2 flex items-center gap-3">
                     <div className="flex items-center border border-negro/25">
                       <button
                         type="button"
                         className="grid h-8 w-8 place-items-center disabled:text-negro/60"
-                        aria-label={`Quitar un par de ${l.nombre}`}
+                        aria-label={`Quitar un artículo de ${l.nombre}`}
                         disabled={pendiente || l.cantidad <= 1}
                         onClick={() => fijarCantidad(l.varianteId, l.cantidad - 1)}
                       >
@@ -52,7 +52,7 @@ export function ResumenCheckout() {
                       <button
                         type="button"
                         className="grid h-8 w-8 place-items-center disabled:text-negro/60"
-                        aria-label={`Agregar un par de ${l.nombre}`}
+                        aria-label={`Agregar un artículo de ${l.nombre}`}
                         disabled={pendiente || l.cantidad >= max}
                         onClick={() => fijarCantidad(l.varianteId, l.cantidad + 1)}
                       >

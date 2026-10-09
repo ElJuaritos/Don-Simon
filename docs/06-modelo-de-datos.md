@@ -31,6 +31,7 @@ paginas (contenido editable)    ajustes (clave/valor)
 |-------|------|-------|
 | nombre | text | "Mocasines" |
 | slug | text, único | `mocasines` |
+| tipo | enum | `calzado` (default) o `accesorio`. El calzado usa talla numérica; el accesorio, etiqueta de texto o talla única |
 | descripcion | text | Para SEO y encabezado |
 | imagen_url | text | Respaldo si falta la foto de un público |
 | imagen_hombre_url | text, nullable | Foto en Hombre, en el catálogo y en el menú |
@@ -76,14 +77,15 @@ paginas (contenido editable)    ajustes (clave/valor)
 | producto_id | fk | |
 | color | text | "Café" |
 | color_hex | text | Para la muestra de color en el selector |
-| talla | numeric(3,1) | 25.5 (MX, en cm) |
+| talla | numeric(3,1), nullable | 25.5 (MX, en cm). Vacía en accesorios |
+| etiqueta_talla | text, nullable | Accesorio: "85 cm", "M". Vacía si es talla única |
 | sku | text, único | `DS-ALA-CAF-255` |
 | stock | int | Disponible para vender |
 | stock_apartado | int | Reservado por pedidos pendientes de pago |
 | precio | int, nullable | Si es null, se usa el del producto |
 | activo | bool | |
 
-Restricción: único (`producto_id`, `color`, `talla`).
+Restricción: único (`producto_id`, `color`, `talla`, `etiqueta_talla`), con `NULLS NOT DISTINCT` para que dos tallas únicas del mismo color no se dupliquen.
 **Convención de SKU**: `DS-{MODELO}-{COLOR}-{TALLA}`.
 
 ### `imagenes`
@@ -137,7 +139,17 @@ pendiente_pago ──▶ pagado ──▶ en_preparacion ──▶ enviado ─�
 ```
 
 ### `pedido_lineas`
-pedido_id, variante_id, nombre_producto, color, talla, sku, precio_unitario, cantidad. Guardan una **copia** de los datos al momento de la compra, así el pedido no cambia si luego se edita el producto.
+pedido_id, variante_id, nombre_producto, color, talla (nullable), etiqueta_talla (nullable), sku, precio_unitario, cantidad. Guardan una **copia** de los datos al momento de la compra, así el pedido no cambia si luego se edita el producto. En un accesorio de talla única las dos tallas van vacías.
+
+### `productos_complementarios` (implementada)
+
+Lo que aparece en «Combínalo con». RLS activo, sin políticas. Si se borra cualquiera de los dos productos, se borra la relación. Un producto no puede complementarse a sí mismo.
+
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| producto_id | fk | El modelo de la ficha |
+| complementario_id | fk | El que se sugiere. Único por pareja |
+| orden | int | El dueño lo ordena en el admin. Máximo 6 por producto, en la acción |
 
 ### `codigos_postales` (implementada)
 

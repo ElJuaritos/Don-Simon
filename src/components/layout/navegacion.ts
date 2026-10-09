@@ -33,10 +33,13 @@ type CategoriaNav = {
 
 /**
  * Columnas del mega menú de Hombre o Mujer.
- * «Ocasión» abre el catálogo con el filtro aplicado.
- * Cinturones, calcetines y piel pequeña esperan a que se definan los accesorios.
+ * La columna Accesorios solo entra si hay categorías de accesorio para ese público.
  */
-export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaNav[]): ColumnaNav[] {
+export function columnasPublico(
+  para: "hombre" | "mujer",
+  categorias: CategoriaNav[],
+  accesorios: CategoriaNav[] = [],
+): ColumnaNav[] {
   return [
     {
       titulo: "Calzado",
@@ -49,10 +52,21 @@ export function columnasPublico(para: "hombre" | "mujer", categorias: CategoriaN
         { href: `/coleccion?para=${para}`, texto: "Ver todo" },
       ],
     },
-    {
-      titulo: "Accesorios",
-      enlaces: [{ href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" }],
-    },
+    ...(accesorios.length > 0
+      ? [
+          {
+            titulo: "Accesorios",
+            enlaces: [
+              ...accesorios.map((c) => ({
+                href: `/accesorios?para=${para}&estilo=${c.slug}`,
+                texto: c.nombre,
+                imagen: c.imagen,
+              })),
+              { href: `/accesorios?para=${para}`, texto: "Ver todo" },
+            ],
+          },
+        ]
+      : []),
     {
       titulo: "Ocasión",
       enlaces: [
@@ -108,10 +122,12 @@ export function columnasFooter({
   resenas = false,
   pieles = false,
   notas = false,
+  accesorios = false,
 }: {
   resenas?: boolean;
   pieles?: boolean;
   notas?: boolean;
+  accesorios?: boolean;
 } = {}): ColumnaNav[] {
   return [
     {
@@ -119,6 +135,7 @@ export function columnasFooter({
       enlaces: [
         { href: "/hombre", texto: "Hombre" },
         { href: "/mujer", texto: "Mujer" },
+        ...(accesorios ? [{ href: "/accesorios", texto: "Accesorios" }] : []),
         { href: "/lookbook", texto: "Lookbook" },
         { href: "/ayuda/cuidado-del-calzado", texto: "Cuidado del calzado" },
       ],

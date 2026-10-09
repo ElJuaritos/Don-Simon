@@ -3,6 +3,7 @@ import type { Db } from "./index";
 import { categorias, hormas, lookbookFotos, notas, pieles, productos, variantes, type Ocasion, type Publico } from "./schema";
 import { LOOKBOOK_EJEMPLO } from "../content/lookbook-ejemplo";
 import { NOTAS_EJEMPLO, PIELES_EJEMPLO } from "../content/ejemplos-etapa-g";
+import { asegurarAccesoriosEjemplo } from "./accesorios-ejemplo";
 
 // Datos de ejemplo para desarrollo. Solo se cargan si la base está vacía.
 // Son modelos inventados: se reemplazan por el catálogo real desde el admin.
@@ -286,4 +287,6 @@ export async function seed(db: Db) {
       publicadaEn: ahora,
     })),
   );
+
+  await asegurarAccesoriosEjemplo(db);
 }

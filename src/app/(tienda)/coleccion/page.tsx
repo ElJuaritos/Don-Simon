@@ -13,7 +13,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/coleccion">
 
 export default async function Coleccion({ searchParams }: PageProps<"/coleccion">) {
   const filtros = await searchParams;
-  const categorias = await getCategorias();
+  const categorias = (await getCategorias()).filter((c) => c.tipo === "calzado");
   return (
     <VistaColeccion
       titulo="Colección"

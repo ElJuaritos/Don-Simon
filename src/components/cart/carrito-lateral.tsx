@@ -1,28 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { tienda } from "@/config/marca";
-import { formatPrecio, formatTalla } from "@/lib/formato";
+import { formatPrecio, textoDeTalla } from "@/lib/formato";
 import { FotoProducto } from "@/components/ui/foto";
 import { PanelLateral } from "@/components/ui/panel-lateral";
-import { CarruselProductos } from "@/components/product/carrusel-productos";
 import { useCarrito } from "./proveedor-carrito";
-
-/** Oculto mientras no haya accesorios que sugerir. */
-function NoOlvidesAgregar({ productos }: { productos: ReactNode[] }) {
-  if (productos.length === 0) return null;
-  return (
-    <section className="border-t border-negro/10 py-6" aria-labelledby="titulo-no-olvides">
-      <h3 id="titulo-no-olvides" className="text-sm font-medium">
-        No olvides agregar
-      </h3>
-      <div className="mt-4">
-        <CarruselProductos etiqueta="No olvides agregar">{productos}</CarruselProductos>
-      </div>
-    </section>
-  );
-}
+import { NoOlvidesAgregar } from "./no-olvides";
 
 function Controles({
   varianteId,
@@ -42,7 +26,7 @@ function Controles({
         <button
           type="button"
           className="grid h-9 w-9 place-items-center disabled:text-negro/60"
-          aria-label={`Quitar un par de ${nombre}`}
+          aria-label={`Quitar un artículo de ${nombre}`}
           disabled={pendiente || cantidad <= 1}
           onClick={() => fijarCantidad(varianteId, cantidad - 1)}
         >
@@ -54,7 +38,7 @@ function Controles({
         <button
           type="button"
           className="grid h-9 w-9 place-items-center disabled:text-negro/60"
-          aria-label={`Agregar un par de ${nombre}`}
+          aria-label={`Agregar un artículo de ${nombre}`}
           disabled={pendiente || cantidad >= max}
           onClick={() => fijarCantidad(varianteId, cantidad + 1)}
         >
@@ -151,10 +135,10 @@ export function CarritoLateral() {
                     <p>{formatPrecio(l.precioUnitario * l.cantidad)}</p>
                   </div>
                   <p className="mt-1 text-sm text-negro/80">
-                    {l.color} · Talla {formatTalla(l.talla)}
+                    {l.color} · {textoDeTalla(l)}
                   </p>
                   {l.cantidad > l.disponibles && (
-                    <p className="mt-1 text-sm text-pizarra-oscuro">Ajusta la cantidad: no hay suficientes pares.</p>
+                    <p className="mt-1 text-sm text-pizarra-oscuro">Ajusta la cantidad: no hay suficientes artículos.</p>
                   )}
                   <Controles varianteId={l.varianteId} cantidad={l.cantidad} max={Math.max(max, 1)} nombre={l.nombre} />
                 </div>
@@ -163,7 +147,7 @@ export function CarritoLateral() {
           })}
         </ul>
       )}
-      <NoOlvidesAgregar productos={[]} />
+      <NoOlvidesAgregar id="titulo-no-olvides-panel" />
     </PanelLateral>
   );
 }

@@ -3,8 +3,9 @@ import Link from "next/link";
 import { tienda } from "@/config/marca";
 import { cambiarCantidad } from "@/lib/actions/tienda";
 import { getCarritoDetallado, type CarritoDetallado } from "@/lib/carrito";
-import { formatPrecio, formatTalla } from "@/lib/formato";
+import { formatPrecio, textoDeTalla } from "@/lib/formato";
 import { FotoProducto } from "@/components/ui/foto";
+import { NoOlvidesAgregar } from "@/components/cart/no-olvides";
 
 export const metadata: Metadata = { title: "Carrito", robots: { index: false } };
 
@@ -24,6 +25,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
             Mujer
           </Link>
         </div>
+        <NoOlvidesAgregar />
       </div>
     );
   }
@@ -54,7 +56,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                         {l.nombre}
                       </Link>
                       <p className="mt-1 text-sm text-negro/85">
-                        {l.color} · Talla {formatTalla(l.talla)}
+                        {l.color} · {textoDeTalla(l)}
                       </p>
                     </div>
                     <p className="font-semibold">{formatPrecio(l.precioUnitario * l.cantidad)}</p>
@@ -63,7 +65,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                     <p className="mt-2 text-sm text-pizarra-oscuro" role="alert">
                       {l.disponibles === 0
                         ? "Esta talla se agotó. Quítala para continuar."
-                        : `Solo quedan ${l.disponibles} pares. Ajusta la cantidad.`}
+                        : `Solo quedan ${l.disponibles} ${l.disponibles === 1 ? "artículo" : "artículos"}. Ajusta la cantidad.`}
                     </p>
                   )}
                   <div className="mt-auto flex items-center gap-4 pt-4">
@@ -73,7 +75,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                         type="submit"
                         name="cantidad"
                         value={l.cantidad - 1}
-                        aria-label="Quitar un par"
+                        aria-label={`Quitar un artículo de ${l.nombre}`}
                         className="grid h-10 w-10 place-items-center hover:bg-niebla"
                       >
                         −
@@ -86,7 +88,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                         name="cantidad"
                         value={l.cantidad + 1}
                         disabled={l.cantidad >= max}
-                        aria-label="Agregar un par"
+                        aria-label={`Agregar un artículo de ${l.nombre}`}
                         className="grid h-10 w-10 place-items-center hover:bg-blanco disabled:opacity-30"
                       >
                         +
@@ -107,6 +109,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
 
         <Resumen carrito={carrito} />
       </div>
+      <NoOlvidesAgregar />
     </div>
   );
 }

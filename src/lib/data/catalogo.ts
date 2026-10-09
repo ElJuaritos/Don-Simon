@@ -11,8 +11,10 @@ import {
   type Ocasion,
   type Producto,
   type Publico,
+  type TipoCategoria,
   type Variante,
 } from "@/db/schema";
+import { etiquetaDeTalla } from "@/lib/formato";
 
 export type Orden = "destacados" | "novedades" | "precio-asc" | "precio-desc";
 
@@ -25,7 +27,8 @@ export type ProductoListado = Producto & {
   imagenSecundaria: { url: string; alt: string } | null;
   color: string;
   colorHex: string;
-  tallasDisponibles: number[];
+  /** Clave de filtro: "25.5", "85 cm" o "Única". */
+  tallasDisponibles: string[];
   disponible: boolean;
   ultimosPares: boolean;
   nuevo: boolean;
@@ -33,7 +36,7 @@ export type ProductoListado = Producto & {
 
 export type OpcionesFiltro = {
   estilos: { slug: string; nombre: string }[];
-  tallas: number[];
+  tallas: string[];
   colores: string[];
   materiales: string[];
   ocasiones: Ocasion[];
@@ -41,8 +44,10 @@ export type OpcionesFiltro = {
 
 export type FiltrosListado = {
   categoriaSlug?: string;
+  /** Solo calzado o solo accesorios. Sin valor, la búsqueda incluye los dos. */
+  tipo?: TipoCategoria;
   para?: Exclude<Publico, "unisex">;
-  talla?: number | number[];
+  talla?: string | string[];
   color?: string | string[];
   material?: string | string[];
   ocasion?: string | string[];
@@ -51,11 +56,12 @@ export type FiltrosListado = {
   q?: string;
   soloDestacados?: boolean;
   limite?: number;
+  ids?: string[];
 };
 
 type Facetas = {
   estilos: string[];
-  tallas: number[];
+  tallas: string[];
   colores: string[];
   materiales: string[];
   ocasiones: string[];
@@ -79,8 +85,8 @@ export async function getCategorias() {
   return db.select().from(categorias).orderBy(asc(categorias.orden), asc(categorias.nombre));
 }
 
-/** Categorías que tienen al menos un modelo activo de ese público (los unisex cuentan en los dos). */
-export async function getCategoriasPara(para: "hombre" | "mujer") {
+/** Categorías con al menos un producto activo de ese público. Por defecto, solo calzado. */
+export async function getCategoriasPara(para: "hombre" | "mujer", tipo: TipoCategoria = "calzado") {
   const db = await getDb();
   return db
     .selectDistinct({
@@ -94,7 +100,7 @@ export async function getCategoriasPara(para: "hombre" | "mujer") {
     })
     .from(categorias)
     .innerJoin(productos, eq(productos.categoriaId, categorias.id))
-    .where(and(eq(productos.estado, "activo"), inArray(productos.publico, [para, "unisex"])))
+    .where(and(eq(productos.estado, "activo"), eq(categorias.tipo, tipo), inArray(productos.publico, [para, "unisex"])))
     .orderBy(asc(categorias.orden), asc(categorias.nombre));
 }
 
@@ -110,9 +116,24 @@ export async function getMaterialesUsados() {
   return filas.map((f) => f.material.trim()).filter(Boolean).sort((a, b) => a.localeCompare(b, "es"));
 }
 
-function nums(valor: number | number[] | undefined) {
-  if (valor == null) return [];
-  return (Array.isArray(valor) ? valor : [valor]).filter((n) => Number.isFinite(n));
+function nums(valor: string | string[] | undefined) {
+  if (!valor) return [];
+  return textos(valor);
+}
+
+function ordenTalla(a: string, b: string) {
+  if (a === "Única") return 1;
+  if (b === "Única") return -1;
+  const na = Number(a);
+  const nb = Number(b);
+  if (Number.isFinite(na) && Number.isFinite(nb)) return na - nb;
+  return a.localeCompare(b, "es");
+}
+
+/** Clave del filtro de talla. "Única" se oculta cuando todo el catálogo es así. */
+function claveDeTalla(v: { talla: number | null; etiquetaTalla: string | null }) {
+  const etiqueta = etiquetaDeTalla(v);
+  return etiqueta === "Talla única" ? "Única" : etiqueta;
 }
 
 function textos(valor: string | string[] | undefined) {
@@ -143,7 +164,7 @@ function opcionesDe(tarjetas: ProductoListado[], facetas: Facetas): OpcionesFilt
     .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"));
   return {
     estilos,
-    tallas: unicos(de("tallas").flatMap((t) => t.tallasDisponibles), (a, b) => a - b),
+    tallas: unicos(de("tallas").flatMap((t) => t.tallasDisponibles), ordenTalla),
     colores: unicos(de("colores").map((t) => t.color), (a, b) => a.localeCompare(b, "es")),
     materiales: unicos(
       de("materiales").map((t) => t.material).filter(Boolean),
@@ -153,9 +174,11 @@ function opcionesDe(tarjetas: ProductoListado[], facetas: Facetas): OpcionesFilt
   };
 }
 
-async function cargarTarjetas(filtros: Pick<FiltrosListado, "para" | "q" | "soloDestacados">) {
+async function cargarTarjetas(filtros: Pick<FiltrosListado, "para" | "q" | "soloDestacados" | "tipo" | "ids">) {
   const db = await getDb();
   const condiciones: SQL[] = [eq(productos.estado, "activo")];
+  if (filtros.tipo) condiciones.push(eq(categorias.tipo, filtros.tipo));
+  if (filtros.ids?.length) condiciones.push(inArray(productos.id, filtros.ids));
   if (filtros.soloDestacados) condiciones.push(eq(productos.destacado, true));
   if (filtros.para) condiciones.push(inArray(productos.publico, [filtros.para, "unisex"]));
   if (filtros.q) {
@@ -196,7 +219,7 @@ async function cargarTarjetas(filtros: Pick<FiltrosListado, "para" | "q" | "solo
         imagenSecundaria: fotos[1] ? { url: fotos[1].url, alt: fotos[1].alt } : null,
         color,
         colorHex,
-        tallasDisponibles: [...new Set(conStock.map((v) => v.talla))].sort((a, b) => a - b),
+        tallasDisponibles: [...new Set(conStock.map(claveDeTalla))].sort(ordenTalla),
         disponible: conStock.length > 0,
         ultimosPares: total > 0 && total <= 5,
         nuevo,
@@ -278,3 +301,15 @@ export async function getProducto(slug: string) {
 }
 
 export type ProductoDetalle = NonNullable<Awaited<ReturnType<typeof getProducto>>>;
+
+/** Hay al menos un accesorio activo: entonces se muestra el enlace del menú. */
+export async function hayAccesoriosActivos() {
+  const db = await getDb();
+  const [fila] = await db
+    .select({ id: productos.id })
+    .from(productos)
+    .innerJoin(categorias, eq(productos.categoriaId, categorias.id))
+    .where(and(eq(productos.estado, "activo"), eq(categorias.tipo, "accesorio")))
+    .limit(1);
+  return Boolean(fila);
+}

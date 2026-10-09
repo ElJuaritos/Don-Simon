@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
   jsonb,
@@ -25,10 +27,15 @@ const timestamps = {
     .$onUpdate(() => new Date()),
 };
 
+export const TIPOS_CATEGORIA = ["calzado", "accesorio"] as const;
+export type TipoCategoria = (typeof TIPOS_CATEGORIA)[number];
+
 export const categorias = pgTable("categorias", {
   id: uuid("id").primaryKey().defaultRandom(),
   nombre: text("nombre").notNull(),
   slug: text("slug").notNull().unique(),
+  /** Calzado usa talla numérica. Accesorio usa etiqueta de texto o talla única. */
+  tipo: text("tipo", { enum: TIPOS_CATEGORIA }).notNull().default("calzado"),
   descripcion: text("descripcion").notNull().default(""),
   imagenUrl: text("imagen_url"),
   /** Foto de la categoría en Hombre. Si falta, se usa imagen_url. */
@@ -93,8 +100,10 @@ export const variantes = pgTable(
       .references(() => productos.id, { onDelete: "cascade" }),
     color: text("color").notNull(),
     colorHex: text("color_hex").notNull().default("#5d3f24"),
-    // Talla MX en centímetros (25.5)
-    talla: numeric("talla", { precision: 3, scale: 1, mode: "number" }).notNull(),
+    /** Talla MX en centímetros. Vacía en accesorios. */
+    talla: numeric("talla", { precision: 3, scale: 1, mode: "number" }),
+    /** Talla de accesorio, p. ej. "85 cm" o "M". Vacía si es talla única. */
+    etiquetaTalla: text("etiqueta_talla"),
     sku: text("sku").notNull().unique(),
     stock: integer("stock").notNull().default(0),
     // Pares reservados por pedidos que esperan pago
@@ -102,7 +111,11 @@ export const variantes = pgTable(
     activo: boolean("activo").notNull().default(true),
     ...timestamps,
   },
-  (t) => [unique("variantes_producto_color_talla").on(t.productoId, t.color, t.talla)],
+  (t) => [
+    unique("variantes_producto_color_talla")
+      .on(t.productoId, t.color, t.talla, t.etiquetaTalla)
+      .nullsNotDistinct(),
+  ],
 ).enableRLS();
 
 export const imagenes = pgTable("imagenes", {
@@ -174,11 +187,33 @@ export const pedidoLineas = pgTable("pedido_lineas", {
   // Copia de los datos al momento de la compra
   nombreProducto: text("nombre_producto").notNull(),
   color: text("color").notNull(),
-  talla: numeric("talla", { precision: 3, scale: 1, mode: "number" }).notNull(),
+  /** Copia de la talla numérica. Vacía si el accesorio no la usa. */
+  talla: numeric("talla", { precision: 3, scale: 1, mode: "number" }),
+  /** Copia de la etiqueta del accesorio ("85 cm", "M"). Vacía en talla única. */
+  etiquetaTalla: text("etiqueta_talla"),
   sku: text("sku").notNull(),
   precioUnitario: integer("precio_unitario").notNull(),
   cantidad: integer("cantidad").notNull(),
 }).enableRLS();
+
+/** Productos que se sugieren junto a otro. No se puede ligar un producto consigo mismo. */
+export const productosComplementarios = pgTable(
+  "productos_complementarios",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productoId: uuid("producto_id")
+      .notNull()
+      .references(() => productos.id, { onDelete: "cascade" }),
+    complementarioId: uuid("complementario_id")
+      .notNull()
+      .references(() => productos.id, { onDelete: "cascade" }),
+    orden: integer("orden").notNull().default(0),
+  },
+  (t) => [
+    unique("productos_complementarios_par").on(t.productoId, t.complementarioId),
+    check("complementario_distinto", sql`${t.productoId} <> ${t.complementarioId}`),
+  ],
+).enableRLS();
 
 export const PREFERENCIAS_BOLETIN = ["hombre", "mujer", "ambos"] as const;
 export type PreferenciaBoletin = (typeof PREFERENCIAS_BOLETIN)[number];

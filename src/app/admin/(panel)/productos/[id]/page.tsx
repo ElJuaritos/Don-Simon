@@ -5,12 +5,13 @@ import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
-import { hormas, imagenes, productos, variantes } from "@/db/schema";
+import { hormas, imagenes, productos, productosComplementarios, variantes } from "@/db/schema";
 import { agregarVariantes, eliminarImagen, guardarInventario, hacerPrincipal, subirImagenes } from "@/lib/actions/admin";
 import { getCategorias } from "@/lib/data/catalogo";
-import { formatTalla } from "@/lib/formato";
+import { textoDeTalla } from "@/lib/formato";
 import { FormAdmin } from "@/components/admin/form-admin";
 import { FormProducto } from "@/components/admin/form-producto";
+import { FormComplementarios } from "@/components/admin/form-complementarios";
 import { Tarjeta, TituloAdmin } from "@/components/admin/ui";
 
 export const metadata: Metadata = { title: "Editar producto" };
@@ -20,14 +21,21 @@ export default async function EditarProducto({ params, searchParams }: PageProps
   if (!z.uuid().safeParse(id).success) notFound();
 
   const db = await getDb();
-  const [[producto], cats, listaHormas, vars, imgs] = await Promise.all([
+  const [[producto], cats, listaHormas, vars, imgs, ligados] = await Promise.all([
     db.select().from(productos).where(eq(productos.id, id)),
     getCategorias(),
     db.select().from(hormas),
-    db.select().from(variantes).where(eq(variantes.productoId, id)).orderBy(asc(variantes.color), asc(variantes.talla)),
+    db.select().from(variantes).where(eq(variantes.productoId, id)).orderBy(asc(variantes.color), asc(variantes.etiquetaTalla), asc(variantes.talla)),
     db.select().from(imagenes).where(eq(imagenes.productoId, id)).orderBy(asc(imagenes.orden)),
+    db
+      .select({ id: productos.id, nombre: productos.nombre, orden: productosComplementarios.orden })
+      .from(productosComplementarios)
+      .innerJoin(productos, eq(productosComplementarios.complementarioId, productos.id))
+      .where(eq(productosComplementarios.productoId, id))
+      .orderBy(asc(productosComplementarios.orden)),
   ]);
   if (!producto) notFound();
+  const esAccesorio = cats.find((c) => c.id === producto.categoriaId)?.tipo === "accesorio";
 
   const porColor = Map.groupBy(vars, (v) => v.color);
   const colores = [...porColor.keys()];
@@ -80,7 +88,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                       {lista.map((v) => (
                         <div key={v.id} className={`border p-2 ${v.activo ? "border-negro/20" : "border-dashed border-negro/20 opacity-60"}`}>
                           <label htmlFor={`stock_${v.id}`} className="block text-center text-sm font-semibold">
-                            {formatTalla(v.talla)}
+                            {textoDeTalla(v)}
                           </label>
                           <input
                             id={`stock_${v.id}`}
@@ -113,13 +121,13 @@ export default async function EditarProducto({ params, searchParams }: PageProps
           )}
         </Tarjeta>
 
-        <Tarjeta titulo="Agregar color y tallas">
-          <FormAdmin action={agregarVariantes} boton="Agregar tallas" botonClase="btn-contorno">
+        <Tarjeta titulo={esAccesorio ? "Agregar color" : "Agregar color y tallas"}>
+          <FormAdmin action={agregarVariantes} boton={esAccesorio ? "Agregar" : "Agregar tallas"} botonClase="btn-contorno">
             <input type="hidden" name="productoId" value={producto.id} />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
               <label className="block lg:col-span-2">
                 <span className="campo-label">Color</span>
-                <input name="color" required list="colores-existentes" className="campo" placeholder="Café" />
+                <input name="color" required list="colores-existentes" className="campo" placeholder={esAccesorio ? "Café" : "Café"} />
                 <datalist id="colores-existentes">
                   {colores.map((c) => (
                     <option key={c} value={c} />
@@ -130,24 +138,54 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                 <span className="campo-label">Muestra</span>
                 <input name="colorHex" type="color" defaultValue="#5d3f24" className="h-12 w-full cursor-pointer border border-negro/25 bg-white p-1" />
               </label>
-              <label className="block">
-                <span className="campo-label">Talla desde</span>
-                <input name="tallaDesde" type="number" step="0.5" defaultValue={25} required className="campo" />
-              </label>
-              <label className="block">
-                <span className="campo-label">Talla hasta</span>
-                <input name="tallaHasta" type="number" step="0.5" defaultValue={29} required className="campo" />
-              </label>
-              <label className="block">
-                <span className="campo-label">Pares por talla</span>
-                <input name="stock" type="number" min={0} defaultValue={0} required className="campo" />
-              </label>
+              {esAccesorio ? (
+                <label className="block lg:col-span-2">
+                  <span className="campo-label">Piezas de este color</span>
+                  <input name="stock" type="number" min={0} defaultValue={0} required className="campo" />
+                </label>
+              ) : (
+                <>
+                  <label className="block">
+                    <span className="campo-label">Talla desde</span>
+                    <input name="tallaDesde" type="number" step="0.5" defaultValue={25} required className="campo" />
+                  </label>
+                  <label className="block">
+                    <span className="campo-label">Talla hasta</span>
+                    <input name="tallaHasta" type="number" step="0.5" defaultValue={29} required className="campo" />
+                  </label>
+                  <label className="block">
+                    <span className="campo-label">Pares por talla</span>
+                    <input name="stock" type="number" min={0} defaultValue={0} required className="campo" />
+                  </label>
+                </>
+              )}
             </div>
-            <label className="mt-4 flex items-center gap-3">
-              <input type="checkbox" name="medias" defaultChecked className="h-5 w-5 accent-negro" />
-              Incluir medias tallas (25.5, 26.5…)
-            </label>
+            {esAccesorio ? (
+              <div className="mt-4 space-y-3">
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" name="unica" defaultChecked className="h-5 w-5 accent-negro" />
+                  Talla única
+                </label>
+                <label className="block">
+                  <span className="campo-label">O escribe las tallas, una por línea</span>
+                  <textarea name="etiquetas" rows={4} className="campo" placeholder={"85 cm\n90 cm\n95 cm"} />
+                  <span className="mt-1 block text-xs text-negro/85">Si marcas talla única, deja este cuadro vacío.</span>
+                </label>
+              </div>
+            ) : (
+              <label className="mt-4 flex items-center gap-3">
+                <input type="checkbox" name="medias" defaultChecked className="h-5 w-5 accent-negro" />
+                Incluir medias tallas (25.5, 26.5…)
+              </label>
+            )}
           </FormAdmin>
+        </Tarjeta>
+
+        <Tarjeta titulo="Combínalo con">
+          <p className="mb-4 text-sm text-negro/85">
+            Estos productos aparecen en la ficha, en este orden. Máximo 6. Si no eliges ninguno, se sugieren accesorios con existencias.
+          </p>
+          <FormComplementarios productoId={producto.id} iniciales={ligados.map((l) => ({ id: l.id, nombre: l.nombre }))} />
         </Tarjeta>
 
         <Tarjeta titulo="Fotos">
