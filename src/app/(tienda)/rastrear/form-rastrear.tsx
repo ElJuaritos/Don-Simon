@@ -25,7 +25,7 @@ export function FormRastrear() {
           <input id="email" name="email" type="email" required autoComplete="email" className="campo" />
         </div>
         {estado?.error && (
-          <p role="alert" className="text-terracota-oscuro">
+          <p role="alert" className="text-pizarra-oscuro">
             {estado.error}
           </p>
         )}
@@ -35,19 +35,19 @@ export function FormRastrear() {
       </form>
 
       {pedido && (
-        <section aria-live="polite" className="border border-cafe/15 p-6">
-          <p className="etiqueta text-cafe/85">{pedido.folio}</p>
+        <section aria-live="polite" className="border border-negro/15 p-6">
+          <p className="etiqueta text-negro/85">{pedido.folio}</p>
           <h2 className="titulo-display mt-3 text-4xl">{pedido.estado}</h2>
-          <p className="mt-2 text-sm text-cafe/85">{pedido.fecha}</p>
+          <p className="mt-2 text-sm text-negro/85">{pedido.fecha}</p>
 
           {pedido.avance >= 0 && (
             <ol className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {PASOS_RASTREO.map((paso, i) => (
                 <li
                   key={paso.estado}
-                  className={`border-t-2 pt-2 text-sm ${i <= pedido.avance ? "border-cafe" : "border-piedra"}`}
+                  className={`border-t-2 pt-2 text-sm ${i <= pedido.avance ? "border-negro" : "border-topo"}`}
                 >
-                  <span className={i <= pedido.avance ? "font-semibold" : "text-cafe/70"}>{paso.texto}</span>
+                  <span className={i <= pedido.avance ? "font-semibold" : "text-negro/70"}>{paso.texto}</span>
                 </li>
               ))}
             </ol>

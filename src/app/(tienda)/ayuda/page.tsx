@@ -14,11 +14,11 @@ export default function Ayuda() {
           <li key={slug}>
             <Link
               href={`/ayuda/${slug}`}
-              className="group flex h-full items-start justify-between gap-4 border border-cafe/15 p-6 transition-colors hover:border-cafe hover:bg-arena/60"
+              className="group flex h-full items-start justify-between gap-4 border border-negro/15 p-6 transition-colors hover:border-negro hover:bg-niebla/60"
             >
               <span>
                 <span className="titulo-display block text-3xl">{p.titulo}</span>
-                <span className="mt-2 block text-[0.9375rem] text-cafe/80">{p.descripcion}</span>
+                <span className="mt-2 block text-[0.9375rem] text-negro/80">{p.descripcion}</span>
               </span>
               <IconoFlecha className="mt-2 shrink-0 transition-transform group-hover:translate-x-1" />
             </Link>
@@ -27,11 +27,11 @@ export default function Ayuda() {
         <li>
           <Link
             href="/rastrear"
-            className="group flex h-full items-start justify-between gap-4 border border-cafe/15 p-6 transition-colors hover:border-cafe hover:bg-arena/60"
+            className="group flex h-full items-start justify-between gap-4 border border-negro/15 p-6 transition-colors hover:border-negro hover:bg-niebla/60"
           >
             <span>
               <span className="titulo-display block text-3xl">Rastrear pedido</span>
-              <span className="mt-2 block text-[0.9375rem] text-cafe/80">Consulta el estado con tu folio y tu correo.</span>
+              <span className="mt-2 block text-[0.9375rem] text-negro/80">Consulta el estado con tu folio y tu correo.</span>
             </span>
             <IconoFlecha className="mt-2 shrink-0 transition-transform group-hover:translate-x-1" />
           </Link>
@@ -39,11 +39,11 @@ export default function Ayuda() {
         <li>
           <Link
             href="/contacto"
-            className="group flex h-full items-start justify-between gap-4 bg-cafe p-6 text-crema-claro transition-colors hover:bg-cafe-oscuro"
+            className="group flex h-full items-start justify-between gap-4 bg-negro p-6 text-blanco transition-colors hover:bg-negro/80"
           >
             <span>
               <span className="titulo-display block text-3xl">Contacto</span>
-              <span className="mt-2 block text-[0.9375rem] text-crema/85">¿No encontraste tu respuesta? Escríbenos.</span>
+              <span className="mt-2 block text-[0.9375rem] text-blanco/85">¿No encontraste tu respuesta? Escríbenos.</span>
             </span>
             <IconoFlecha className="mt-2 shrink-0 transition-transform group-hover:translate-x-1" />
           </Link>

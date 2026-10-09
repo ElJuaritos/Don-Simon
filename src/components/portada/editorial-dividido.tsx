@@ -22,14 +22,14 @@ export function EditorialDividido({
       <div className="grid items-center gap-10 md:grid-cols-12 md:gap-8">
         <Foto
           imagen={bloque.imagen}
-          tono="piedra"
+          tono="topo"
           nota={bloque.notaFoto}
           sinIlustracion
           sizes="(min-width: 768px) 58vw, 100vw"
           className={`aspect-[4/5] md:col-span-7 md:aspect-[5/4] ${invertido ? "md:order-2 md:col-start-6" : ""}`}
         />
         <div className={`md:col-span-5 lg:col-span-4 ${invertido ? "md:order-1 md:col-start-1" : "md:col-start-8 lg:col-start-9"}`}>
-          {etiqueta && <p className="etiqueta text-cafe/85">{etiqueta}</p>}
+          {etiqueta && <p className="etiqueta text-negro/85">{etiqueta}</p>}
           <h2 id={`titulo-${bloque.clave}`} className="titulo-display mt-4 text-4xl md:text-5xl">
             {bloque.titulo}
           </h2>

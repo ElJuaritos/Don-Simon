@@ -28,8 +28,8 @@ export function FormAdmin({
           {enviando ? "Guardando…" : boton}
         </button>
         <p aria-live="polite" className="text-sm">
-          {estado?.error && <span className="font-semibold text-terracota-oscuro">{estado.error}</span>}
-          {estado?.ok && <span className="font-semibold text-olivo-oscuro">✓ {estado.mensaje}</span>}
+          {estado?.error && <span className="font-semibold text-pizarra-oscuro">{estado.error}</span>}
+          {estado?.ok && <span className="font-semibold text-pizarra">✓ {estado.mensaje}</span>}
         </p>
       </div>
     </form>

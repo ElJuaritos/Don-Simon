@@ -51,7 +51,7 @@ export function GaleriaProducto({
               />
             ))}
       </div>
-      <p className="mt-3 text-center text-sm text-cafe/80 lg:hidden" aria-live="polite">
+      <p className="mt-3 text-center text-sm text-negro/80 lg:hidden" aria-live="polite">
         {indice + 1} / {total}
       </p>
     </div>

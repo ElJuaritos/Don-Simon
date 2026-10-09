@@ -30,7 +30,7 @@ export default async function NuestraHistoria() {
   return (
     <>
       <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-16">
-        <p className="etiqueta text-cafe/85">Nuestra historia</p>
+        <p className="etiqueta text-negro/85">Nuestra historia</p>
         <h1 className="titulo-display mx-auto mt-5 max-w-4xl text-5xl md:text-7xl">{intro.titulo}</h1>
         {intro.texto && <p className="mx-auto mt-8 max-w-xl text-lg">{intro.texto}</p>}
       </section>
@@ -46,7 +46,7 @@ export default async function NuestraHistoria() {
       <div className="contenedor">
         <Foto
           imagen={intro.imagen}
-          tono="piedra"
+          tono="topo"
           nota={intro.notaFoto}
           sinIlustracion
           sizes="100vw"
@@ -64,7 +64,7 @@ export default async function NuestraHistoria() {
           ] as const
         ).map(([id, clave], i) =>
           b[clave]?.titulo ? (
-            <div key={id} id={id} className="scroll-mt-28">
+            <div key={id} id={id} className="scroll-mt-36">
               <EditorialDividido bloque={b[clave]} invertido={i % 2 === 1} />
             </div>
           ) : null,
@@ -72,7 +72,7 @@ export default async function NuestraHistoria() {
         <EditorialDividido bloque={b["historia-quien"]} etiqueta="La casa" />
       </div>
 
-      <section className="border-y border-cafe/10 bg-arena/50" aria-labelledby="titulo-proceso">
+      <section className="border-y border-negro/10 bg-niebla/50" aria-labelledby="titulo-proceso">
         <div className="contenedor seccion">
           <h2 id="titulo-proceso" className="titulo-display text-center text-4xl md:text-5xl">
             Paso a paso
@@ -84,8 +84,8 @@ export default async function NuestraHistoria() {
           </p>
           <ol className="mt-16 grid gap-10 md:grid-cols-5 md:gap-8">
             {PASOS.map((p) => (
-              <li key={p.n} className="revelar border-t border-cafe/25 pt-5">
-                <span className="etiqueta text-cafe/85">{p.n}</span>
+              <li key={p.n} className="revelar border-t border-negro/25 pt-5">
+                <span className="etiqueta text-negro/85">{p.n}</span>
                 <h3 className="titulo-display mt-2 text-3xl">{p.titulo}</h3>
                 <p className="mt-3 text-[0.9375rem]">{p.texto}</p>
               </li>

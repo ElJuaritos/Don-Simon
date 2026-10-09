@@ -11,7 +11,7 @@ export default async function TiendaLayout({ children }: LayoutProps<"/">) {
     <ProveedorCarrito carrito={carrito}>
       <a
         href="#contenido"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-cafe focus:px-4 focus:py-2 focus:text-crema-claro"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-negro focus:px-4 focus:py-2 focus:text-blanco"
       >
         Saltar al contenido
       </a>

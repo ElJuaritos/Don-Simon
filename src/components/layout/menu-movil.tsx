@@ -37,13 +37,13 @@ export function MenuMovil({ entradas }: { entradas: EntradaNav[] }) {
         className={`fixed inset-0 z-50 transition-opacity duration-300 ${abierto ? "opacity-100" : "pointer-events-none opacity-0"}`}
         aria-hidden={!abierto}
       >
-        <div className="absolute inset-0 bg-cafe-oscuro/40" onClick={cerrar} />
+        <div className="absolute inset-0 bg-negro/40" onClick={cerrar} />
         <nav
           aria-label="Menú"
-          className={`absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col overflow-y-auto bg-hueso px-6 py-5 transition-transform duration-500 ease-suave ${abierto ? "translate-x-0" : "-translate-x-full"}`}
+          className={`absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col overflow-y-auto bg-blanco px-6 py-5 transition-transform duration-500 ease-suave ${abierto ? "translate-x-0" : "-translate-x-full"}`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-3xl">
+            <span>
               <Logo />
             </span>
             <button type="button" onClick={cerrar} aria-label="Cerrar menú" className="-mr-2 p-2">
@@ -51,7 +51,7 @@ export function MenuMovil({ entradas }: { entradas: EntradaNav[] }) {
             </button>
           </div>
 
-          <ul className="mt-8 divide-y divide-cafe/10 border-y border-cafe/10">
+          <ul className="mt-8 divide-y divide-negro/10 border-y border-negro/10">
             {entradas.map((e) => (
               <li key={e.id}>
                 {e.tipo === "enlace" ? (
@@ -62,17 +62,17 @@ export function MenuMovil({ entradas }: { entradas: EntradaNav[] }) {
                   <details className="group">
                     <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between py-3 text-lg font-medium [&::-webkit-details-marker]:hidden">
                       {e.texto}
-                      <span className="text-cafe/70 group-open:hidden" aria-hidden>
+                      <span className="text-negro/70 group-open:hidden" aria-hidden>
                         +
                       </span>
-                      <span className="hidden text-cafe/70 group-open:inline" aria-hidden>
+                      <span className="hidden text-negro/70 group-open:inline" aria-hidden>
                         −
                       </span>
                     </summary>
                     <div className="space-y-5 pb-4">
                       {e.columnas.map((col) => (
                         <div key={col.titulo}>
-                          <p className="etiqueta text-cafe/85">{col.titulo}</p>
+                          <p className="etiqueta text-negro/85">{col.titulo}</p>
                           <ul className="mt-2 space-y-1">
                             {col.enlaces.map((enlace) => (
                               <li key={`${col.titulo}-${enlace.texto}`}>

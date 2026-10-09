@@ -43,14 +43,14 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
       <div className="grid max-w-6xl gap-6 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-6">
           <Tarjeta titulo="Productos">
-            <ul className="divide-y divide-cafe/10">
+            <ul className="divide-y divide-negro/10">
               {pedido.lineas.map((l) => (
                 <li key={l.id} className="flex justify-between gap-4 py-3">
                   <span>
                     <span className="font-semibold">
                       {l.cantidad} × {l.nombreProducto}
                     </span>
-                    <span className="block text-sm text-cafe/85">
+                    <span className="block text-sm text-negro/85">
                       {l.color} · Talla {formatTalla(l.talla)} · SKU {l.sku}
                     </span>
                   </span>
@@ -58,7 +58,7 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
                 </li>
               ))}
             </ul>
-            <dl className="mt-4 space-y-1 border-t border-cafe/15 pt-4 text-[0.9375rem]">
+            <dl className="mt-4 space-y-1 border-t border-negro/15 pt-4 text-[0.9375rem]">
               <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatPrecio(pedido.subtotal)}</dd></div>
               <div className="flex justify-between"><dt>Envío</dt><dd>{pedido.envio ? formatPrecio(pedido.envio) : "Gratis"}</dd></div>
               {(pedido.descuento > 0 || pedido.codigoDescuento) && (
@@ -74,22 +74,22 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
           {enlaces.length > 0 && (
             <Tarjeta titulo="Pedir reseña">
               {/* TODO: correo automático con Resend cuando el pedido lleve unos días entregado. */}
-              <p className="text-sm text-cafe/80">
+              <p className="text-sm text-negro/80">
                 El correo se enviará solo cuando conectemos el correo. Mientras tanto, comparte el enlace de cada par.
               </p>
-              <ul className="mt-4 divide-y divide-cafe/10">
+              <ul className="mt-4 divide-y divide-negro/10">
                 {enlaces.map(({ linea, url }) => (
                   <li key={linea.id} className="py-4">
                     <p className="font-semibold">
                       {linea.nombreProducto}
-                      <span className="block text-sm font-normal text-cafe/75">
+                      <span className="block text-sm font-normal text-negro/75">
                         {linea.color} · Talla {formatTalla(linea.talla)}
                       </span>
                     </p>
                     {url ? (
                       <EnlaceResena url={url} nombre={pedido.nombre} producto={linea.nombreProducto} telefono={pedido.telefono} />
                     ) : (
-                      <p className="mt-2 text-sm text-cafe/75">Este par ya tiene reseña.</p>
+                      <p className="mt-2 text-sm text-negro/75">Este par ya tiene reseña.</p>
                     )}
                   </li>
                 ))}
@@ -113,7 +113,7 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
               {d.calle} {d.numeroExt}{d.numeroInt ? ` int. ${d.numeroInt}` : ""}<br />
               {d.colonia}, C.P. {d.codigoPostal}<br />
               {d.ciudad}, {d.estado}
-              {d.referencias && <><br /><span className="text-sm text-cafe/85">Ref.: {d.referencias}</span></>}
+              {d.referencias && <><br /><span className="text-sm text-negro/85">Ref.: {d.referencias}</span></>}
             </address>
             {pedido.numeroGuia && (
               <p className="mt-3 text-sm">
@@ -128,7 +128,7 @@ export default async function PedidoAdmin({ params }: PageProps<"/admin/pedidos/
               {pedido.enviadoEn && <div><dt className="inline font-semibold">Enviado: </dt><dd className="inline">{formatFecha(pedido.enviadoEn)}</dd></div>}
               {pedido.stripeSessionId && <div><dt className="inline font-semibold">Stripe: </dt><dd className="inline break-all">{pedido.stripeSessionId}</dd></div>}
             </dl>
-            {pedido.notas && <p className="mt-3 bg-crema-claro px-3 py-2 text-sm"><strong>Nota del cliente:</strong> {pedido.notas}</p>}
+            {pedido.notas && <p className="mt-3 bg-blanco px-3 py-2 text-sm"><strong>Nota del cliente:</strong> {pedido.notas}</p>}
           </Tarjeta>
         </div>
       </div>

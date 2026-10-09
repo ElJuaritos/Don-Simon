@@ -59,7 +59,7 @@ function Tabla({ filas, titulo }: { filas: FilaTalla[]; titulo?: string }) {
           Equivalencia de tallas MX, US, EU, UK y centímetros{titulo ? ` de ${titulo.toLowerCase()}` : ""}
         </caption>
         <thead>
-          <tr className="border-b border-cafe/30">
+          <tr className="border-b border-negro/30">
             {["MX", "US", "EU", "UK", "Pie (cm)"].map((h) => (
               <th key={h} scope="col" className="etiqueta py-2.5">
                 {h}
@@ -69,7 +69,7 @@ function Tabla({ filas, titulo }: { filas: FilaTalla[]; titulo?: string }) {
         </thead>
         <tbody>
           {filas.map((f) => (
-            <tr key={f.mx} className="border-b border-cafe/10">
+            <tr key={f.mx} className="border-b border-negro/10">
               <th scope="row" className="py-2 font-semibold">
                 {f.mx}
               </th>

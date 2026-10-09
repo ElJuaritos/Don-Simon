@@ -87,7 +87,7 @@ function Flecha({
       type="button"
       onClick={onClick}
       aria-label={izquierda ? "Ver anteriores" : "Ver siguientes"}
-      className={`absolute top-1/3 z-10 hidden h-11 w-11 place-items-center border border-cafe/15 bg-hueso/95 text-cafe transition-opacity hover:bg-hueso focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cafe lg:grid ${izquierda ? "left-3" : "right-3"}`}
+      className={`absolute top-1/3 z-10 hidden h-11 w-11 place-items-center border border-negro/15 bg-blanco/95 text-negro transition-opacity hover:bg-blanco focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-negro lg:grid ${izquierda ? "left-3" : "right-3"}`}
     >
       <span aria-hidden className="text-xl leading-none">
         {izquierda ? "‹" : "›"}

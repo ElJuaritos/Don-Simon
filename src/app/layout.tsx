@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Pinyon_Script, Quicksand } from "next/font/google";
+import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { marca } from "@/config/marca";
 import { urlDelSitio } from "@/lib/sitio";
 import "./globals.css";
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const sans = Montserrat({
+  variable: "--font-sans-marca",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -13,14 +13,8 @@ const quicksand = Quicksand({
 const display = Cormorant_Garamond({
   variable: "--font-display-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-});
-
-const script = Pinyon_Script({
-  variable: "--font-script-logo",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["500", "600"],
+  style: "normal",
 });
 
 export const metadata: Metadata = {
@@ -38,15 +32,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#5d3f24",
+  themeColor: "#3d516b",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="es-MX"
-      className={`${quicksand.variable} ${display.variable} ${script.variable}`}
-    >
+    <html lang="es-MX" className={`${sans.variable} ${display.variable}`}>
       <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Tienda en línea a la medida para **Don Simon**, marca mexicana de calzado de piel premium. Es un sitio público más un panel de administración. Toda la planeación está en [`docs/`](docs/). Léela antes de tomar decisiones de producto o arquitectura.
+Tienda en línea a la medida para **Varen**, marca mexicana de calzado de piel premium. Es un sitio público más un panel de administración. Toda la planeación está en [`docs/`](docs/). Léela antes de tomar decisiones de producto o arquitectura.
 
 ## Estado
 
@@ -28,7 +28,7 @@ MVP funcional en local, con el rediseño editorial pedido por el dueño (referen
 - **Pagos con Stripe** (Checkout alojado + webhooks). Nunca procesamos ni guardamos datos de tarjeta. El dueño pidió también **PayPal** y **meses sin intereses en promociones**; Stripe no procesa PayPal en México, así que la forma de integrarlo está pendiente ([09](docs/09-plan-rediseno-mockups.md) §14.3).
 - Stack: **Next.js (App Router) + TypeScript + Tailwind + Supabase (Postgres, Auth, Storage) + Drizzle + Resend, en Cloudflare Workers** con OpenNext, en el plan gratuito. Se muda a Vercel cuando la tienda crezca ([05-stack-tecnico](docs/05-stack-tecnico.md), [08 #11b](docs/08-decisiones-pendientes.md)).
 - Arrancar en los **planes gratuitos**; el costo bajo es un requisito.
-- El nombre nuevo es **Varen** (antes "Don Simon", que se cambió por el conflicto con la marca de bebidas Don Simón; [08](docs/08-decisiones-pendientes.md) #0). El código y los documentos todavía dicen Don Simon hasta la etapa H ([09](docs/09-plan-rediseno-mockups.md) §14). El nombre, el logo y el dominio deben ser configurables. Dominio: `donsimonshoes.com` (`marca.dominio`) y no ir escritos a mano por todo el código.
+- El nombre es **Varen** (antes "Don Simon", por el conflicto con la marca de bebidas Don Simón; el historial sigue en [08](docs/08-decisiones-pendientes.md) #0). En el código se usa `marca.nombre`. El dominio (`marca.dominio`) está vacío hasta que se elija y no se muestra.
 
 Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-pendientes.md). Cuando se resuelva una, actualiza ese archivo y el documento afectado.
 
@@ -36,10 +36,9 @@ Las decisiones abiertas están en [08-decisiones-pendientes](docs/08-decisiones-
 
 - **Idioma**: todo lo que ve el usuario (textos y URLs) va en español de México, tuteando. Código, nombres de variables y commits pueden ir en inglés, pero las tablas y columnas de la BD siguen el español de [06-modelo-de-datos](docs/06-modelo-de-datos.md).
 - **Marca** ([02-identidad-de-marca](docs/02-identidad-de-marca.md)):
-  - Colores solo mediante tokens: `cafe #5d3f24`, `crema #e7dac7`, `olivo #9e9268`, `terracota #a85f3e`.
-  - La base es neutra y cálida: fondos `hueso #faf7f2`, `arena #f0e9df` y `piedra #e3d9ca`. Café, olivo y terracota van solo como acentos (botones, badges, detalles), no como fondos de sección. Única excepción: la barra de anuncio y la franja legal del footer van en café oscuro con texto crema.
-  - Texto de cuerpo solo en café sobre crema o blanco. Blanco sobre terracota está bien. Sobre olivo, solo títulos grandes. Nunca café sobre terracota.
-  - Tipografía: *The Seasons* (display, ≥32px) y *Quicksand* (todo lo demás).
+  - Colores solo mediante tokens: `blanco #ffffff`, `niebla #f2f0f0`, `topo #aa9d92`, `pizarra #3d516b`, `pizarra-oscuro #2e3d52`, `negro #000000`.
+  - Sobre topo solo texto negro. Sobre pizarra solo texto blanco. El texto secundario es negro al 70 % y no baja de 60 %. No hay texto topo.
+  - Tipografía provisional: Montserrat en todo el texto y Cormorant Garamond, sin cursiva, en títulos de 32 px o más.
   - Esquinas rectas o de radio mínimo, animaciones suaves, sin estética de plantilla.
 - **Montos en centavos** (enteros) y en MXN, con IVA incluido.
 - **Seguridad en la compra**: el precio y el stock se recalculan en el servidor; un pedido solo pasa a `pagado` por el webhook verificado de Stripe, nunca por la redirección de éxito.

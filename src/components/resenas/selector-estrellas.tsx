@@ -13,7 +13,7 @@ export function SelectorEstrellas() {
         {[1, 2, 3, 4, 5].map((n) => (
           <label
             key={n}
-            className={`grid h-11 w-11 cursor-pointer place-items-center ${n <= valor ? "text-terracota" : "text-cafe/25"}`}
+            className={`grid h-11 w-11 cursor-pointer place-items-center ${n <= valor ? "text-negro" : "text-negro/60"}`}
           >
             <input
               type="radio"

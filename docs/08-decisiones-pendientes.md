@@ -102,6 +102,7 @@ El dueño mandó un segundo PDF (`Diseño Página WEB.pdf`) con la estructura qu
 ### 9. Cambios y devoluciones
 ¿Cambio de talla gratis? ¿Plazo (p. ej. 30 días)? ¿Quién paga el envío de regreso?
 **Decisión (2026-10-07)**: ✅ **Cambios y devoluciones gratis durante 30 días** después de la entrega. Hay que actualizar la ayuda y los términos.
+**Confirmado (2026-10-08)**: ✅ La condición es que el calzado **no tenga uso y conserve su caja original**.
 
 ### 10. Facturación
 ¿Se emitirá CFDI? ¿Con qué proveedor (Facturama, Facturapi, contador)?

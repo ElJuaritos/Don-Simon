@@ -77,7 +77,7 @@ export async function VistaColeccion({
           <ul className="mb-6 flex flex-wrap items-center gap-2" aria-label="Filtros activos">
             {chips.map((c) => (
               <li key={c.texto}>
-                <Link href={c.href} scroll={false} className="texto-nav inline-flex min-h-11 items-center gap-2 border border-cafe/20 px-3">
+                <Link href={c.href} scroll={false} className="texto-nav inline-flex min-h-11 items-center gap-2 border border-negro/20 px-3">
                   {c.texto}
                   <span aria-hidden>×</span>
                   <span className="sr-only">Quitar {c.texto}</span>
@@ -93,14 +93,14 @@ export async function VistaColeccion({
         )}
 
         <header className="max-w-2xl">
-          <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
-            <Link href="/" className="hover:text-cafe">
+          <nav aria-label="Migas de pan" className="text-sm text-negro/85">
+            <Link href="/" className="hover:text-negro">
               Inicio
             </Link>
             {(categoria || filtros.para) && (
               <>
                 {" / "}
-                <Link href={filtros.para ? `/coleccion?para=${filtros.para}` : "/coleccion"} className="hover:text-cafe">
+                <Link href={filtros.para ? `/coleccion?para=${filtros.para}` : "/coleccion"} className="hover:text-negro">
                   Colección
                 </Link>
               </>
@@ -108,7 +108,7 @@ export async function VistaColeccion({
             {categoria && filtros.para && (
               <>
                 {" / "}
-                <Link href={`/${filtros.para}`} className="hover:text-cafe">
+                <Link href={`/${filtros.para}`} className="hover:text-negro">
                   {nombrePara}
                 </Link>
               </>
@@ -116,7 +116,7 @@ export async function VistaColeccion({
           </nav>
           <div className={foto ? "mt-4 grid items-end gap-6 sm:grid-cols-[9rem_1fr]" : ""}>
             {foto && (
-              <Foto imagen={foto} tono="piedra" sinIlustracion className="aspect-[3/4] w-full sm:w-36" sizes="144px" />
+              <Foto imagen={foto} tono="topo" sinIlustracion className="aspect-[3/4] w-full sm:w-36" sizes="144px" />
             )}
             <div>
               <h1 className="titulo-display mt-3 text-5xl md:text-6xl">{tituloFinal}</h1>

@@ -25,17 +25,17 @@ export function FichaLateral({
   invertido?: boolean;
 }) {
   return (
-    <section id={id} className="revelar grid scroll-mt-28 items-center gap-8 md:grid-cols-12 md:gap-6" aria-labelledby={`${id}-titulo`}>
+    <section id={id} className="revelar grid scroll-mt-36 items-center gap-8 md:grid-cols-12 md:gap-6" aria-labelledby={`${id}-titulo`}>
       <Foto
         imagen={imagen}
-        tono={invertido ? "claro" : "piedra"}
+        tono={invertido ? "claro" : "topo"}
         nota={notaFoto}
         sinIlustracion
         sizes="(min-width: 768px) 50vw, 100vw"
         className={`aspect-[4/5] md:col-span-6 md:aspect-square ${invertido ? "md:order-2 md:col-start-7" : ""}`}
       />
       <div className={`md:col-span-5 ${invertido ? "md:order-1 md:col-start-1" : "md:col-start-8"}`}>
-        {etiqueta && <p className="etiqueta text-cafe/85">{etiqueta}</p>}
+        {etiqueta && <p className="etiqueta text-negro/85">{etiqueta}</p>}
         <h2 id={`${id}-titulo`} className="titulo-display mt-3 text-4xl md:text-5xl">
           {titulo}
         </h2>

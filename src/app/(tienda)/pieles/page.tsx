@@ -15,7 +15,7 @@ export default async function Pieles() {
   return (
     <>
       <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-16">
-        <p className="etiqueta text-cafe/85">Materiales</p>
+        <p className="etiqueta text-negro/85">Materiales</p>
         <h1 className="titulo-display mx-auto mt-5 max-w-3xl text-5xl md:text-7xl">Pieles</h1>
         <p className="mx-auto mt-8 max-w-xl text-lg">
           Cada piel se comporta distinto. Aquí ves cómo se siente y cómo cuidarla.
@@ -40,7 +40,7 @@ export default async function Pieles() {
             invertido={i % 2 === 1}
             extra={
               p.cuidado ? (
-                <div className="mt-8 border-t border-cafe/10 pt-6">
+                <div className="mt-8 border-t border-negro/10 pt-6">
                   <h3 className="text-lg font-medium">Cómo cuidarla</h3>
                   <p className="mt-3 whitespace-pre-line">{p.cuidado}</p>
                 </div>

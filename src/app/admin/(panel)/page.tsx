@@ -47,16 +47,16 @@ export default async function InicioAdmin() {
         {indicadores.map((i) => {
           const contenido = (
             <>
-              <p className="text-sm text-cafe/85">{i.etiqueta}</p>
+              <p className="text-sm text-negro/85">{i.etiqueta}</p>
               <p className="mt-2 text-3xl font-semibold">{i.valor}</p>
             </>
           );
           return i.href ? (
-            <Link key={i.etiqueta} href={i.href} className="border border-cafe/15 p-5 transition-colors hover:border-cafe">
+            <Link key={i.etiqueta} href={i.href} className="border border-negro/15 p-5 transition-colors hover:border-negro">
               {contenido}
             </Link>
           ) : (
-            <div key={i.etiqueta} className="border border-cafe/15 p-5">
+            <div key={i.etiqueta} className="border border-negro/15 p-5">
               {contenido}
             </div>
           );
@@ -66,15 +66,15 @@ export default async function InicioAdmin() {
       <div className="mt-8 grid gap-6 xl:grid-cols-2">
         <Tarjeta titulo="Pedidos recientes">
           {recientes.length === 0 ? (
-            <p className="text-cafe/85">Todavía no hay pedidos.</p>
+            <p className="text-negro/85">Todavía no hay pedidos.</p>
           ) : (
-            <ul className="divide-y divide-cafe/10">
+            <ul className="divide-y divide-negro/10">
               {recientes.map((p) => (
                 <li key={p.id}>
-                  <Link href={`/admin/pedidos/${p.id}`} className="flex items-center justify-between gap-4 py-3 hover:bg-crema-claro">
+                  <Link href={`/admin/pedidos/${p.id}`} className="flex items-center justify-between gap-4 py-3 hover:bg-blanco">
                     <span>
                       <span className="font-semibold">{folio(p.numero)}</span> · {p.nombre}
-                      <span className="block text-sm text-cafe/85">{formatFecha(p.createdAt)}</span>
+                      <span className="block text-sm text-negro/85">{formatFecha(p.createdAt)}</span>
                     </span>
                     <span className="flex flex-col items-end gap-1">
                       <BadgeEstado estado={p.estado} />
@@ -89,18 +89,18 @@ export default async function InicioAdmin() {
 
         <Tarjeta titulo="Tallas por agotarse">
           {pocoStock.length === 0 ? (
-            <p className="text-cafe/85">Todo con buen inventario.</p>
+            <p className="text-negro/85">Todo con buen inventario.</p>
           ) : (
-            <ul className="divide-y divide-cafe/10">
+            <ul className="divide-y divide-negro/10">
               {pocoStock.map(({ variante: v, producto }) => {
                 const libres = v.stock - v.stockApartado;
                 return (
                   <li key={v.id}>
-                    <Link href={`/admin/productos/${producto.id}#inventario`} className="flex justify-between gap-4 py-2.5 hover:bg-crema-claro">
+                    <Link href={`/admin/productos/${producto.id}#inventario`} className="flex justify-between gap-4 py-2.5 hover:bg-blanco">
                       <span>
                         {producto.nombre} · {v.color} · {formatTalla(v.talla)}
                       </span>
-                      <span className={libres <= 0 ? "font-semibold text-terracota-oscuro" : ""}>
+                      <span className={libres <= 0 ? "font-semibold text-pizarra-oscuro" : ""}>
                         {libres <= 0 ? "Agotada" : "Queda 1"}
                       </span>
                     </Link>

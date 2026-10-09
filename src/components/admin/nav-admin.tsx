@@ -29,12 +29,12 @@ export function NavAdmin({ pendientes = 0 }: { pendientes?: number }) {
             href={e.href}
             aria-current={activo ? "page" : undefined}
             className={`whitespace-nowrap rounded-[2px] px-3 py-2.5 text-[0.9375rem] font-semibold transition-colors ${
-              activo ? "bg-cafe text-crema-claro" : "hover:bg-crema"
+              activo ? "bg-negro text-blanco" : "hover:bg-blanco"
             }`}
           >
             {e.texto}
             {e.href === "/admin/resenas" && pendientes > 0 && (
-              <span className="ml-2 inline-grid min-w-5 place-items-center bg-terracota px-1 text-xs text-white">{pendientes}</span>
+              <span className="ml-2 inline-grid min-w-5 place-items-center bg-pizarra px-1 text-xs text-blanco">{pendientes}</span>
             )}
           </Link>
         );

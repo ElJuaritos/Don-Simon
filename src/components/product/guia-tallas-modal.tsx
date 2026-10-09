@@ -33,12 +33,12 @@ export function GuiaTallasPanel({
               <li>Marca la punta del dedo más largo y mide en centímetros.</li>
               <li>Mide ambos pies y quédate con el más grande.</li>
             </ul>
-            <p className="mt-2 text-sm text-cafe/80">Esa medida en centímetros es tu talla MX.</p>
+            <p className="mt-2 text-sm text-negro/80">Esa medida en centímetros es tu talla MX.</p>
           </section>
 
           <TablaTallas publico={publico} />
 
-          <p className="text-sm text-cafe/75">
+          <p className="text-sm text-negro/75">
             Equivalencias de referencia. Si estás entre dos tallas, sigue la recomendación de la horma.
           </p>
 

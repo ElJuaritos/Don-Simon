@@ -22,7 +22,7 @@ export default async function EditarNota({ params }: PageProps<"/admin/notas/[id
               Ver nota ↗
             </Link>
           ) : (
-            <span className="text-sm text-cafe/80">Borrador: no se ve en la tienda</span>
+            <span className="text-sm text-negro/80">Borrador: no se ve en la tienda</span>
           )
         }
       >

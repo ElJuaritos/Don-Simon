@@ -51,7 +51,7 @@ export function BotonAyuda() {
   return (
     <div ref={ref} className="fixed right-4 bottom-4 z-30">
       {abierto && (
-        <div id={panelId} role="region" aria-label="Opciones de ayuda" className="mb-2 w-64 border border-cafe/15 bg-hueso p-2">
+        <div id={panelId} role="region" aria-label="Opciones de ayuda" className="mb-2 w-64 border border-negro/15 bg-blanco p-2">
           <ul>
             {marca.whatsapp && (
               <li>
@@ -59,7 +59,7 @@ export function BotonAyuda() {
                   href={`https://wa.me/${marca.whatsapp}?text=${textoWhatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex min-h-11 items-center gap-2 px-3 text-sm hover:bg-arena"
+                  className="flex min-h-11 items-center gap-2 px-3 text-sm hover:bg-niebla"
                 >
                   <IconoWhatsapp />
                   WhatsApp
@@ -68,14 +68,14 @@ export function BotonAyuda() {
             )}
             {marca.email && (
               <li>
-                <a href={`mailto:${marca.email}`} className="flex min-h-11 items-center gap-2 px-3 text-sm hover:bg-arena">
+                <a href={`mailto:${marca.email}`} className="flex min-h-11 items-center gap-2 px-3 text-sm hover:bg-niebla">
                   <IconoCorreo />
                   Correo
                 </a>
               </li>
             )}
             <li>
-              <Link href="/ayuda/preguntas-frecuentes" className="flex min-h-11 items-center px-3 text-sm hover:bg-arena">
+              <Link href="/ayuda/preguntas-frecuentes" className="flex min-h-11 items-center px-3 text-sm hover:bg-niebla">
                 Preguntas frecuentes
               </Link>
             </li>
@@ -87,7 +87,7 @@ export function BotonAyuda() {
         aria-expanded={abierto}
         aria-controls={panelId}
         onClick={() => setAbierto((v) => !v)}
-        className="border border-cafe/20 bg-hueso px-4 py-3 text-sm font-medium text-cafe"
+        className="border border-negro/20 bg-blanco px-4 py-3 text-sm font-medium text-negro"
       >
         ¿Necesitas ayuda?
       </button>

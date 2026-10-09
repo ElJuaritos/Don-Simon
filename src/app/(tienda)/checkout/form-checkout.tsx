@@ -33,9 +33,9 @@ function Campo({
 
 function Paso({ n, titulo, children }: { n: number; titulo: string; children: ReactNode }) {
   return (
-    <section aria-labelledby={`paso-${n}`} className="border-t border-cafe/10 py-8 first:border-0 first:pt-0">
+    <section aria-labelledby={`paso-${n}`} className="border-t border-negro/10 py-8 first:border-0 first:pt-0">
       <h2 id={`paso-${n}`} className="flex items-center gap-3 font-sans text-lg font-medium">
-        <span className="grid h-8 w-8 shrink-0 place-items-center border border-cafe text-sm" aria-hidden>
+        <span className="grid h-8 w-8 shrink-0 place-items-center border border-negro text-sm" aria-hidden>
           {n}
         </span>
         {titulo}
@@ -94,7 +94,7 @@ export function FormCheckout({ modoDemo, sinPagos }: { modoDemo: boolean; sinPag
           <Campo nombre="email" label="Correo electrónico" type="email" autoComplete="email" required />
           <Campo nombre="telefono" label="Celular" type="tel" autoComplete="tel" inputMode="tel" required placeholder="10 dígitos" />
           <label className="flex items-start gap-3 text-sm">
-            <input type="checkbox" name="novedades" className="mt-1 accent-cafe" />
+            <input type="checkbox" name="novedades" className="mt-1 accent-negro" />
             Quiero recibir novedades
           </label>
         </div>
@@ -118,7 +118,7 @@ export function FormCheckout({ modoDemo, sinPagos }: { modoDemo: boolean; sinPag
               value={cp}
               onChange={(e) => alCp(e.target.value)}
             />
-            {avisoCp && <p className="mt-2 text-sm text-cafe/80">{avisoCp}</p>}
+            {avisoCp && <p className="mt-2 text-sm text-negro/80">{avisoCp}</p>}
           </div>
 
           <div>
@@ -185,12 +185,12 @@ export function FormCheckout({ modoDemo, sinPagos }: { modoDemo: boolean; sinPag
       <Paso n={3} titulo="Método de envío">
         <div className="space-y-3" role="radiogroup" aria-label="Método de envío">
           {metodos.map((m) => (
-            <label key={m.id} className="flex cursor-pointer items-center justify-between gap-4 border border-cafe/20 px-4 py-3 has-[:checked]:border-cafe">
+            <label key={m.id} className="flex cursor-pointer items-center justify-between gap-4 border border-negro/20 px-4 py-3 has-[:checked]:border-negro">
               <span className="flex items-center gap-3">
-                <input type="radio" name="metodoEnvio" value={m.id} defaultChecked className="accent-cafe" />
+                <input type="radio" name="metodoEnvio" value={m.id} defaultChecked className="accent-negro" />
                 <span>
                   {m.nombre}
-                  <span className="mt-0.5 block text-sm text-cafe/70">{m.detalle}</span>
+                  <span className="mt-0.5 block text-sm text-negro/70">{m.detalle}</span>
                 </span>
               </span>
               <span className="text-sm font-medium">{m.costo === 0 ? "Gratis" : formatPrecio(m.costo)}</span>
@@ -201,19 +201,19 @@ export function FormCheckout({ modoDemo, sinPagos }: { modoDemo: boolean; sinPag
 
       <Paso n={4} titulo="Pago">
         {estadoForm?.error && (
-          <p role="alert" className="mb-4 border-l-4 border-terracota bg-arena px-4 py-3">
+          <p role="alert" className="mb-4 border-l-4 border-pizarra bg-niebla px-4 py-3">
             {estadoForm.error}
           </p>
         )}
         <button type="submit" disabled={enviando || sinPagos} className="btn-primario w-full sm:w-auto">
           {enviando ? "Procesando…" : modoDemo ? "Confirmar pedido" : "Pagar ahora"}
         </button>
-        <p className="mt-3 text-sm text-cafe/80">
+        <p className="mt-3 text-sm text-negro/80">
           {modoDemo
             ? "El pedido se registra, pero no se cobra mientras Stripe no esté configurado."
             : "Vas a continuar en la página segura de Stripe. No guardamos los datos de tu tarjeta."}
         </p>
-        <LogosPago className="mt-5 text-cafe/80" />
+        <LogosPago className="mt-5 text-negro/80" />
       </Paso>
     </form>
   );

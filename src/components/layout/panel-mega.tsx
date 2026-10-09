@@ -10,13 +10,13 @@ export function PanelMega({ menu }: { menu: Extract<EntradaNav, { tipo: "menu" }
   return (
     <div
       id={`mega-${menu.id}`}
-      className="absolute inset-x-0 top-full max-h-[calc(100svh-4.75rem)] overflow-y-auto border-b border-cafe/10 bg-hueso"
+      className="absolute inset-x-0 top-full max-h-[calc(100svh-8rem)] overflow-y-auto border-b border-negro/10 bg-blanco"
     >
       <div className="contenedor grid gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-10">
         <div className="grid gap-6 sm:grid-cols-3 sm:gap-0">
           {menu.columnas.map((col, i) => (
-            <div key={col.titulo} className={i > 0 ? "sm:border-l sm:border-cafe/10 sm:pl-6" : "sm:pr-6"}>
-              <p className="etiqueta text-cafe/85">{col.titulo}</p>
+            <div key={col.titulo} className={i > 0 ? "sm:border-l sm:border-negro/10 sm:pl-6" : "sm:pr-6"}>
+              <p className="etiqueta text-negro/85">{col.titulo}</p>
               <ul className="mt-4 space-y-1">
                 {col.enlaces.map((e) => (
                   <li key={`${col.titulo}-${e.texto}`}>

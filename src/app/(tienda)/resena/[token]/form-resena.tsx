@@ -19,7 +19,7 @@ export function FormResena({
   const [estado, accion, enviando] = useActionState(enviarResena, undefined);
   if (estado?.ok) {
     return (
-      <p className="border border-cafe/15 bg-arena/50 p-6 text-lg" role="status">
+      <p className="border border-negro/15 bg-niebla/50 p-6 text-lg" role="status">
         Gracias. Tu reseña se publicará cuando la revisemos.
       </p>
     );
@@ -36,7 +36,7 @@ export function FormResena({
       <label className="block">
         <span className="campo-label">Tu reseña</span>
         <textarea name="texto" required minLength={20} maxLength={2000} rows={5} className="campo" />
-        <span className="mt-1 block text-xs text-cafe/60">Entre 20 y 2,000 caracteres.</span>
+        <span className="mt-1 block text-xs text-negro/60">Entre 20 y 2,000 caracteres.</span>
       </label>
 
       <fieldset>
@@ -44,7 +44,7 @@ export function FormResena({
         <div className="mt-2 grid gap-2">
           {OPCIONES_AJUSTE.map((o) => (
             <label key={o.valor} className="flex min-h-11 items-center gap-3 text-sm">
-              <input type="radio" name="ajuste" value={o.valor} required className="accent-cafe" />
+              <input type="radio" name="ajuste" value={o.valor} required className="accent-negro" />
               {o.etiqueta}
             </label>
           ))}
@@ -56,7 +56,7 @@ export function FormResena({
         <div className="mt-2 flex flex-wrap gap-4">
           {(Object.keys(ETIQUETA_ANCHO) as AnchoPie[]).map((a) => (
             <label key={a} className="flex min-h-11 items-center gap-2 text-sm">
-              <input type="radio" name="anchoPie" value={a} required className="accent-cafe" />
+              <input type="radio" name="anchoPie" value={a} required className="accent-negro" />
               {ETIQUETA_ANCHO[a]}
             </label>
           ))}
@@ -73,7 +73,7 @@ export function FormResena({
       </label>
 
       {estado?.error && (
-        <p role="alert" className="text-sm font-semibold text-terracota-oscuro">
+        <p role="alert" className="text-sm font-semibold text-pizarra-oscuro">
           {estado.error}
         </p>
       )}

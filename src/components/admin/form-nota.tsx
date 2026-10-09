@@ -61,9 +61,9 @@ export function FormNota({
       <Campo label="Texto" ayuda={AYUDA_CUERPO}>
         <textarea name="cuerpo" rows={12} value={cuerpo} onChange={(e) => setCuerpo(e.target.value)} className="campo" />
       </Campo>
-      <div className="border border-cafe/10 bg-hueso p-4">
-        <p className="etiqueta mb-3 text-cafe/85">Vista previa</p>
-        {cuerpo.trim() ? <CuerpoNota texto={cuerpo} /> : <p className="text-sm text-cafe/70">El texto se ve aquí mientras lo escribes.</p>}
+      <div className="border border-negro/10 bg-blanco p-4">
+        <p className="etiqueta mb-3 text-negro/85">Vista previa</p>
+        {cuerpo.trim() ? <CuerpoNota texto={cuerpo} /> : <p className="text-sm text-negro/70">El texto se ve aquí mientras lo escribes.</p>}
       </div>
       <Campo label="Texto de la foto" ayuda="Describe la imagen para quien no puede verla.">
         <input name="imagenAlt" defaultValue={nota?.imagenAlt} className="campo" />

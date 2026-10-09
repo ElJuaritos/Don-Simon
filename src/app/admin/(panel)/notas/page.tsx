@@ -20,11 +20,11 @@ export default async function NotasAdmin() {
       >
         Notas
       </TituloAdmin>
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         Una nota en borrador no se ve en la tienda. Al publicarla por primera vez se guarda la fecha.
       </p>
       {lista.length === 0 ? (
-        <p className="text-cafe/85">Todavía no hay notas.</p>
+        <p className="text-negro/85">Todavía no hay notas.</p>
       ) : (
         <ul className="grid max-w-3xl gap-4">
           {lista.map((n) => (
@@ -35,7 +35,7 @@ export default async function NotasAdmin() {
                     <Link href={`/admin/notas/${n.id}`} className="text-lg font-semibold hover:opacity-70">
                       {n.titulo}
                     </Link>
-                    <p className="mt-1 text-sm text-cafe/80">
+                    <p className="mt-1 text-sm text-negro/80">
                       {n.estado === "publicada" ? "Publicada" : "Borrador"}
                       {" · "}
                       {formatDia(n.publicadaEn ?? n.updatedAt)}

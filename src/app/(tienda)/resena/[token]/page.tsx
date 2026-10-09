@@ -42,12 +42,12 @@ export default async function PaginaResena({ params, searchParams }: PageProps<"
 
   return (
     <div className="contenedor max-w-3xl py-10 md:py-16">
-      <p className="text-sm text-cafe/70">Tu reseña</p>
+      <p className="text-sm text-negro/70">Tu reseña</p>
       <div className="mt-4 flex items-center gap-4">
         <FotoProducto imagen={p.imagen} sizes="96px" className="h-24 w-20 shrink-0" />
         <div>
           <h1 className="font-sans text-2xl font-medium">{p.nombre}</h1>
-          <p className="mt-1 text-sm text-cafe/75">
+          <p className="mt-1 text-sm text-negro/75">
             {p.color} · Talla {formatTalla(p.talla)}
           </p>
         </div>
@@ -63,7 +63,7 @@ function Aviso({ texto }: { texto: string }) {
   return (
     <div className="contenedor max-w-xl py-16 md:py-24">
       <h1 className="font-sans text-2xl font-medium">No pudimos abrir este enlace</h1>
-      <p className="mt-4 text-cafe/80">{texto}</p>
+      <p className="mt-4 text-negro/80">{texto}</p>
     </div>
   );
 }

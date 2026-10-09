@@ -14,7 +14,7 @@ export default async function Notas() {
 
   return (
     <div className="contenedor py-12 md:py-20">
-      <p className="etiqueta text-cafe/85">Journal</p>
+      <p className="etiqueta text-negro/85">Journal</p>
       <h1 className="titulo-display mt-4 text-5xl md:text-7xl">Notas</h1>
       {lista.length === 0 ? (
         <p className="mt-10 max-w-md text-lg">Pronto vamos a escribir desde el taller.</p>

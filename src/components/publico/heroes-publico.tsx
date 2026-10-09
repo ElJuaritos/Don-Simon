@@ -14,7 +14,7 @@ export function HeroesPublico({ bloques }: { bloques: BloqueResuelto[] }) {
           <Link key={bloque.clave} href={href} className="group relative block h-[70svh] min-h-80">
             <Foto
               imagen={bloque.imagen}
-              tono="piedra"
+              tono="topo"
               nota={conFoto ? undefined : bloque.notaFoto}
               sinIlustracion
               cubrir
@@ -23,8 +23,8 @@ export function HeroesPublico({ bloques }: { bloques: BloqueResuelto[] }) {
               sizes="(min-width: 768px) 50vw, 100vw"
               className="h-full w-full"
             />
-            {conFoto && <span className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-cafe-oscuro/55 to-transparent" />}
-            <span className={`btn-contorno-claro absolute bottom-8 left-1/2 -translate-x-1/2 ${conFoto ? "" : "border-cafe/40 text-cafe"}`}>
+            {conFoto && <span className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-negro/55 to-transparent" />}
+            <span className={`btn-contorno-claro absolute bottom-8 left-1/2 -translate-x-1/2 ${conFoto ? "" : "border-negro/40 text-negro"}`}>
               {texto}
             </span>
           </Link>

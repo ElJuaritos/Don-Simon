@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import { tienda } from "@/config/marca";
 import { getPedido } from "@/lib/data/pedidos";
 import { folio, formatPrecio, formatTalla } from "@/lib/formato";
 import { VaciarCarrito } from "./vaciar-carrito";
@@ -20,7 +21,7 @@ export default async function Gracias({ searchParams }: PageProps<"/checkout/gra
   return (
     <div className="contenedor max-w-2xl py-16 text-center md:py-24">
       <VaciarCarrito />
-      <p className="etiqueta text-terracota-oscuro">Pedido {folio(pedido.numero)}</p>
+      <p className="etiqueta text-pizarra-oscuro">Pedido {folio(pedido.numero)}</p>
       <h1 className="titulo-display mt-3 text-5xl md:text-6xl">Gracias, {pedido.nombre.split(" ")[0]}</h1>
       <p className="mt-6 text-lg">
         {pagado
@@ -30,14 +31,17 @@ export default async function Gracias({ searchParams }: PageProps<"/checkout/gra
             : "Estamos confirmando tu pago. Si pagaste con OXXO o transferencia, se confirma cuando llegue el depósito."}
       </p>
       {/* TODO: correo de confirmación con Resend (fase 4) */}
-      <p className="mt-2 text-sm text-cafe/85">Guarda tu número de pedido para cualquier aclaración.</p>
+      <p className="mt-2 text-sm text-negro/70">Guarda tu número de pedido para cualquier aclaración.</p>
+      <p className="mt-2 text-sm text-negro/70">
+        Los cambios y las devoluciones son gratis durante los primeros {tienda.diasCambios} días después de la entrega.
+      </p>
 
-      <ul className="mt-10 divide-y divide-cafe/10 border-y border-cafe/10 text-left">
+      <ul className="mt-10 divide-y divide-negro/10 border-y border-negro/10 text-left">
         {pedido.lineas.map((l) => (
           <li key={l.id} className="flex justify-between gap-4 py-4">
             <span>
               {l.cantidad} × {l.nombreProducto}
-              <span className="block text-sm text-cafe/85">
+              <span className="block text-sm text-negro/85">
                 {l.color} · Talla {formatTalla(l.talla)}
               </span>
             </span>

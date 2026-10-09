@@ -32,13 +32,13 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
     <div className="contenedor py-12 md:py-16">
       <h1 className="titulo-display text-5xl">Tu carrito</h1>
       {sp.pago === "cancelado" && (
-        <p role="status" className="mt-6 bg-arena px-4 py-3">
+        <p role="status" className="mt-6 bg-niebla px-4 py-3">
           El pago no se completó. Tus productos siguen aquí cuando quieras intentarlo de nuevo.
         </p>
       )}
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_24rem]">
-        <ul className="divide-y divide-cafe/10 border-y border-cafe/10">
+        <ul className="divide-y divide-negro/10 border-y border-negro/10">
           {carrito.lineas.map((l) => {
             const excede = l.cantidad > l.disponibles;
             const max = Math.min(tienda.maxParesPorLinea, Math.max(l.disponibles, l.cantidad));
@@ -53,28 +53,28 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                       <Link href={`/producto/${l.slug}`} className="font-semibold hover:underline">
                         {l.nombre}
                       </Link>
-                      <p className="mt-1 text-sm text-cafe/85">
+                      <p className="mt-1 text-sm text-negro/85">
                         {l.color} · Talla {formatTalla(l.talla)}
                       </p>
                     </div>
                     <p className="font-semibold">{formatPrecio(l.precioUnitario * l.cantidad)}</p>
                   </div>
                   {excede && (
-                    <p className="mt-2 text-sm text-terracota-oscuro" role="alert">
+                    <p className="mt-2 text-sm text-pizarra-oscuro" role="alert">
                       {l.disponibles === 0
                         ? "Esta talla se agotó. Quítala para continuar."
                         : `Solo quedan ${l.disponibles} pares. Ajusta la cantidad.`}
                     </p>
                   )}
                   <div className="mt-auto flex items-center gap-4 pt-4">
-                    <form action={cambiarCantidad} className="flex items-center border border-cafe/25">
+                    <form action={cambiarCantidad} className="flex items-center border border-negro/25">
                       <input type="hidden" name="varianteId" value={l.varianteId} />
                       <button
                         type="submit"
                         name="cantidad"
                         value={l.cantidad - 1}
                         aria-label="Quitar un par"
-                        className="grid h-10 w-10 place-items-center hover:bg-arena"
+                        className="grid h-10 w-10 place-items-center hover:bg-niebla"
                       >
                         −
                       </button>
@@ -87,7 +87,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
                         value={l.cantidad + 1}
                         disabled={l.cantidad >= max}
                         aria-label="Agregar un par"
-                        className="grid h-10 w-10 place-items-center hover:bg-crema disabled:opacity-30"
+                        className="grid h-10 w-10 place-items-center hover:bg-blanco disabled:opacity-30"
                       >
                         +
                       </button>
@@ -114,7 +114,7 @@ export default async function Carrito({ searchParams }: PageProps<"/carrito">) {
 function Resumen({ carrito }: { carrito: CarritoDetallado }) {
   const progreso = Math.min(100, (carrito.subtotal / tienda.envioGratisDesde) * 100);
   return (
-    <aside className="h-fit bg-arena p-6 lg:sticky lg:top-28" aria-labelledby="titulo-resumen">
+    <aside className="h-fit bg-niebla p-6 lg:sticky lg:top-28" aria-labelledby="titulo-resumen">
       <h2 id="titulo-resumen" className="etiqueta">
         Resumen
       </h2>
@@ -126,8 +126,8 @@ function Resumen({ carrito }: { carrito: CarritoDetallado }) {
         ) : (
           <p className="text-sm font-semibold">¡Tu envío es gratis!</p>
         )}
-        <div className="mt-2 h-1 bg-cafe/15" role="presentation">
-          <div className="h-full bg-terracota transition-all" style={{ width: `${progreso}%` }} />
+        <div className="mt-2 h-1 bg-negro/15" role="presentation">
+          <div className="h-full bg-pizarra transition-all" style={{ width: `${progreso}%` }} />
         </div>
       </div>
       <dl className="mt-6 space-y-2 text-[0.9375rem]">
@@ -139,12 +139,12 @@ function Resumen({ carrito }: { carrito: CarritoDetallado }) {
           <dt>Envío</dt>
           <dd>{carrito.envio === 0 ? "Gratis" : formatPrecio(carrito.envio)}</dd>
         </div>
-        <div className="flex justify-between border-t border-cafe/15 pt-3 text-lg font-semibold">
+        <div className="flex justify-between border-t border-negro/15 pt-3 text-lg font-semibold">
           <dt>Total</dt>
           <dd>{formatPrecio(carrito.total)}</dd>
         </div>
       </dl>
-      <p className="mt-1 text-xs text-cafe/85">IVA incluido</p>
+      <p className="mt-1 text-xs text-negro/85">IVA incluido</p>
       {carrito.hayProblemasDeStock ? (
         <p className="btn-primario mt-6 w-full opacity-50" aria-disabled>
           Ajusta tu carrito para continuar

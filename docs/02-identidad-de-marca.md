@@ -1,102 +1,66 @@
 # 02 · Identidad de marca
 
-![Brand board](assets/brand-board.png)
+Varen es una marca mexicana de calzado de piel. El sitio debe verse sobrio: mucho blanco, el producto como protagonista y pocos acentos.
 
-## Logo
+Los colores y las fuentes se usan solo mediante los tokens de `src/app/globals.css`. El nombre sale de `marca.nombre` en `src/config/marca.ts`.
 
-- **Monograma**: las iniciales "S" entrelazadas con trazos ornamentales tipo agujeta. Sirve como favicon, avatar de redes, sello y en el empaque.
-- **Logotipo**: "Don Simon" en caligrafía, con "Est. 2026" debajo.
-- Versiones que se necesitan: café sobre crema, crema/blanco sobre café o sobre fotografía, y monograma solo.
-- **Pendiente**: archivos vectoriales (SVG) del monograma y el logotipo. No se debe usar el PNG del brand board en producción.
+## Logotipo
 
-> El nombre oficial se escribe **"Don Simon", sin acento**, igual que en el logotipo, en todo el sitio y la comunicación. Ojo: el nombre podría cambiar por el conflicto con la marca de bebidas Don Simón (ver [decisiones pendientes](08-decisiones-pendientes.md#0-conflicto-de-nombre-y-registro-de-marca)).
+Hay dos PNG provisionales, con fondo transparente, en `public/marca/`:
 
-## Paleta de color
+| Archivo | Uso | Medida |
+| --- | --- | --- |
+| `varen-negro.png` | Fondos claros (blanco, niebla) | 1938×543 |
+| `varen-blanco.png` | Fondos oscuros (pizarra, negro) | 1832×450 |
 
-| Token | Nombre | HEX | Uso principal |
-|-------|--------|-----|---------------|
-| `--color-cafe` | Café piel | `#5d3f24` | Texto principal, header/footer, botones primarios |
-| `--color-crema` | Crema | `#e7dac7` | Fondo general del sitio |
-| `--color-olivo` | Olivo | `#9e9268` | Fondos de sección, acentos secundarios, etiquetas |
-| `--color-terracota` | Terracota | `#a85f3e` | Acento: CTA destacados, ofertas, estados activos |
-| `--color-blanco` | Blanco | `#ffffff` | Tarjetas, texto sobre fotografía |
+El componente `Logo` elige la versión con la prop `tono` (`claro` u `oscuro`). El texto alternativo es `marca.nombre`. En el header lleva `priority`.
 
-**Base neutra (2026-09-26).** Siguiendo el PDF de estilo visual del dueño, el sitio usa fondos neutros cálidos y deja la paleta de marca como acento. Café se queda para texto y botones primarios; olivo y terracota, para detalles y ofertas. Ya no se usan como fondos de sección.
+Falta pedir el SVG. El favicon y el ícono de Apple son la «V» recortada del logotipo negro, sobre blanco (`src/app/icon.png` y `src/app/apple-icon.png`).
 
-**Excepción (2026-10-05).** La barra de anuncio de arriba y la franja legal al pie del footer van en **café oscuro (`#3f2a17`) con texto crema claro**, como las franjas negras de las referencias del dueño. Solo esas dos franjas delgadas; el resto de las secciones sigue con fondos neutros. Ver [09](09-plan-rediseno-mockups.md), D1.
+No se usa monograma ni una línea de «Est.».
 
-| Token | HEX | Uso |
-|-------|-----|-----|
-| `--color-hueso` | `#faf7f2` | Fondo general |
-| `--color-arena` | `#f0e9df` | Secciones alternas, footer, resúmenes, espacios de foto |
-| `--color-piedra` | `#e3d9ca` | Espacios de foto con más contraste |
+## Paleta
 
-### Contraste (WCAG)
+| Token | Hex | Uso |
+| --- | --- | --- |
+| `blanco` | `#ffffff` | Fondo principal y texto sobre pizarra o negro |
+| `niebla` | `#f2f0f0` | Fondos suaves, hover de botones claros |
+| `topo` | `#aa9d92` | Cuadros sin foto, barras y el estado «en preparación» |
+| `pizarra` | `#3d516b` | Barra de anuncio, footer, acentos (selección, foco, botón de acento) |
+| `pizarra-oscuro` | `#2e3d52` | Hover de esos acentos |
+| `negro` | `#000000` | Texto, botones principales, barra del menú, estrellas de reseñas |
 
-Mínimos: 4.5:1 para texto normal (AA) y 3:1 para texto grande (≥ 24px, o ≥ 18.66px en negritas).
+### Contraste
 
-| Combinación | Ratio | Uso permitido |
-|-------------|-------|---------------|
-| Café sobre crema | 6.93 | ✅ Cualquier texto |
-| Café sobre blanco | 9.54 | ✅ Cualquier texto |
-| Blanco sobre terracota | 4.80 | ✅ Cualquier texto (botones, badges) |
-| Crema sobre terracota | 3.49 | ⚠️ Solo texto grande |
-| Blanco sobre olivo | 3.10 | ⚠️ Solo texto grande (títulos) |
-| Café sobre olivo | 3.07 | ⚠️ Solo texto grande |
-| Crema sobre olivo | 2.25 | ❌ No usar para texto |
-| Café sobre terracota | 1.99 | ❌ No usar para texto |
+Estas combinaciones son las que se pueden usar. El resto se evita.
 
-Regla práctica: **el texto de cuerpo va en café sobre crema/blanco**. El olivo y la terracota son para fondos con títulos grandes o para botones con texto blanco.
+| Texto | Fondo | Relación aprox. |
+| --- | --- | --- |
+| Negro | Blanco | 21:1 |
+| Negro | Niebla | 18:1 |
+| Negro | Topo | 8:1 |
+| Blanco | Pizarra | 8.1:1 |
+| Blanco | Negro | 21:1 |
+
+- Sobre topo solo va texto negro, sin opacidad.
+- Sobre pizarra solo va texto blanco. Un botón negro sobre pizarra no alcanza.
+- No se usa texto topo.
+- El texto secundario es negro al 70 %. Nunca baja de 60 %.
+- En fondos oscuros el anillo de foco es blanco (`foco-claro`). En el resto es pizarra.
+- La selección de texto es pizarra con texto blanco.
+
+Los nombres de color de un producto («Café», «Coñac») son datos del catálogo, no tokens de la interfaz.
 
 ## Tipografía
 
-| Rol | Fuente | Uso | Licencia |
-|-----|--------|-----|----------|
-| Display | **The Seasons** (Italic) | Títulos grandes, frases de marca, nombres de colección | Comercial: **hace falta comprar la licencia web** |
-| Texto | **Quicksand** (Regular / Medium / SemiBold) | Cuerpo, navegación, botones, precios, formularios | Gratuita (Google Fonts, OFL) |
+Provisional, con `next/font`, hasta que llegue la tipografía definitiva:
 
-Lineamientos:
-- The Seasons solo en tamaños grandes (≥ 32px). Nunca en párrafos, precios ni formularios.
-- Quicksand en cuerpo a 16–18px mínimo; su trazo es delgado y a menor tamaño se lee mal sobre crema.
-- Cargar las fuentes con `font-display: swap` y en formato WOFF2, auto-hospedadas.
+- **Montserrat** para todo el texto (`--font-sans`).
+- **Cormorant Garamond**, sin cursiva, solo en títulos de 32 px o más (`titulo-display`, `--font-display`).
 
-Escala tipográfica sugerida (desktop / móvil):
+## Uso
 
-| Nivel | Tamaño | Fuente |
-|-------|--------|--------|
-| Hero | 72 / 44 px | The Seasons Italic |
-| H1 | 56 / 36 px | The Seasons Italic |
-| H2 | 40 / 28 px | The Seasons Italic |
-| H3 | 22 / 20 px | Quicksand SemiBold |
-| Cuerpo | 18 / 16 px | Quicksand Regular |
-| Pequeño / legal | 14 px | Quicksand Medium |
-| Botón / etiqueta | 14 px, mayúsculas, tracking 0.08em | Quicksand SemiBold |
-
-## Fotografía y dirección de arte
-
-Según el brand board, hay tres tipos de imagen:
-
-1. **Producto en contexto natural**: zapatos sobre piedra, madera vieja o tronco, con luz cálida de tarde. Para portada, colecciones y redes.
-2. **Oficio / taller**: manos cortando piel, patrones, herramientas (lezna, tijeras, hilo). Para la historia de marca y como separadores entre secciones.
-3. **Texturas**: piel con el logo grabado en seco. Para fondos, empaque y detalles.
-
-Además, para el catálogo hace falta:
-
-4. **Producto en fondo liso** (crema o blanco cálido), con los mismos ángulos para todos los modelos: lateral, 3/4, frontal, suela, detalle y par. Así la cuadrícula del catálogo se ve uniforme.
-
-Especificaciones técnicas: proporción 4:5 para producto y 16:9 / 3:2 para editorial; exportar a ≥ 2000px del lado largo; el sitio las sirve en AVIF/WebP optimizadas.
-
-## Tono de voz
-
-- **Cálido y cercano**, sin caer en lo informal. Tuteo ("Encuentra tu talla").
-- **Habla del oficio**: materiales, procesos, tiempo de trabajo. Hechos concretos en lugar de adjetivos vacíos.
-- **Breve**: frases cortas, sobre todo en la interfaz.
-- Ejemplos: "Hecho a mano, paso a paso." · "Piel que mejora con los años." · "Envío gratis a todo México."
-
-## Elementos gráficos y UI
-
-- Esquinas rectas o con radio mínimo (2–4px); nada redondeado tipo app.
-- Líneas finas (1px, café al 30%) como divisores, igual que la línea vertical del brand board.
-- Mucho espacio en blanco; secciones de color sólido que se alternan (crema → olivo → terracota) como en el brand board.
-- Animaciones suaves y lentas (fade y desplazamiento corto). Nada de rebotes.
-- Posible recurso gráfico: una línea tipo hilo o costura que conecta secciones.
+- Móvil primero, desde 375 px.
+- Esquinas rectas o de radio mínimo. Animaciones suaves.
+- El header de escritorio lleva tres franjas: anuncio en pizarra, logotipo sobre blanco y menú en negro. En el celular no hay barra negra.
+- El footer es pizarra con texto blanco. El campo del boletín es blanco y su botón es blanco con texto negro.

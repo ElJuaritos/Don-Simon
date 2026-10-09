@@ -14,7 +14,7 @@ export function FormLogin() {
         <input id="password" name="password" type="password" required autoComplete="current-password" className="campo" autoFocus />
       </div>
       {estado?.error && (
-        <p role="alert" className="text-sm font-semibold text-terracota-oscuro">
+        <p role="alert" className="text-sm font-semibold text-pizarra-oscuro">
           {estado.error}
         </p>
       )}

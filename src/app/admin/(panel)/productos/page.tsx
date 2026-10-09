@@ -47,7 +47,7 @@ export default async function ProductosAdmin() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[40rem] text-left text-[0.9375rem]">
             <thead>
-              <tr className="border-b border-cafe/20 text-sm">
+              <tr className="border-b border-negro/20 text-sm">
                 <th className="py-3 pr-4 font-semibold">Producto</th>
                 <th className="py-3 pr-4 font-semibold">Categoría</th>
                 <th className="py-3 pr-4 font-semibold">Precio</th>
@@ -57,20 +57,20 @@ export default async function ProductosAdmin() {
             </thead>
             <tbody>
               {lista.map(({ producto: p, categoria, pares, tallas }) => (
-                <tr key={p.id} className="border-b border-cafe/10 hover:bg-crema-claro">
+                <tr key={p.id} className="border-b border-negro/10 hover:bg-blanco">
                   <td className="py-3 pr-4">
                     <Link href={`/admin/productos/${p.id}`} className="font-semibold hover:underline">
                       {p.nombre}
                     </Link>
-                    {p.destacado && <span className="ml-2 text-xs text-cafe/85">★ Destacado</span>}
+                    {p.destacado && <span className="ml-2 text-xs text-negro/85">★ Destacado</span>}
                   </td>
                   <td className="py-3 pr-4">{categoria}</td>
                   <td className="py-3 pr-4">{formatPrecio(p.precio)}</td>
                   <td className="py-3 pr-4">
                     {tallas === 0 ? (
-                      <span className="text-terracota-oscuro">Sin tallas</span>
+                      <span className="text-pizarra-oscuro">Sin tallas</span>
                     ) : pares === 0 ? (
-                      <span className="font-semibold text-terracota-oscuro">Agotado</span>
+                      <span className="font-semibold text-pizarra-oscuro">Agotado</span>
                     ) : (
                       pares
                     )}

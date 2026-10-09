@@ -14,14 +14,14 @@ export function Valores() {
     { Icono: IconoCambio, titulo: "Pago seguro", texto: "Con tarjeta de crédito o débito, procesado por Stripe." },
   ];
   return (
-    <section className="border-y border-cafe/10" aria-label="Por qué comprar aquí">
+    <section className="border-y border-negro/10" aria-label="Por qué comprar aquí">
       <ul className="contenedor grid md:grid-cols-3">
         {valores.map(({ Icono, titulo, texto }) => (
-          <li key={titulo} className="flex gap-5 border-b border-cafe/10 py-10 md:border-b-0 md:border-r md:px-8 md:py-14 md:first:pl-0 md:last:border-r-0">
+          <li key={titulo} className="flex gap-5 border-b border-negro/10 py-10 md:border-b-0 md:border-r md:px-8 md:py-14 md:first:pl-0 md:last:border-r-0">
             <Icono width={26} height={26} strokeWidth={1.1} className="mt-0.5 shrink-0" />
             <div>
               <h3 className="font-semibold">{titulo}</h3>
-              <p className="mt-1.5 text-[0.9375rem] text-cafe/85">{texto}</p>
+              <p className="mt-1.5 text-[0.9375rem] text-negro/85">{texto}</p>
             </div>
           </li>
         ))}

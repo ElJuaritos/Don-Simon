@@ -70,16 +70,16 @@ export function PanelLateral({
 
   return (
     <div className={`fixed inset-0 z-50 ${abierto ? "" : "pointer-events-none"}`} aria-hidden={!abierto}>
-      <div className={`absolute inset-0 bg-cafe-oscuro/40 transition-opacity duration-300 ${abierto ? "opacity-100" : "opacity-0"}`} onClick={onCerrar} />
+      <div className={`absolute inset-0 bg-negro/40 transition-opacity duration-300 ${abierto ? "opacity-100" : "opacity-0"}`} onClick={onCerrar} />
       <aside
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={tituloId}
         inert={!abierto}
-        className={`absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-hueso shadow-xl transition-transform duration-500 ease-suave ${abierto ? "translate-x-0" : "translate-x-full"}`}
+        className={`absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-blanco shadow-xl transition-transform duration-500 ease-suave ${abierto ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex items-center justify-between border-b border-cafe/10 px-6 py-5">
+        <div className="flex items-center justify-between border-b border-negro/10 px-6 py-5">
           <h2 id={tituloId} className="font-sans text-lg font-medium">
             {titulo}
           </h2>
@@ -88,7 +88,7 @@ export function PanelLateral({
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-6">{children}</div>
-        {pie && <div className="border-t border-cafe/10 bg-arena px-6 py-6">{pie}</div>}
+        {pie && <div className="border-t border-negro/10 bg-niebla px-6 py-6">{pie}</div>}
       </aside>
     </div>
   );

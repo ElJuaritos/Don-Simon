@@ -23,7 +23,7 @@ export default async function ElOficio() {
   return (
     <>
       <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-16">
-        <p className="etiqueta text-cafe/85">El oficio</p>
+        <p className="etiqueta text-negro/85">El oficio</p>
         <h1 className="titulo-display mx-auto mt-5 max-w-4xl text-5xl md:text-7xl">{intro.titulo}</h1>
         {intro.texto && <p className="mx-auto mt-8 max-w-xl text-lg">{intro.texto}</p>}
       </section>
@@ -31,7 +31,7 @@ export default async function ElOficio() {
       <div className="contenedor">
         <Foto
           imagen={intro.imagen}
-          tono="piedra"
+          tono="topo"
           nota={intro.notaFoto}
           sinIlustracion
           sizes="100vw"
@@ -47,7 +47,7 @@ export default async function ElOficio() {
       </div>
 
       {construcciones.length > 0 && (
-        <section className="border-y border-cafe/10 bg-arena/50" aria-labelledby="titulo-construccion">
+        <section className="border-y border-negro/10 bg-niebla/50" aria-labelledby="titulo-construccion">
           <div className="contenedor py-12 md:py-16">
             <h2 id="titulo-construccion" className="titulo-display text-center text-4xl md:text-5xl">
               Cómo se construye

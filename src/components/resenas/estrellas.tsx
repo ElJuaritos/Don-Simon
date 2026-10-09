@@ -1,4 +1,4 @@
-/** Estrella de línea. El color lo pone el texto del contenedor (café o terracota). */
+/** Estrella de línea. El relleno va en negro. */
 export function IconoEstrella({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" className={className} aria-hidden fill="currentColor">
@@ -18,9 +18,9 @@ export function Estrellas({ valor }: { valor: number }) {
           const lleno = Math.min(1, Math.max(0, valor - i));
           return (
             <span key={i} className="relative inline-block h-4 w-4">
-              <IconoEstrella className="absolute inset-0 h-4 w-4 text-cafe/20" />
+              <IconoEstrella className="absolute inset-0 h-4 w-4 text-negro/60" />
               <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${lleno * 100}%` }}>
-                <IconoEstrella className="h-4 w-4 text-terracota" />
+                <IconoEstrella className="h-4 w-4 text-negro" />
               </span>
             </span>
           );

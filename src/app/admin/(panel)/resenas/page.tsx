@@ -22,7 +22,7 @@ export default async function AdminResenas({ searchParams }: PageProps<"/admin/r
   return (
     <>
       <TituloAdmin>Reseñas</TituloAdmin>
-      <p className="mb-6 max-w-2xl text-sm text-cafe/80">
+      <p className="mb-6 max-w-2xl text-sm text-negro/80">
         Nada se publica solo. Revisa cada reseña y publícala cuando te parezca bien.
       </p>
 
@@ -34,7 +34,7 @@ export default async function AdminResenas({ searchParams }: PageProps<"/admin/r
               key={t.id}
               href={t.id === "pendiente" ? "/admin/resenas" : `/admin/resenas?estado=${t.id}`}
               aria-current={activa ? "page" : undefined}
-              className={`whitespace-nowrap px-4 py-3 text-sm font-semibold ${activa ? "bg-cafe text-crema-claro" : "border border-cafe/15"}`}
+              className={`whitespace-nowrap px-4 py-3 text-sm font-semibold ${activa ? "bg-negro text-blanco" : "border border-negro/15"}`}
             >
               {t.texto} ({conteo[t.id]})
             </Link>
@@ -44,15 +44,15 @@ export default async function AdminResenas({ searchParams }: PageProps<"/admin/r
 
       <div className="mt-6 grid max-w-3xl gap-4">
         {lista.length === 0 ? (
-          <p className="text-sm text-cafe/75">No hay reseñas en esta lista.</p>
+          <p className="text-sm text-negro/75">No hay reseñas en esta lista.</p>
         ) : (
           lista.map((r) => <TarjetaResenaAdmin key={r.id} resena={r} estado={estado} />)
         )}
       </div>
 
-      <section className="mt-12 max-w-xl border border-cafe/15 p-5">
+      <section className="mt-12 max-w-xl border border-negro/15 p-5">
         <h2 className="text-lg font-medium">Agregar reseña</h2>
-        <p className="mt-2 mb-5 text-sm text-cafe/75">
+        <p className="mt-2 mb-5 text-sm text-negro/75">
           Para las que te lleguen por WhatsApp o en persona. No se marca como compra verificada y queda pendiente.
         </p>
         <FormAgregarResena productos={productos} />

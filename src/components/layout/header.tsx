@@ -71,9 +71,9 @@ export async function Header() {
   ];
 
   return (
-    <>
+    <div className="sticky top-0 z-40 border-b border-negro/10 lg:border-b-0">
       <BarraAnuncio mensajes={mensajesAnuncio(global["global-anuncio"]?.texto ?? "")} />
       <Cabecera entradas={entradas} />
-    </>
+    </div>
   );
 }

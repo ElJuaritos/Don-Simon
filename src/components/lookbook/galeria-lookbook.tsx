@@ -29,7 +29,7 @@ function Marco({ foto, ancha, prioridad = false }: { foto: FotoLookbook; ancha: 
     <>
       <Foto
         imagen={foto.imagen}
-        tono="piedra"
+        tono="topo"
         nota={conFoto ? undefined : foto.alt}
         sinIlustracion
         cubrir
@@ -40,9 +40,9 @@ function Marco({ foto, ancha, prioridad = false }: { foto: FotoLookbook; ancha: 
       {foto.producto && (
         <>
           {conFoto && (
-            <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-cafe-oscuro/70 to-transparent" />
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-negro/70 to-transparent" />
           )}
-          <span className={`enlace-nav absolute bottom-6 left-5 ${conFoto ? "text-crema-claro" : "text-cafe"}`} aria-hidden>
+          <span className={`enlace-nav absolute bottom-6 left-5 ${conFoto ? "text-blanco" : "text-negro"}`} aria-hidden>
             Ver el modelo
           </span>
         </>

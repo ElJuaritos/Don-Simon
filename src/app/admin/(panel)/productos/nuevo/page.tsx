@@ -20,7 +20,7 @@ export default async function NuevoProducto() {
         <TituloAdmin>Nuevo producto</TituloAdmin>
       </div>
       <Tarjeta className="max-w-4xl">
-        <p className="mb-6 bg-crema-claro px-4 py-3 text-sm">
+        <p className="mb-6 bg-blanco px-4 py-3 text-sm">
           Primero guarda los datos generales. Después podrás agregar colores, tallas, inventario y fotos.
         </p>
         <FormProducto categorias={cats} hormas={listaHormas} />

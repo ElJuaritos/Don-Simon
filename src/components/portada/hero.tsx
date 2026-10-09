@@ -9,7 +9,7 @@ export function Hero({ bloque }: { bloque: BloqueResuelto }) {
     <section className="relative h-[82svh] min-h-[30rem] md:h-[88svh]" aria-labelledby="titulo-hero">
       <Foto
         imagen={bloque.imagen}
-        tono="piedra"
+        tono="topo"
         nota={bloque.notaFoto}
         sinIlustracion
         sizes="100vw"
@@ -17,9 +17,9 @@ export function Hero({ bloque }: { bloque: BloqueResuelto }) {
         encuadre="object-[72%_50%] md:object-center"
         cubrir
       />
-      {conFoto && <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-cafe-oscuro/60 via-cafe-oscuro/10 to-transparent" />}
+      {conFoto && <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-negro/60 via-negro/10 to-transparent" />}
 
-      <div className={`contenedor aparecer absolute inset-x-0 bottom-0 pb-14 md:pb-20 ${conFoto ? "text-white" : "text-cafe"}`}>
+      <div className={`contenedor aparecer absolute inset-x-0 bottom-0 pb-14 md:pb-20 ${conFoto ? "text-white" : "text-negro"}`}>
         <h1 id="titulo-hero" className="titulo-display max-w-3xl text-[2.75rem] md:text-7xl lg:text-[5.25rem]">
           {bloque.titulo}
         </h1>

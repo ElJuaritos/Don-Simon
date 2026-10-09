@@ -25,20 +25,20 @@ export type ResenaAdmin = {
 export function TarjetaResenaAdmin({ resena, estado }: { resena: ResenaAdmin; estado: EstadoResena }) {
   const ajuste = OPCIONES_AJUSTE.find((o) => o.valor === resena.ajuste)?.etiqueta;
   return (
-    <article className="border border-cafe/15 p-4 md:p-5">
-      <p className="text-sm text-cafe/70">{resena.productoNombre}</p>
+    <article className="border border-negro/15 p-4 md:p-5">
+      <p className="text-sm text-negro/70">{resena.productoNombre}</p>
       <div className="mt-2">
         <Estrellas valor={resena.calificacion} />
       </div>
       <h2 className="mt-2 text-lg font-medium">{resena.titulo}</h2>
       <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{resena.texto}</p>
-      <p className="mt-3 text-sm text-cafe/75">
+      <p className="mt-3 text-sm text-negro/75">
         {resena.nombre}
         {resena.ciudad ? ` · ${resena.ciudad}` : ""} · Pie {ETIQUETA_ANCHO[resena.anchoPie].toLocaleLowerCase("es-MX")}
         {ajuste ? ` · ${ajuste}` : ""}
         {resena.verificada ? " · Compra verificada" : " · Capturada a mano"}
       </p>
-      <p className="mt-1 text-xs text-cafe/60">{formatFecha(resena.createdAt)}</p>
+      <p className="mt-1 text-xs text-negro/60">{formatFecha(resena.createdAt)}</p>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {estado !== "publicada" && (

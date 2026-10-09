@@ -92,9 +92,9 @@ export function ListaResenas({
       </div>
 
       {pagina.length === 0 ? (
-        <p className="mt-8 text-sm text-cafe/75">Ninguna reseña coincide con tu búsqueda.</p>
+        <p className="mt-8 text-sm text-negro/75">Ninguna reseña coincide con tu búsqueda.</p>
       ) : (
-        <ul className="mt-8 divide-y divide-cafe/10">
+        <ul className="mt-8 divide-y divide-negro/10">
           {pagina.map((r) => (
             <li key={r.id} className="py-6">
               {mostrarProducto && (
@@ -105,21 +105,21 @@ export function ListaResenas({
               )}
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                 <span className="font-medium">{r.nombre}</span>
-                {r.verificada && <span className="text-cafe/70">Compra verificada</span>}
-                {r.ciudad && <span className="text-cafe/70">{r.ciudad}</span>}
-                <span className="text-cafe/70">Pie {ETIQUETA_ANCHO[r.anchoPie].toLocaleLowerCase("es-MX")}</span>
+                {r.verificada && <span className="text-negro/70">Compra verificada</span>}
+                {r.ciudad && <span className="text-negro/70">{r.ciudad}</span>}
+                <span className="text-negro/70">Pie {ETIQUETA_ANCHO[r.anchoPie].toLocaleLowerCase("es-MX")}</span>
               </div>
               <div className="mt-2">
                 <Estrellas valor={r.calificacion} />
               </div>
               <h3 className="mt-3 font-medium">{r.titulo}</h3>
               <p className="mt-2 max-w-2xl whitespace-pre-wrap text-sm leading-relaxed">{r.texto}</p>
-              <p className="mt-2 text-xs text-cafe/60">
+              <p className="mt-2 text-xs text-negro/60">
                 <time dateTime={r.fecha}>{formatFecha(new Date(r.fecha))}</time>
                 {ajusteDe(r.ajuste) && <span> · {ajusteDe(r.ajuste)}</span>}
               </p>
               {r.respuesta && (
-                <div className="mt-4 max-w-2xl border-l-2 border-cafe/20 bg-arena/50 px-4 py-3">
+                <div className="mt-4 max-w-2xl border-l-2 border-negro/20 bg-niebla/50 px-4 py-3">
                   <p className="text-sm font-medium">Respuesta de la tienda</p>
                   <p className="mt-1 whitespace-pre-wrap text-sm">{r.respuesta}</p>
                 </div>

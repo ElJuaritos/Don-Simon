@@ -12,7 +12,7 @@ export function FormDevolucion() {
 
   if (estado?.mensaje) {
     return (
-      <div className="bg-arena p-8" role="status">
+      <div className="bg-niebla p-8" role="status">
         <p className="titulo-display text-3xl">{estado.mensaje}</p>
       </div>
     );
@@ -83,7 +83,7 @@ export function FormDevolucion() {
       )}
 
       {estado?.error && (
-        <p role="alert" className="text-terracota-oscuro">
+        <p role="alert" className="text-pizarra-oscuro">
           {estado.error}
         </p>
       )}

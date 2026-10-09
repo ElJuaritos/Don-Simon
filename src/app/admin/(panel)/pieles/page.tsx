@@ -19,7 +19,7 @@ export default async function PielesAdmin() {
       >
         Pieles
       </TituloAdmin>
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         Cada piel aparece en la página Pieles, con su foto, su descripción y cómo cuidarla. Si desmarcas «Mostrar», deja de verse en la tienda.
       </p>
       <div className="grid max-w-3xl gap-6">

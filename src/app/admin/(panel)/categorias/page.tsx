@@ -21,13 +21,13 @@ export default async function CategoriasAdmin() {
   return (
     <>
       <TituloAdmin>Categorías</TituloAdmin>
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         Cada categoría puede tener una foto para Hombre, otra para Mujer y una de respaldo por si falta alguna. Usa fotos verticales (3:4).
       </p>
       <div className="grid max-w-3xl gap-6">
         {cats.map((c) => (
           <Tarjeta key={c.id} titulo={c.nombre} className="bg-white">
-            <p className="-mt-3 mb-5 text-sm text-cafe/85">
+            <p className="-mt-3 mb-5 text-sm text-negro/85">
               /coleccion/{c.slug} · {conteos.find((x) => x.id === c.id)?.n ?? 0} productos activos
             </p>
             <FormAdmin action={guardarCategoria} boton="Guardar" className="space-y-5">

@@ -42,14 +42,14 @@ export default async function ContenidoAdmin({ searchParams }: PageProps<"/admin
             key={clave}
             href={`/admin/contenido?grupo=${clave}`}
             aria-current={clave === grupo ? "page" : undefined}
-            className={`border px-4 py-2.5 text-sm font-medium ${clave === grupo ? "border-cafe bg-cafe text-crema-claro" : "border-cafe/25 hover:border-cafe"}`}
+            className={`border px-4 py-2.5 text-sm font-medium ${clave === grupo ? "border-negro bg-negro text-blanco" : "border-negro/25 hover:border-negro"}`}
           >
             {GRUPOS[clave].nombre}
           </Link>
         ))}
       </nav>
 
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         Cada cuadro es un espacio de la página. Sube la foto, ajusta los textos y presiona <strong>Guardar</strong>. Los
         cuadros están en el mismo orden en que aparecen en la tienda.
       </p>

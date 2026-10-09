@@ -13,7 +13,7 @@ import { useCarrito } from "./proveedor-carrito";
 function NoOlvidesAgregar({ productos }: { productos: ReactNode[] }) {
   if (productos.length === 0) return null;
   return (
-    <section className="border-t border-cafe/10 py-6" aria-labelledby="titulo-no-olvides">
+    <section className="border-t border-negro/10 py-6" aria-labelledby="titulo-no-olvides">
       <h3 id="titulo-no-olvides" className="text-sm font-medium">
         No olvides agregar
       </h3>
@@ -38,10 +38,10 @@ function Controles({
   const { fijarCantidad, pendiente } = useCarrito();
   return (
     <div className="mt-3 flex items-center gap-3">
-      <div className="flex items-center border border-cafe/25">
+      <div className="flex items-center border border-negro/25">
         <button
           type="button"
-          className="grid h-9 w-9 place-items-center disabled:text-cafe/30"
+          className="grid h-9 w-9 place-items-center disabled:text-negro/60"
           aria-label={`Quitar un par de ${nombre}`}
           disabled={pendiente || cantidad <= 1}
           onClick={() => fijarCantidad(varianteId, cantidad - 1)}
@@ -53,7 +53,7 @@ function Controles({
         </span>
         <button
           type="button"
-          className="grid h-9 w-9 place-items-center disabled:text-cafe/30"
+          className="grid h-9 w-9 place-items-center disabled:text-negro/60"
           aria-label={`Agregar un par de ${nombre}`}
           disabled={pendiente || cantidad >= max}
           onClick={() => fijarCantidad(varianteId, cantidad + 1)}
@@ -97,8 +97,8 @@ export function CarritoLateral() {
             ) : (
               <p className="text-sm font-semibold">Tu envío es gratis.</p>
             )}
-            <div className="mt-2 h-1 bg-cafe/15" role="presentation">
-              <div className="h-full bg-terracota transition-all" style={{ width: `${progreso}%` }} />
+            <div className="mt-2 h-1 bg-negro/15" role="presentation">
+              <div className="h-full bg-pizarra transition-all" style={{ width: `${progreso}%` }} />
             </div>
             <dl className="mt-5 space-y-2 text-[0.9375rem]">
               <div className="flex justify-between">
@@ -109,7 +109,7 @@ export function CarritoLateral() {
                 <dt>Envío</dt>
                 <dd>{carrito.envio === 0 ? "Gratis" : formatPrecio(carrito.envio)}</dd>
               </div>
-              <div className="text-sm text-cafe/70">IVA incluido</div>
+              <div className="text-sm text-negro/70">IVA incluido</div>
               <div className="flex justify-between pt-1 text-lg font-semibold">
                 <dt>Total</dt>
                 <dd>{formatPrecio(carrito.total)}</dd>
@@ -128,7 +128,7 @@ export function CarritoLateral() {
       {vacio ? (
         <div className="py-10">
           <p>Tu carrito está vacío.</p>
-          <p className="mt-2 text-sm text-cafe/75">Encuentra el par que te va a acompañar muchos años.</p>
+          <p className="mt-2 text-sm text-negro/75">Encuentra el par que te va a acompañar muchos años.</p>
           <div className="mt-6 flex gap-3">
             <Link href="/hombre" className="btn-contorno">
               Hombre
@@ -139,7 +139,7 @@ export function CarritoLateral() {
           </div>
         </div>
       ) : (
-        <ul className="divide-y divide-cafe/10">
+        <ul className="divide-y divide-negro/10">
           {lineas.map((l) => {
             const max = Math.min(tienda.maxParesPorLinea, Math.max(l.disponibles, 0));
             return (
@@ -150,11 +150,11 @@ export function CarritoLateral() {
                     <p className="font-medium">{l.nombre}</p>
                     <p>{formatPrecio(l.precioUnitario * l.cantidad)}</p>
                   </div>
-                  <p className="mt-1 text-sm text-cafe/80">
+                  <p className="mt-1 text-sm text-negro/80">
                     {l.color} · Talla {formatTalla(l.talla)}
                   </p>
                   {l.cantidad > l.disponibles && (
-                    <p className="mt-1 text-sm text-terracota-oscuro">Ajusta la cantidad: no hay suficientes pares.</p>
+                    <p className="mt-1 text-sm text-pizarra-oscuro">Ajusta la cantidad: no hay suficientes pares.</p>
                   )}
                   <Controles varianteId={l.varianteId} cantidad={l.cantidad} max={Math.max(max, 1)} nombre={l.nombre} />
                 </div>

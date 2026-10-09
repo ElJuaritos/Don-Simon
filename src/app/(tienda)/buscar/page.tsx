@@ -25,7 +25,7 @@ export default async function Buscar({ searchParams }: PageProps<"/buscar">) {
 
       {q && (
         <div className="mt-12">
-          <p className="mb-8 text-cafe/80" role="status">
+          <p className="mb-8 text-negro/80" role="status">
             {resultados.length} {resultados.length === 1 ? "resultado" : "resultados"} para “{q}”
           </p>
           {resultados.length > 0 ? (

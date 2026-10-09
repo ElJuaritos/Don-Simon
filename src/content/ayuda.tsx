@@ -53,9 +53,15 @@ export const paginasAyuda: Record<string, PaginaContenido> = {
       <>
         <p>Queremos que tu par te quede perfecto. Si no es así, te ayudamos.</p>
         <h2>Cambios de talla</h2>
-        <p>Puedes solicitar un cambio de talla dentro de los primeros 30 días después de recibir tu pedido, siempre que el calzado no tenga uso y conserve su caja original.</p>
+        <p>
+          Los cambios y las devoluciones son gratis durante los primeros {tienda.diasCambios} días después de la entrega,
+          siempre que el calzado no tenga uso y conserve su caja original.
+        </p>
         <h2>Devoluciones</h2>
-        <p>Si prefieres una devolución, escríbenos dentro del mismo plazo. Una vez que recibamos y revisemos el producto, hacemos el reembolso al mismo método de pago.</p>
+        <p>
+          Si prefieres una devolución, escríbenos dentro de esos {tienda.diasCambios} días. Una vez que recibamos y
+          revisemos el producto, hacemos el reembolso al mismo método de pago.
+        </p>
         <h2>Cómo solicitarlo</h2>
         <p>Usa el formulario de abajo con tu folio y el correo de la compra. Solo podemos registrarlo si el pedido ya salió o ya lo recibiste.</p>
       </>
@@ -96,7 +102,10 @@ export const paginasAyuda: Record<string, PaginaContenido> = {
         <h3>¿Hacen envíos fuera de México?</h3>
         <p>Por ahora solo enviamos dentro de México.</p>
         <h3>¿Puedo cambiar la talla?</h3>
-        <p>Sí, revisa nuestra política de <Link href="/ayuda/cambios-y-devoluciones">cambios y devoluciones</Link>.</p>
+        <p>
+          Sí. Los cambios y las devoluciones son gratis durante los primeros {tienda.diasCambios} días después de la
+          entrega. Revisa la política de <Link href="/ayuda/cambios-y-devoluciones">cambios y devoluciones</Link>.
+        </p>
         <h3>¿Dónde se fabrican?</h3>
         <p>Todos los pares de {marca.nombre} se hacen a mano en México.</p>
       </>
@@ -110,7 +119,7 @@ export const paginasLegales: Record<string, PaginaContenido> = {
     descripcion: "Cómo tratamos tus datos personales.",
     contenido: (
       <>
-        <p className="border-l-4 border-terracota bg-arena px-4 py-3">
+        <p className="border-l-4 border-pizarra bg-niebla px-4 py-3">
           <strong>Borrador.</strong> Este texto es un marcador de posición y debe redactarlo o revisarlo un abogado conforme a la LFPDPPP antes del lanzamiento.
         </p>
         <h2>Responsable</h2>
@@ -129,7 +138,7 @@ export const paginasLegales: Record<string, PaginaContenido> = {
     descripcion: "Condiciones de uso y compra.",
     contenido: (
       <>
-        <p className="border-l-4 border-terracota bg-arena px-4 py-3">
+        <p className="border-l-4 border-pizarra bg-niebla px-4 py-3">
           <strong>Borrador.</strong> Este texto es un marcador de posición y debe redactarlo o revisarlo un abogado antes del lanzamiento.
         </p>
         <h2>Precios</h2>
@@ -137,7 +146,10 @@ export const paginasLegales: Record<string, PaginaContenido> = {
         <h2>Pedidos</h2>
         <p>Un pedido se confirma cuando recibimos el pago. Nos reservamos el derecho de cancelar pedidos por falta de inventario, en cuyo caso reembolsamos el total.</p>
         <h2>Envíos, cambios y devoluciones</h2>
-        <p>Consulta <Link href="/ayuda/envios">envíos</Link> y <Link href="/ayuda/cambios-y-devoluciones">cambios y devoluciones</Link>.</p>
+        <p>
+          Los cambios y las devoluciones son gratis durante los primeros {tienda.diasCambios} días después de la entrega.
+          Consulta <Link href="/ayuda/envios">envíos</Link> y <Link href="/ayuda/cambios-y-devoluciones">cambios y devoluciones</Link>.
+        </p>
       </>
     ),
   },

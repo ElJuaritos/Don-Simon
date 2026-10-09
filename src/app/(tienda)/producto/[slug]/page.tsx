@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { marca } from "@/config/marca";
+import { marca, tienda } from "@/config/marca";
 import { disponibles, getProducto, getProductos } from "@/lib/data/catalogo";
 import { listarPublicadasProducto, resumenProducto, seMuestranResenas } from "@/lib/data/resenas";
 import { formatPromedio } from "@/lib/resenas-texto";
@@ -33,15 +33,12 @@ function textoDetalles(producto: {
   suela: string;
   hechoEn: string;
 }) {
-  return [
-    producto.materiales,
-    producto.construccion && `Construcción: ${producto.construccion}`,
-    producto.suela && `Suela: ${producto.suela}`,
-    producto.hechoEn,
-  ]
+  const construccion = producto.construccion.includes("\n")
+    ? `Construcción\n\n${producto.construccion}`
+    : `Construcción: ${producto.construccion}`;
+  return [producto.materiales, producto.construccion && construccion, producto.suela && `Suela: ${producto.suela}`, producto.hechoEn]
     .filter(Boolean)
-    .join(". ")
-    .replace(/\.\./g, ".");
+    .join("\n\n");
 }
 
 export default async function PaginaProducto({ params, searchParams }: PageProps<"/producto/[slug]">) {
@@ -87,6 +84,12 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
         enlace: { href: "/nuestras-hormas", texto: "Nuestras hormas" },
       },
       { id: "cuidado", titulo: "Cuidado", texto: producto.cuidado },
+      {
+        id: "cambios",
+        titulo: "Cambios",
+        texto: `Los cambios y las devoluciones son gratis durante los primeros ${tienda.diasCambios} días después de la entrega.`,
+        enlace: { href: "/ayuda/cambios-y-devoluciones", texto: "Cambios y devoluciones" },
+      },
     ] as (PestanaProducto | false | null | undefined)[]
   ).filter((p): p is PestanaProducto => Boolean(p && p.texto.trim()));
 
@@ -132,12 +135,12 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="contenedor py-8 md:py-12">
-        <nav aria-label="Migas de pan" className="text-sm text-cafe/85">
-          <Link href="/" className="hover:text-cafe">
+        <nav aria-label="Migas de pan" className="text-sm text-negro/85">
+          <Link href="/" className="hover:text-negro">
             Inicio
           </Link>
           {" / "}
-          <Link href={`/coleccion/${producto.categoria.slug}`} className="hover:text-cafe">
+          <Link href={`/coleccion/${producto.categoria.slug}`} className="hover:text-negro">
             {producto.categoria.nombre}
           </Link>
           {" / "}
@@ -148,12 +151,12 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
           <GaleriaProducto imagenes={imagenesColor} colorHex={color?.hex} />
 
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-sm text-cafe/70">{producto.categoria.nombre}</p>
+            <p className="text-sm text-negro/70">{producto.categoria.nombre}</p>
             <div className="mt-2 flex items-baseline justify-between gap-4">
               <h1 className="font-sans text-2xl font-medium leading-tight md:text-[1.75rem]">{producto.nombre}</h1>
               <Precio precio={producto.precio} comparacion={producto.precioComparacion} className="shrink-0 text-lg" />
             </div>
-            <p className="mt-1 text-right text-xs text-cafe/70">IVA incluido</p>
+            <p className="mt-1 text-right text-xs text-negro/70">IVA incluido</p>
             {conResenas && resumen && (
               <a href="#resenas" className="mt-3 inline-flex items-center gap-2 text-sm">
                 <Estrellas valor={resumen.promedio} />
@@ -179,12 +182,12 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
                           replace
                           aria-label={c.nombre}
                           aria-current={elegido ? "true" : undefined}
-                          className={`block w-16 border-b-2 pb-1 ${elegido ? "border-cafe" : "border-transparent hover:border-cafe/40"}`}
+                          className={`block w-16 border-b-2 pb-1 ${elegido ? "border-negro" : "border-transparent hover:border-negro/40"}`}
                         >
                           {c.imagen ? (
                             <FotoProducto imagen={c.imagen} sizes="64px" className="aspect-square w-16" />
                           ) : (
-                            <span className="block aspect-square w-16 border border-cafe/15" style={{ backgroundColor: c.hex }} />
+                            <span className="block aspect-square w-16 border border-negro/15" style={{ backgroundColor: c.hex }} />
                           )}
                         </Link>
                       </li>
@@ -208,7 +211,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
       {conResenas && resumen && <SeccionResenas resumen={resumen} resenas={resenas} />}
 
       {relacionados.length > 0 && (
-        <section className="border-t border-cafe/10 bg-arena/50 py-16 md:py-24" aria-labelledby="titulo-relacionados">
+        <section className="border-t border-negro/10 bg-niebla/50 py-16 md:py-24" aria-labelledby="titulo-relacionados">
           <div className="contenedor">
             <h2 id="titulo-relacionados" className="titulo-display mb-10 text-4xl">
               También te puede gustar

@@ -52,13 +52,13 @@ export default async function Nota({ params }: PageProps<"/notas/[slug]">) {
     <article className="pb-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <header className="contenedor max-w-3xl pt-12 md:pt-20">
-        <p className="etiqueta text-cafe/85">
+        <p className="etiqueta text-negro/85">
           <Link href="/notas" className="hover:opacity-60">
             Notas
           </Link>
         </p>
         <h1 className="titulo-display mt-4 text-5xl md:text-6xl">{nota.titulo}</h1>
-        <p className="mt-4 text-cafe/80">
+        <p className="mt-4 text-negro/80">
           <time dateTime={fecha.toISOString()}>{formatDia(fecha)}</time>
         </p>
       </header>
@@ -66,7 +66,7 @@ export default async function Nota({ params }: PageProps<"/notas/[slug]">) {
       <div className="contenedor mt-10">
         <Foto
           imagen={nota.imagenUrl ? { url: nota.imagenUrl, alt: nota.imagenAlt || nota.titulo } : null}
-          tono="piedra"
+          tono="topo"
           sinIlustracion
           prioridad
           sizes="100vw"
@@ -79,10 +79,10 @@ export default async function Nota({ params }: PageProps<"/notas/[slug]">) {
       </div>
 
       {(anterior || siguiente) && (
-        <nav aria-label="Otras notas" className="contenedor mt-16 grid max-w-3xl gap-6 border-t border-cafe/10 pt-8 sm:grid-cols-2">
+        <nav aria-label="Otras notas" className="contenedor mt-16 grid max-w-3xl gap-6 border-t border-negro/10 pt-8 sm:grid-cols-2">
           {anterior ? (
             <Link href={`/notas/${anterior.slug}`} className="hover:opacity-60">
-              <span className="etiqueta text-cafe/75">Anterior</span>
+              <span className="etiqueta text-negro/75">Anterior</span>
               <span className="mt-2 block text-lg">{anterior.titulo}</span>
             </Link>
           ) : (
@@ -90,7 +90,7 @@ export default async function Nota({ params }: PageProps<"/notas/[slug]">) {
           )}
           {siguiente && (
             <Link href={`/notas/${siguiente.slug}`} className="hover:opacity-60 sm:text-right">
-              <span className="etiqueta text-cafe/75">Siguiente</span>
+              <span className="etiqueta text-negro/75">Siguiente</span>
               <span className="mt-2 block text-lg">{siguiente.titulo}</span>
             </Link>
           )}

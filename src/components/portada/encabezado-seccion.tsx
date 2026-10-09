@@ -15,7 +15,7 @@ export function EncabezadoSeccion({
   return (
     <div className="mb-10 flex items-end justify-between gap-6 md:mb-14">
       <div>
-        {etiqueta && <p className="etiqueta text-cafe/85">{etiqueta}</p>}
+        {etiqueta && <p className="etiqueta text-negro/85">{etiqueta}</p>}
         <h2 id={id} className="titulo-display mt-3 text-4xl md:text-5xl">
           {titulo}
         </h2>

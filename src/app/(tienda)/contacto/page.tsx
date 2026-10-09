@@ -13,7 +13,7 @@ export default function Contacto() {
         <dl className="mt-10 space-y-5">
           {marca.email && (
             <div>
-              <dt className="etiqueta text-cafe/85">Correo</dt>
+              <dt className="etiqueta text-negro/85">Correo</dt>
               <dd className="mt-1">
                 <a href={`mailto:${marca.email}`} className="enlace">
                   {marca.email}
@@ -23,7 +23,7 @@ export default function Contacto() {
           )}
           {marca.whatsapp && (
             <div>
-              <dt className="etiqueta text-cafe/85">WhatsApp</dt>
+              <dt className="etiqueta text-negro/85">WhatsApp</dt>
               <dd className="mt-1">
                 <a href={`https://wa.me/${marca.whatsapp}`} className="enlace" target="_blank" rel="noopener noreferrer">
                   Enviar mensaje

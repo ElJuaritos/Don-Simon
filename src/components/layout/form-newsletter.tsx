@@ -30,7 +30,7 @@ export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
                 name="preferencia"
                 value={opcion.valor}
                 defaultChecked={opcion.valor === "ambos"}
-                className="h-4 w-4 accent-cafe"
+                className="h-4 w-4 accent-blanco"
               />
               {opcion.texto}
             </label>
@@ -48,9 +48,9 @@ export function FormNewsletter({ origen = "footer" }: { origen?: string }) {
           required
           autoComplete="email"
           placeholder="Tu correo electrónico"
-          className="campo min-w-0 flex-1 bg-white"
+          className="campo min-w-0 flex-1 bg-blanco text-negro"
         />
-        <button type="submit" disabled={enviando} className="btn-primario shrink-0">
+        <button type="submit" disabled={enviando} className="btn-claro shrink-0">
           {enviando ? "Enviando…" : "Suscribirme"}
         </button>
       </div>

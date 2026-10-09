@@ -78,14 +78,14 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
         <p id="etiqueta-tallas" className="text-sm font-medium">
           Talla
         </p>
-        <div className="flex border border-cafe/20 text-xs" role="group" aria-label="Sistema de tallas">
+        <div className="flex border border-negro/20 text-xs" role="group" aria-label="Sistema de tallas">
           {SISTEMAS.map((s) => (
             <button
               key={s.id}
               type="button"
               aria-pressed={sistema === s.id}
               onClick={() => setSistema(s.id)}
-              className={`px-2.5 py-1 ${sistema === s.id ? "bg-cafe text-crema-claro" : "hover:bg-arena"}`}
+              className={`px-2.5 py-1 ${sistema === s.id ? "bg-negro text-blanco" : "hover:bg-niebla"}`}
             >
               {s.etiqueta}
             </button>
@@ -100,12 +100,12 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
           return (
             <label
               key={t.varianteId}
-              className={`relative grid h-11 cursor-pointer place-items-center border text-sm font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-terracota ${
+              className={`relative grid h-11 cursor-pointer place-items-center border text-sm font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-pizarra ${
                 agotada
-                  ? "cursor-not-allowed border-cafe/10 text-cafe/35 line-through"
+                  ? "cursor-not-allowed border-negro/10 text-negro/60 line-through"
                   : marcada
-                    ? "border-cafe bg-cafe text-crema-claro"
-                    : "border-cafe/25 hover:border-cafe"
+                    ? "border-negro bg-negro text-blanco"
+                    : "border-negro/25 hover:border-negro"
               }`}
             >
               <input
@@ -127,11 +127,11 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
         })}
       </div>
 
-      <p id="aviso-talla" className="mt-2 min-h-5 text-sm text-terracota-oscuro" role="alert">
+      <p id="aviso-talla" className="mt-2 min-h-5 text-sm text-pizarra-oscuro" role="alert">
         {aviso || estado?.error || ""}
       </p>
       {elegida && elegida.disponibles > 0 && elegida.disponibles <= 2 && (
-        <p className="text-sm text-terracota-oscuro">
+        <p className="text-sm text-pizarra-oscuro">
           {elegida.disponibles === 1 ? "Queda 1 par." : `Quedan ${elegida.disponibles} pares.`}
         </p>
       )}
@@ -144,7 +144,7 @@ export function SelectorCompra({ tallas, publico }: { tallas: OpcionTalla[]; pub
           Comprar ahora
         </button>
       </div>
-      <p className="mt-3 text-center text-sm text-cafe/75">
+      <p className="mt-3 text-center text-sm text-negro/75">
         Envío gratis a todo México desde {formatPrecio(tienda.envioGratisDesde)}.
       </p>
     </form>

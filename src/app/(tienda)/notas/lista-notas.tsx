@@ -24,13 +24,13 @@ export function ListaNotas({ notas }: { notas: NotaTarjeta[] }) {
             <Link href={`/notas/${n.slug}`} className="group block">
               <Foto
                 imagen={n.imagen}
-                tono="piedra"
+                tono="topo"
                 sinIlustracion
                 sizes="(min-width: 640px) 45vw, 100vw"
                 className="aspect-[3/2]"
               />
-              <h2 className="etiqueta mt-4 text-cafe group-hover:opacity-60">{n.titulo}</h2>
-              <p className="mt-2 text-sm text-cafe/75">{n.fecha}</p>
+              <h2 className="etiqueta mt-4 text-negro group-hover:opacity-60">{n.titulo}</h2>
+              <p className="mt-2 text-sm text-negro/75">{n.fecha}</p>
             </Link>
           </li>
         ))}

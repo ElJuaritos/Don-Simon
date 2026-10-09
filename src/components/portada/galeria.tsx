@@ -24,7 +24,7 @@ function FotoConPie({ bloque, className, sizes }: { bloque: BloqueResuelto; clas
     <figure className={`relative ${className}`}>
       <Foto imagen={bloque.imagen} tono="claro" nota={bloque.notaFoto} sinIlustracion sizes={sizes} className="h-full w-full" />
       {bloque.titulo && (
-        <figcaption className={`etiqueta absolute right-3 top-3 text-[0.625rem] ${bloque.imagen ? "text-white" : "text-cafe/85"}`}>
+        <figcaption className={`etiqueta absolute right-3 top-3 text-[0.625rem] ${bloque.imagen ? "text-white" : "text-negro/85"}`}>
           {bloque.titulo}
         </figcaption>
       )}

@@ -89,8 +89,8 @@ export async function FormProducto({
         <Campo label="Cuidado">
           <textarea name="cuidado" rows={2} defaultValue={producto?.cuidado} className="campo" />
         </Campo>
-        <Campo label="Construcción">
-          <input name="construccion" defaultValue={producto?.construccion} className="campo" placeholder="Cosido Blake" />
+        <Campo label="Construcción" ayuda="Explica cómo está construido este modelo (por ejemplo, Goodyear Welt)">
+          <textarea name="construccion" rows={4} defaultValue={producto?.construccion} className="campo" />
         </Campo>
         <Campo label="Suela">
           <input name="suela" defaultValue={producto?.suela} className="campo" placeholder="Suela de cuero" />
@@ -109,7 +109,7 @@ export async function FormProducto({
 
       <fieldset className="space-y-3">
         <legend className="campo-label">Ocasiones</legend>
-        <p className="text-xs text-cafe/85">Elige una o varias. Así el modelo aparece cuando filtran por ocasión.</p>
+        <p className="text-xs text-negro/85">Elige una o varias. Así el modelo aparece cuando filtran por ocasión.</p>
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           {OCASIONES.map((o) => (
             <label key={o} className="flex min-h-11 items-center gap-2">
@@ -118,7 +118,7 @@ export async function FormProducto({
                 name="ocasiones"
                 value={o}
                 defaultChecked={producto?.ocasiones.includes(o)}
-                className="h-5 w-5 accent-cafe"
+                className="h-5 w-5 accent-negro"
               />
               {ETIQUETA_OCASION[o]}
             </label>
@@ -127,7 +127,7 @@ export async function FormProducto({
       </fieldset>
 
       <label className="flex items-center gap-3">
-        <input type="checkbox" name="destacado" defaultChecked={producto?.destacado} className="h-5 w-5 accent-cafe" />
+        <input type="checkbox" name="destacado" defaultChecked={producto?.destacado} className="h-5 w-5 accent-negro" />
         <span className="font-semibold">Mostrar en la portada (destacado)</span>
       </label>
     </FormAdmin>

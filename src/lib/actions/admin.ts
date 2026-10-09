@@ -58,7 +58,7 @@ const productoSchema = z.object({
   precioComparacion: z.string().optional(),
   descripcion: z.string().trim(),
   materiales: z.string().trim(),
-  construccion: z.string().trim(),
+  construccion: z.string().trim().max(4000, "La construcción es muy larga. Resume en unos párrafos."),
   suela: z.string().trim(),
   cuidado: z.string().trim(),
   hechoEn: z.string().trim(),

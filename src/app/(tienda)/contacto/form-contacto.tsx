@@ -8,7 +8,7 @@ export function FormContacto() {
 
   if (estado?.ok) {
     return (
-      <div className="flex items-center bg-arena p-8" role="status">
+      <div className="flex items-center bg-niebla p-8" role="status">
         <p className="titulo-display text-3xl">{estado.mensaje}</p>
       </div>
     );
@@ -44,7 +44,7 @@ export function FormContacto() {
         <textarea id="c-mensaje" name="mensaje" rows={6} required minLength={10} className="campo" />
       </div>
       {estado?.error && (
-        <p role="alert" className="text-terracota-oscuro">
+        <p role="alert" className="text-pizarra-oscuro">
           {estado.error}
         </p>
       )}

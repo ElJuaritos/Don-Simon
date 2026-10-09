@@ -16,12 +16,12 @@ export default async function PanelLayout({ children }: LayoutProps<"/admin">) {
   const conteo = await contarPorEstado();
   return (
     <div className="flex min-h-dvh flex-col bg-white md:flex-row">
-      <aside className="border-b border-cafe/10 bg-crema-claro md:sticky md:top-0 md:h-dvh md:w-60 md:shrink-0 md:border-b-0 md:border-r">
+      <aside className="border-b border-negro/10 bg-blanco md:sticky md:top-0 md:h-dvh md:w-60 md:shrink-0 md:border-b-0 md:border-r">
         <div className="flex items-center justify-between px-5 py-4 md:block md:py-8">
-          <Link href="/admin" className="text-3xl">
+          <Link href="/admin">
             <Logo />
           </Link>
-          <p className="etiqueta text-cafe/85 max-md:hidden md:mt-1">Panel</p>
+          <p className="etiqueta text-negro/85 max-md:hidden md:mt-1">Panel</p>
           <Link href="/" target="_blank" className="enlace text-sm md:hidden">
             Ver tienda
           </Link>

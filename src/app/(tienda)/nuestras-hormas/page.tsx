@@ -16,7 +16,7 @@ export default async function NuestrasHormas() {
   return (
     <>
       <section className="contenedor aparecer pt-16 pb-12 text-center md:pt-24 md:pb-20">
-        <p className="etiqueta text-cafe/85">Ajuste</p>
+        <p className="etiqueta text-negro/85">Ajuste</p>
         <h1 className="titulo-display mx-auto mt-5 max-w-3xl text-5xl md:text-7xl">Nuestras hormas</h1>
         <p className="mx-auto mt-8 max-w-xl text-lg">
           La horma es el molde de madera sobre el que se monta cada zapato. De ella dependen la forma de la punta, la
@@ -36,7 +36,7 @@ export default async function NuestrasHormas() {
             notaFoto={`${h.nombre.toLowerCase()} en el taller`}
             invertido={i % 2 === 1}
             extra={
-              <dl className="mt-8 divide-y divide-cafe/10 border-y border-cafe/10 text-[0.9375rem]">
+              <dl className="mt-8 divide-y divide-negro/10 border-y border-negro/10 text-[0.9375rem]">
                 <div className="flex justify-between gap-6 py-3">
                   <dt className="font-semibold">Ancho</dt>
                   <dd>{h.ancho === "ancho" ? "Amplio" : "Estándar"}</dd>
@@ -51,7 +51,7 @@ export default async function NuestrasHormas() {
         ))}
       </div>
 
-      <section className="border-t border-cafe/10 bg-arena/50">
+      <section className="border-t border-negro/10 bg-niebla/50">
         <div className="contenedor seccion text-center">
           <h2 className="titulo-display text-4xl md:text-5xl">¿Dudas con tu talla?</h2>
           <p className="mx-auto mt-6 max-w-md">Mide tu pie en casa con nuestra guía o escríbenos y te ayudamos a elegir.</p>

@@ -20,7 +20,7 @@ export default async function PaginaResenas() {
   return (
     <div className="contenedor py-10 md:py-16">
       <h1 className="titulo-display text-4xl md:text-5xl">Reseñas</h1>
-      <p className="mt-3 max-w-xl text-cafe/80">Lo que cuentan quienes ya caminan con {marca.nombre}.</p>
+      <p className="mt-3 max-w-xl text-negro/80">Lo que cuentan quienes ya caminan con {marca.nombre}.</p>
       <div className="mt-8">
         <ResumenResenasVista resumen={resumen} />
       </div>

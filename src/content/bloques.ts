@@ -301,12 +301,12 @@ function bloquesOficio(): DefinicionBloque[] {
   ];
   const construcciones: [string, string, string][] = [
     [
-      "Goodyear",
-      "Goodyear",
-      "Una cinta de tela cose la parte de arriba con la suela. Se puede cambiar la suela sin desarmar el zapato.",
+      "Goodyear Welt",
+      "Goodyear Welt",
+      "Cosido en vuelta: la suela se puede resuelar y el par dura más.",
     ],
-    ["Blake", "Blake", "Una sola costura une la parte de arriba, la plantilla y la suela. El par queda más flexible."],
-    ["Cementado", "Cementado", "La suela se pega. Es una construcción más ligera, útil en modelos de uso diario."],
+    ["2", "", ""],
+    ["3", "", ""],
   ];
   return [
     {

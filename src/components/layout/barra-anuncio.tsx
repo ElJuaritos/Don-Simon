@@ -27,10 +27,10 @@ export function BarraAnuncio({ mensajes }: { mensajes: string[] }) {
   const actual = mensajes[indice] ?? mensajes[0];
 
   return (
-    <div className="bg-cafe-oscuro text-crema-claro">
-      <div className={`relative px-3 py-2 sm:px-4 sm:py-2.5 ${varios ? "pr-16 sm:pr-4" : ""}`}>
+    <div className="foco-claro bg-pizarra text-blanco">
+      <div className={`relative px-3 py-2 sm:px-4 lg:py-1.5 ${varios ? "pr-16 sm:pr-4" : ""}`}>
         <p
-          className={`text-center text-[0.75rem] leading-none font-medium whitespace-nowrap sm:text-[0.8125rem] sm:leading-snug sm:whitespace-normal ${varios ? "sm:px-14" : ""}`}
+          className={`text-center text-[0.75rem] leading-none font-medium whitespace-nowrap sm:text-[0.8125rem] sm:whitespace-normal lg:leading-none ${varios ? "sm:px-14" : ""}`}
           aria-live="polite"
         >
           {actual}

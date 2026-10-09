@@ -36,7 +36,7 @@ export default async function LookbookAdmin() {
       >
         Lookbook
       </TituloAdmin>
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         Sube las fotos de la temporada, ordénalas y, si en la foto sale un modelo de la tienda, enlázalo. El 1 aparece
         primero. En el celular se ve una foto por pantalla.
       </p>
@@ -57,7 +57,7 @@ export default async function LookbookAdmin() {
 
         {lista.map(({ foto, productoNombre }) => (
           <Tarjeta key={foto.id} titulo={foto.alt || "Foto sin descripción"} className="bg-white">
-            <p className="mb-4 text-sm text-cafe/85">
+            <p className="mb-4 text-sm text-negro/85">
               {PUBLICO[foto.publico]}
               {productoNombre ? ` · ${productoNombre}` : ""}
               {foto.activa ? "" : " · Oculta"}

@@ -19,7 +19,7 @@ export default async function HormasAdmin() {
       >
         Hormas
       </TituloAdmin>
-      <p className="mb-8 max-w-2xl text-cafe/85">
+      <p className="mb-8 max-w-2xl text-negro/85">
         La horma es el molde de cada modelo. Aquí defines su descripción y la recomendación de talla; luego la eliges en cada
         producto.
       </p>

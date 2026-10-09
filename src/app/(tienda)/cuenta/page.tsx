@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function Cuenta() {
   return (
     <div className="contenedor flex min-h-[50vh] flex-col items-center justify-center py-24 text-center">
-      <p className="etiqueta text-cafe/85">Tu cuenta</p>
+      <p className="etiqueta text-negro/85">Tu cuenta</p>
       <h1 className="titulo-display mt-3 text-4xl md:text-5xl">Próximamente</h1>
       <p className="mt-4 max-w-md text-lg">Aquí vas a ver tus pedidos y tus datos. Mientras tanto, puedes comprar sin crear una cuenta.</p>
     </div>

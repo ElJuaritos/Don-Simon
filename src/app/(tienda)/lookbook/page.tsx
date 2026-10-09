@@ -31,7 +31,7 @@ export default async function Lookbook({
     <>
       <header className="contenedor py-12 text-center md:py-16">
         <h1 className="text-2xl font-medium md:text-[1.75rem]">{intro?.titulo || "Lookbook"}</h1>
-        {intro?.texto && <p className="mx-auto mt-3 max-w-md text-cafe/80">{intro.texto}</p>}
+        {intro?.texto && <p className="mx-auto mt-3 max-w-md text-negro/80">{intro.texto}</p>}
         <nav aria-label="Filtrar lookbook" className="texto-nav mt-8 flex justify-center gap-6">
           {FILTROS.map((f) => {
             const activo = f.valor === para;
@@ -40,7 +40,7 @@ export default async function Lookbook({
                 key={f.texto}
                 href={f.href}
                 aria-current={activo ? "page" : undefined}
-                className={`border-b pb-1 ${activo ? "border-cafe" : "border-transparent text-cafe/75 hover:text-cafe"}`}
+                className={`border-b pb-1 ${activo ? "border-negro" : "border-transparent text-negro/75 hover:text-negro"}`}
               >
                 {f.texto}
               </Link>

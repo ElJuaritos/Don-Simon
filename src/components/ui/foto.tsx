@@ -4,9 +4,9 @@ import Image from "next/image";
 // con una silueta de línea y una nota de qué foto va ahí, para que el dueño sepa qué subir.
 
 const TONOS = {
-  claro: "bg-arena text-cafe/55",
-  piedra: "bg-piedra text-cafe/60",
-  oscuro: "bg-cafe-oscuro text-crema/70",
+  claro: "bg-niebla text-negro/70",
+  topo: "bg-topo text-negro",
+  oscuro: "bg-negro text-blanco",
 } as const;
 export type Tono = keyof typeof TONOS;
 
@@ -111,7 +111,7 @@ export function Foto({
     );
   }
   return (
-    <div className={`${posicion} overflow-hidden bg-arena ${className}`}>
+    <div className={`${posicion} overflow-hidden bg-niebla ${className}`}>
       <Image
         src={imagen.url}
         alt={imagen.alt}

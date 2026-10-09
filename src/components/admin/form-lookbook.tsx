@@ -61,12 +61,12 @@ export function FormLookbook({
           </select>
         </Campo>
         <label className="flex min-h-11 items-center gap-2 text-sm">
-          <input type="checkbox" name="activa" defaultChecked={foto?.activa ?? true} className="h-4 w-4 accent-cafe" />
+          <input type="checkbox" name="activa" defaultChecked={foto?.activa ?? true} className="h-4 w-4 accent-negro" />
           Mostrar en el lookbook
         </label>
       </FormAdmin>
       {foto && (
-        <div className="mt-4 border-t border-cafe/10 pt-4">
+        <div className="mt-4 border-t border-negro/10 pt-4">
           <ConfirmarQuitar id={foto.id} />
         </div>
       )}

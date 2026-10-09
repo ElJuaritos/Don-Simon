@@ -1,27 +1,17 @@
 @import "tailwindcss";
 
-/* Tokens de marca: docs/02-identidad-de-marca.md
-   Base neutra y cálida (hueso, arena, piedra) con café para el texto;
-   olivo y terracota quedan como acentos puntuales. */
+/* Tokens de Varen. Contraste en docs/02-identidad-de-marca.md. */
 @theme {
-  --color-hueso: #faf7f2;
-  --color-arena: #f0e9df;
-  --color-piedra: #e3d9ca;
+  --color-blanco: #ffffff;
+  --color-niebla: #f2f0f0;
+  --color-topo: #aa9d92;
+  --color-pizarra: #3d516b;
+  --color-pizarra-oscuro: #2e3d52;
+  --color-negro: #000000;
 
-  --color-cafe: #5d3f24;
-  --color-cafe-oscuro: #3f2a17;
-  --color-crema: #e7dac7;
-  --color-crema-claro: #f4eee5;
-  --color-olivo: #9e9268;
-  --color-olivo-oscuro: #6f6648;
-  --color-terracota: #a85f3e;
-  --color-terracota-oscuro: #8c4d31;
-
-  --font-sans: var(--font-quicksand), ui-sans-serif, system-ui, sans-serif;
-  /* The Seasons (pendiente de licencia) → Cormorant Garamond como sustituto */
+  --font-sans: var(--font-sans-marca), ui-sans-serif, system-ui, sans-serif;
+  /* Cormorant Garamond es provisional, hasta que llegue la tipografía definitiva. */
   --font-display: var(--font-display-serif), Georgia, serif;
-  /* Logotipo: se reemplaza por el SVG oficial cuando exista */
-  --font-script: var(--font-script-logo), cursive;
 
   --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -31,7 +21,7 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply bg-hueso text-cafe font-sans antialiased;
+    @apply bg-blanco text-negro font-sans antialiased;
     font-size: 1rem;
     line-height: 1.65;
   }
@@ -41,28 +31,37 @@
     }
   }
   ::selection {
-    @apply bg-terracota text-white;
+    @apply bg-pizarra text-blanco;
   }
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-terracota;
+    @apply outline-2 outline-offset-2 outline-pizarra;
+  }
+}
+
+/* En pizarra o negro el anillo de foco va en blanco. */
+@utility foco-claro {
+  &:focus-visible {
+    outline-color: var(--color-blanco);
+  }
+  :focus-visible {
+    outline-color: var(--color-blanco);
   }
 }
 
 @utility titulo-display {
-  @apply font-display italic font-medium leading-[1.05] tracking-tight;
+  @apply font-display font-medium leading-[1.05] tracking-tight not-italic;
 }
 
 @utility etiqueta {
   @apply text-[0.75rem] font-semibold uppercase tracking-[0.14em];
 }
 
-/* Menú, footer y datos de tarjeta: Quicksand, sin mayúsculas ni tracking. */
 @utility texto-nav {
   @apply text-[0.8125rem] font-medium normal-case tracking-normal lg:text-[0.875rem];
 }
 
 @utility enlace-nav {
-  @apply texto-nav inline-block border-b border-current pb-0.5 transition-opacity duration-300 hover:opacity-60;
+  @apply texto-nav inline-block border-b border-current pb-0.5 transition-opacity duration-300 hover:opacity-80;
 }
 
 @utility contenedor {
@@ -74,27 +73,27 @@
 }
 
 @utility btn-primario {
-  @apply btn bg-cafe text-crema-claro hover:bg-cafe-oscuro;
+  @apply btn bg-negro text-blanco hover:bg-negro/80;
 }
 
 @utility btn-acento {
-  @apply btn bg-terracota text-white hover:bg-terracota-oscuro;
+  @apply btn bg-pizarra text-blanco hover:bg-pizarra-oscuro;
 }
 
 @utility btn-claro {
-  @apply btn bg-crema-claro text-cafe hover:bg-white;
+  @apply btn bg-blanco text-negro hover:bg-niebla;
 }
 
 @utility btn-contorno {
-  @apply btn border border-current bg-transparent hover:bg-cafe hover:text-crema-claro;
+  @apply btn border border-current bg-transparent hover:bg-negro hover:text-blanco;
 }
 
 @utility btn-contorno-claro {
-  @apply btn border border-crema-claro/70 text-crema-claro hover:bg-crema-claro hover:text-cafe;
+  @apply btn border border-blanco/70 text-blanco hover:bg-blanco hover:text-negro;
 }
 
 @utility campo {
-  @apply block w-full rounded-[2px] border border-cafe/25 bg-white px-4 py-3 text-base text-cafe placeholder:text-cafe/50 transition-colors focus:border-cafe focus:outline-none;
+  @apply block w-full rounded-[2px] border border-negro/25 bg-blanco px-4 py-3 text-base text-negro placeholder:text-negro/60 transition-colors focus:border-negro focus:outline-none;
 }
 
 @utility campo-label {
@@ -102,15 +101,13 @@
 }
 
 @utility enlace {
-  @apply underline decoration-cafe/30 underline-offset-4 transition-colors hover:decoration-cafe;
+  @apply underline decoration-negro/30 underline-offset-4 transition-colors hover:decoration-negro;
 }
 
-/* Enlace editorial: mayúsculas pequeñas con línea inferior que se desvanece al pasar */
 @utility enlace-etiqueta {
-  @apply etiqueta inline-block border-b border-current pb-1 transition-opacity duration-300 hover:opacity-60;
+  @apply etiqueta inline-block border-b border-current pb-1 transition-opacity duration-300 hover:opacity-80;
 }
 
-/* Espaciado vertical entre secciones: aire sin alargar de más la página */
 @utility seccion {
   @apply py-16 md:py-24;
 }
@@ -120,7 +117,7 @@
     @apply mb-4;
   }
   .prosa h2 {
-    @apply titulo-display mt-10 mb-4 text-3xl;
+    @apply titulo-display mt-10 mb-4 text-4xl;
   }
   .prosa h3 {
     @apply mt-8 mb-2 text-lg font-semibold;
@@ -133,7 +130,7 @@
   }
 }
 
-/* Textura sutil de piel/papel para bloques sin fotografía */
+/* Textura sutil para bloques sin fotografía. */
 .textura {
   background-image:
     radial-gradient(circle at 20% 15%, rgb(255 255 255 / 0.08), transparent 45%),
@@ -157,7 +154,6 @@
     animation: aparecer 0.9s var(--ease-suave) both;
   }
 
-  /* Aparece suavemente al entrar en pantalla. Sin soporte del navegador, simplemente se muestra. */
   @supports (animation-timeline: view()) {
     .revelar {
       animation: aparecer linear both;

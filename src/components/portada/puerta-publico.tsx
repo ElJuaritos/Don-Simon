@@ -17,7 +17,7 @@ export function PuertaPublico({ bloques }: { bloques: BloqueResuelto[] }) {
           <Link key={bloque.clave} href={href} className="group relative block h-[70svh] lg:h-full">
             <Foto
               imagen={bloque.imagen}
-              tono="piedra"
+              tono="topo"
               nota={conFoto ? undefined : bloque.notaFoto}
               sinIlustracion
               cubrir
@@ -27,10 +27,10 @@ export function PuertaPublico({ bloques }: { bloques: BloqueResuelto[] }) {
               className="h-full w-full"
             />
             {conFoto && (
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-cafe-oscuro/70 to-transparent" />
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-negro/70 to-transparent" />
             )}
             <span
-              className={`enlace-nav absolute bottom-8 left-1/2 -translate-x-1/2 ${conFoto ? "text-crema-claro" : "text-cafe"}`}
+              className={`enlace-nav absolute bottom-8 left-1/2 -translate-x-1/2 ${conFoto ? "text-blanco" : "text-negro"}`}
             >
               {texto}
             </span>

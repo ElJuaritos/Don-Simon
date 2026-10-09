@@ -59,12 +59,12 @@ export function FormFiltros({
     startTransition(() => router.push(qs ? `${rutaBase}?${qs}` : rutaBase, { scroll: false }));
   }
 
-  const panel = `bg-hueso lg:static lg:z-auto lg:flex lg:flex-row lg:items-center lg:justify-between lg:overflow-visible lg:bg-transparent ${
+  const panel = `bg-blanco lg:static lg:z-auto lg:flex lg:flex-row lg:items-center lg:justify-between lg:overflow-visible lg:bg-transparent ${
     abierto ? "fixed inset-0 z-50 flex flex-col overflow-y-auto" : "hidden"
   }`;
 
   return (
-    <div className="border-y border-cafe/15">
+    <div className="border-y border-negro/15">
       <noscript>
         <style>{`.filtros-panel{display:flex !important;position:static !important;inset:auto !important;overflow:visible !important;}`}</style>
       </noscript>
@@ -78,7 +78,7 @@ export function FormFiltros({
         >
           Filtrar y ordenar
           {activos > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center bg-cafe px-1 text-[0.6875rem] text-crema-claro">{activos}</span>
+            <span className="grid h-5 min-w-5 place-items-center bg-negro px-1 text-[0.6875rem] text-blanco">{activos}</span>
           )}
         </button>
         <Conteo total={total} cargando={pendiente} />
@@ -99,7 +99,7 @@ export function FormFiltros({
         }}
         className={`filtros-panel ${panel}`}
       >
-        <div className="flex items-center justify-between border-b border-cafe/15 px-4 py-3 lg:hidden">
+        <div className="flex items-center justify-between border-b border-negro/15 px-4 py-3 lg:hidden">
           <p id={tituloId} className="text-lg font-medium">
             Filtrar y ordenar
           </p>
@@ -113,10 +113,10 @@ export function FormFiltros({
           {grupos.map((g) => (
             <Desplegable key={g.id} {...g} />
           ))}
-          <div className="mt-2 border-t border-cafe/10 py-4 lg:mt-0 lg:ml-auto lg:flex lg:items-center lg:gap-6 lg:border-0 lg:py-0">
+          <div className="mt-2 border-t border-negro/10 py-4 lg:mt-0 lg:ml-auto lg:flex lg:items-center lg:gap-6 lg:border-0 lg:py-0">
             <label className="texto-nav flex min-h-11 items-center gap-2">
               <span>Ordenar</span>
-              <select name="orden" defaultValue={orden} className="bg-transparent py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cafe">
+              <select name="orden" defaultValue={orden} className="bg-transparent py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-negro">
                 {ORDENES.map((o) => (
                   <option key={o.valor} value={o.valor}>
                     {o.texto}
@@ -130,7 +130,7 @@ export function FormFiltros({
           </div>
         </div>
 
-        <div className="sticky bottom-0 border-t border-cafe/15 bg-hueso p-4 lg:hidden">
+        <div className="sticky bottom-0 border-t border-negro/15 bg-blanco p-4 lg:hidden">
           <button type="submit" className="btn-primario w-full">
             Ver {total} {total === 1 ? "modelo" : "modelos"}
           </button>
@@ -163,18 +163,18 @@ function Desplegable({
 
   return (
     <details
-      className="border-b border-cafe/10 lg:relative lg:border-0"
+      className="border-b border-negro/10 lg:relative lg:border-0"
       onToggle={(e) => setAbierto(e.currentTarget.open)}
     >
       <summary
         aria-expanded={abierto}
         aria-controls={panelId}
-        className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cafe lg:px-3 [&::-webkit-details-marker]:hidden"
+        className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-negro lg:px-3 [&::-webkit-details-marker]:hidden"
       >
         <span className="texto-nav">{etiqueta}</span>
-        {activos.length > 0 && <span className="text-[0.75rem] text-cafe/70">{activos.length}</span>}
+        {activos.length > 0 && <span className="text-[0.75rem] text-negro/70">{activos.length}</span>}
       </summary>
-      <div id={panelId} className="flex flex-col gap-1 pb-3 lg:absolute lg:top-full lg:left-0 lg:z-20 lg:min-w-56 lg:border lg:border-cafe/15 lg:bg-hueso lg:p-3">
+      <div id={panelId} className="flex flex-col gap-1 pb-3 lg:absolute lg:top-full lg:left-0 lg:z-20 lg:min-w-56 lg:border lg:border-negro/15 lg:bg-blanco lg:p-3">
         {opciones.map((o) => (
           <label key={o.valor} className="flex min-h-11 cursor-pointer items-center gap-3 px-1 text-sm">
             <input
@@ -182,7 +182,7 @@ function Desplegable({
               name={nombre}
               value={o.valor}
               defaultChecked={activos.includes(o.valor)}
-              className="h-4 w-4 accent-cafe"
+              className="h-4 w-4 accent-negro"
             />
             {o.texto}
           </label>
@@ -194,7 +194,7 @@ function Desplegable({
 
 function Conteo({ total, cargando }: { total: number; cargando: boolean }) {
   return (
-    <p className="texto-nav text-cafe/75" aria-live="polite">
+    <p className="texto-nav text-negro/75" aria-live="polite">
       {cargando ? "Buscando…" : `${total} ${total === 1 ? "modelo" : "modelos"}`}
     </p>
   );

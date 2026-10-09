@@ -1,34 +1,31 @@
+import Image from "next/image";
 import { marca } from "@/config/marca";
 
-// Logotipo provisional en tipografía caligráfica.
-// TODO: reemplazar por el SVG oficial del monograma + logotipo (docs/02-identidad-de-marca.md).
+const VARIANTES = {
+  claro: { src: "/marca/varen-negro.png", width: 1938, height: 543 },
+  oscuro: { src: "/marca/varen-blanco.png", width: 1832, height: 450 },
+} as const;
 
+/** Logotipo. `oscuro` es la versión blanca, para la barra negra y el footer. */
 export function Logo({
+  tono = "claro",
   className = "",
-  conFecha = false,
+  priority = false,
 }: {
+  tono?: keyof typeof VARIANTES;
   className?: string;
-  conFecha?: boolean;
+  priority?: boolean;
 }) {
+  const v = VARIANTES[tono];
   return (
-    <span className={`inline-flex flex-col items-center leading-none ${className}`}>
-      <span className="font-script text-[1em] whitespace-nowrap">{marca.nombre}</span>
-      {conFecha && (
-        <span className="mt-[0.35em] font-sans text-[0.18em] tracking-[0.2em]">
-          Est. {marca.fundada}
-        </span>
-      )}
-    </span>
-  );
-}
-
-/** Monograma provisional: dos "S" entrelazadas */
-export function Monograma({ className = "" }: { className?: string }) {
-  return (
-    <span className={`font-script leading-none ${className}`} aria-hidden>
-      <span className="relative inline-block">
-        S<span className="absolute left-[0.28em] top-[0.06em] -scale-x-100">S</span>
-      </span>
-    </span>
+    <Image
+      src={v.src}
+      alt={marca.nombre}
+      width={v.width}
+      height={v.height}
+      priority={priority}
+      sizes="180px"
+      className={`h-7 w-auto lg:h-8 ${className}`}
+    />
   );
 }

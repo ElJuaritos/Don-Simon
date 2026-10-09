@@ -17,12 +17,12 @@ export default async function Checkout() {
     <div className="contenedor py-10 md:py-14">
       <h1 className="font-sans text-2xl font-medium md:text-3xl">Finalizar compra</h1>
       {sinPagos && (
-        <p role="alert" className="mt-6 border-l-4 border-terracota bg-arena px-4 py-3 text-sm">
+        <p role="alert" className="mt-6 border-l-4 border-pizarra bg-niebla px-4 py-3 text-sm">
           Los pagos no están disponibles en este momento. Intenta más tarde.
         </p>
       )}
       {modoDemo && (
-        <p className="mt-6 border-l-4 border-terracota bg-arena px-4 py-3 text-sm">
+        <p className="mt-6 border-l-4 border-pizarra bg-niebla px-4 py-3 text-sm">
           <strong>Modo demo:</strong> Stripe todavía no está configurado. El pedido se registra, pero no se cobra.
         </p>
       )}

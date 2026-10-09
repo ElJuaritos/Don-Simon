@@ -11,9 +11,17 @@ export type PestanaProducto = {
 };
 
 function Cuerpo({ pestana }: { pestana: PestanaProducto }) {
+  const parrafos = pestana.texto
+    .split(/\n\s*\n/)
+    .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
+    .filter(Boolean);
   return (
     <>
-      <p>{pestana.texto}</p>
+      {parrafos.map((parrafo, i) => (
+        <p key={i} className="mt-3 first:mt-0">
+          {parrafo}
+        </p>
+      ))}
       {pestana.enlace && (
         <Link href={pestana.enlace.href} className="enlace mt-3 inline-block text-sm">
           {pestana.enlace.texto}
@@ -54,7 +62,7 @@ export function PestanasProducto({ pestanas }: { pestanas: PestanaProducto[] }) 
 
   return (
     <div className="mt-8">
-      <div className="lg:hidden divide-y divide-cafe/15 border-y border-cafe/15">
+      <div className="lg:hidden divide-y divide-negro/15 border-y border-negro/15">
         {pestanas.map((p) => {
           const abierta = activa === p.id;
           return (
@@ -83,7 +91,7 @@ export function PestanasProducto({ pestanas }: { pestanas: PestanaProducto[] }) 
       </div>
 
       <div className="hidden lg:block">
-        <div role="tablist" aria-label="Información del modelo" className="flex border-b border-cafe/15">
+        <div role="tablist" aria-label="Información del modelo" className="flex border-b border-negro/15">
           {pestanas.map((p) => {
             const es = activa === p.id;
             return (
@@ -97,7 +105,7 @@ export function PestanasProducto({ pestanas }: { pestanas: PestanaProducto[] }) 
                 tabIndex={es ? 0 : -1}
                 onClick={() => setActiva(p.id)}
                 onKeyDown={(e) => onTecla(e, p.id)}
-                className={`-mb-px border-b-2 px-4 py-3 text-sm ${es ? "border-cafe font-semibold" : "border-transparent text-cafe/70 hover:text-cafe"}`}
+                className={`-mb-px border-b-2 px-4 py-3 text-sm ${es ? "border-negro font-semibold" : "border-transparent text-negro/70 hover:text-negro"}`}
               >
                 {p.titulo}
               </button>
@@ -112,7 +120,7 @@ export function PestanasProducto({ pestanas }: { pestanas: PestanaProducto[] }) 
             aria-labelledby={`tab-${p.id}`}
             hidden={activa !== p.id}
             tabIndex={0}
-            className="py-5 text-[0.9375rem] focus-visible:outline-2 focus-visible:outline-terracota"
+            className="py-5 text-[0.9375rem] focus-visible:outline-2 focus-visible:outline-pizarra"
           >
             <Cuerpo pestana={p} />
           </div>

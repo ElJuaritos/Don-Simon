@@ -18,12 +18,12 @@ export function FormBloque({
   const usa = (c: (typeof def.campos)[number]) => def.campos.includes(c);
 
   return (
-    <section className="border border-cafe/15 bg-white p-5 md:p-6" aria-labelledby={`titulo-${def.clave}`}>
+    <section className="border border-negro/15 bg-white p-5 md:p-6" aria-labelledby={`titulo-${def.clave}`}>
       <header className="mb-5">
         <h2 id={`titulo-${def.clave}`} className="text-lg font-semibold">
           {def.nombre}
         </h2>
-        <p className="mt-1 text-sm text-cafe/85">{def.ayuda}</p>
+        <p className="mt-1 text-sm text-negro/85">{def.ayuda}</p>
       </header>
 
       <FormAdmin action={guardarBloque} boton="Guardar" className="space-y-5">
@@ -68,7 +68,7 @@ export function FormBloque({
       </FormAdmin>
 
       {personalizado && (
-        <form action={restaurarBloque} className="mt-4 border-t border-cafe/10 pt-4">
+        <form action={restaurarBloque} className="mt-4 border-t border-negro/10 pt-4">
           <input type="hidden" name="clave" value={def.clave} />
           <button type="submit" className="enlace text-sm">
             Regresar a los textos originales y quitar la foto

@@ -52,7 +52,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
       </div>
 
       {sp.nuevo && (
-        <p className="mb-6 bg-crema px-4 py-3" role="status">
+        <p className="mb-6 bg-blanco px-4 py-3" role="status">
           ✓ Producto creado. Ahora agrega sus colores y tallas, y súbele fotos. Cuando esté listo, cámbialo a <strong>Activo</strong>.
         </p>
       )}
@@ -65,7 +65,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
         <Tarjeta titulo="Inventario por talla" className="scroll-mt-6">
           <div id="inventario" />
           {vars.length === 0 ? (
-            <p className="text-cafe/85">Este producto aún no tiene tallas. Agrégalas abajo.</p>
+            <p className="text-negro/85">Este producto aún no tiene tallas. Agrégalas abajo.</p>
           ) : (
             <FormAdmin action={guardarInventario} boton="Guardar inventario">
               <input type="hidden" name="productoId" value={producto.id} />
@@ -73,12 +73,12 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                 {[...porColor].map(([color, lista]) => (
                   <fieldset key={color}>
                     <legend className="mb-3 flex items-center gap-2 font-semibold">
-                      <span className="h-4 w-4 rounded-full border border-cafe/20" style={{ backgroundColor: lista[0].colorHex }} />
+                      <span className="h-4 w-4 rounded-full border border-negro/20" style={{ backgroundColor: lista[0].colorHex }} />
                       {color}
                     </legend>
                     <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9">
                       {lista.map((v) => (
-                        <div key={v.id} className={`border p-2 ${v.activo ? "border-cafe/20" : "border-dashed border-cafe/20 opacity-60"}`}>
+                        <div key={v.id} className={`border p-2 ${v.activo ? "border-negro/20" : "border-dashed border-negro/20 opacity-60"}`}>
                           <label htmlFor={`stock_${v.id}`} className="block text-center text-sm font-semibold">
                             {formatTalla(v.talla)}
                           </label>
@@ -92,12 +92,12 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                             aria-describedby={v.stockApartado ? `ap_${v.id}` : undefined}
                           />
                           {v.stockApartado > 0 && (
-                            <p id={`ap_${v.id}`} className="mt-1 text-center text-[0.6875rem] text-terracota-oscuro">
+                            <p id={`ap_${v.id}`} className="mt-1 text-center text-[0.6875rem] text-pizarra-oscuro">
                               {v.stockApartado} apartado{v.stockApartado > 1 && "s"}
                             </p>
                           )}
                           <label className="mt-1.5 flex items-center justify-center gap-1 text-[0.6875rem]">
-                            <input type="checkbox" name={`activo_${v.id}`} defaultChecked={v.activo} className="accent-cafe" />
+                            <input type="checkbox" name={`activo_${v.id}`} defaultChecked={v.activo} className="accent-negro" />
                             Visible
                           </label>
                         </div>
@@ -106,7 +106,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                   </fieldset>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-cafe/85">
+              <p className="mt-4 text-xs text-negro/85">
                 Los pares <em>apartados</em> pertenecen a pedidos que esperan pago; se descuentan solos cuando se paga o se liberan si el pago vence.
               </p>
             </FormAdmin>
@@ -128,7 +128,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
               </label>
               <label className="block">
                 <span className="campo-label">Muestra</span>
-                <input name="colorHex" type="color" defaultValue="#5d3f24" className="h-12 w-full cursor-pointer border border-cafe/25 bg-white p-1" />
+                <input name="colorHex" type="color" defaultValue="#5d3f24" className="h-12 w-full cursor-pointer border border-negro/25 bg-white p-1" />
               </label>
               <label className="block">
                 <span className="campo-label">Talla desde</span>
@@ -144,7 +144,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
               </label>
             </div>
             <label className="mt-4 flex items-center gap-3">
-              <input type="checkbox" name="medias" defaultChecked className="h-5 w-5 accent-cafe" />
+              <input type="checkbox" name="medias" defaultChecked className="h-5 w-5 accent-negro" />
               Incluir medias tallas (25.5, 26.5…)
             </label>
           </FormAdmin>
@@ -154,13 +154,13 @@ export default async function EditarProducto({ params, searchParams }: PageProps
           {imgs.length > 0 && (
             <ul className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
               {imgs.map((img, i) => (
-                <li key={img.id} className="border border-cafe/15">
-                  <div className="relative aspect-[4/5] bg-crema-claro">
+                <li key={img.id} className="border border-negro/15">
+                  <div className="relative aspect-[4/5] bg-blanco">
                     <Image src={img.url} alt={img.alt} fill sizes="200px" className="object-cover" />
-                    {i === 0 && <span className="etiqueta absolute left-2 top-2 bg-cafe px-2 py-0.5 text-[0.625rem] text-crema-claro">Principal</span>}
+                    {i === 0 && <span className="etiqueta absolute left-2 top-2 bg-negro px-2 py-0.5 text-[0.625rem] text-blanco">Principal</span>}
                   </div>
                   <div className="space-y-1 p-2 text-xs">
-                    <p className="text-cafe/85">{img.color ?? "Todos los colores"}</p>
+                    <p className="text-negro/85">{img.color ?? "Todos los colores"}</p>
                     <div className="flex justify-between gap-2">
                       {i > 0 && (
                         <form action={hacerPrincipal}>
@@ -170,7 +170,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
                       )}
                       <form action={eliminarImagen} className="ml-auto">
                         <input type="hidden" name="id" value={img.id} />
-                        <button type="submit" className="enlace text-terracota-oscuro">Eliminar</button>
+                        <button type="submit" className="enlace text-pizarra-oscuro">Eliminar</button>
                       </form>
                     </div>
                   </div>
@@ -184,7 +184,7 @@ export default async function EditarProducto({ params, searchParams }: PageProps
               <label className="block">
                 <span className="campo-label">Imágenes</span>
                 <input name="archivos" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple required className="campo py-2.5" />
-                <span className="mt-1 block text-xs text-cafe/85">JPG, PNG o WebP de hasta 8 MB. Proporción 4:5 recomendada.</span>
+                <span className="mt-1 block text-xs text-negro/85">JPG, PNG o WebP de hasta 8 MB. Proporción 4:5 recomendada.</span>
               </label>
               <label className="block">
                 <span className="campo-label">¿De qué color?</span>
