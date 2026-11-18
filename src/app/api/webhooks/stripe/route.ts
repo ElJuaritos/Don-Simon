@@ -1,9 +1,12 @@
-import type Stripe from "stripe";
+import Stripe from "stripe";
 import { cancelarPedidoPendiente, confirmarPago, registrarPagoTardio } from "@/lib/data/pedidos";
 import { getStripe, metodoDePago } from "@/lib/stripe";
 
 // Único lugar donde un pedido pasa a "pagado". Stripe firma cada evento y aquí se verifica.
 // En local: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+
+// La firma se verifica con Web Crypto: funciona igual en Node y en Cloudflare Workers.
+const cripto = Stripe.createSubtleCryptoProvider();
 
 function codigoUsado(sesion: Stripe.Checkout.Session) {
   for (const d of sesion.discounts ?? []) {
@@ -47,7 +50,7 @@ export async function POST(request: Request) {
 
   let evento: Stripe.Event;
   try {
-    evento = stripe.webhooks.constructEvent(await request.text(), firma, secreto);
+    evento = await stripe.webhooks.constructEventAsync(await request.text(), firma, secreto, undefined, cripto);
   } catch {
     return new Response("Firma inválida", { status: 400 });
   }

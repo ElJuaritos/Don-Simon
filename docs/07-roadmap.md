@@ -35,7 +35,7 @@ Las fechas se definen cuando estén resueltas las [decisiones pendientes](08-dec
 - [x] Checkout más robusto: libera stock si Stripe falla, cierra la sesión al cancelar, avisa de pagos tardíos, guarda el método de pago real y bloquea el modo demo en producción
 - [x] Revisión de diseño y espacio (2026-09-29): secciones más compactas (la portada pasó de 8.3 a 7.2 pantallas), bloques editoriales 5:4, foto fija en la ficha de producto, sugerencias por público, filtros automáticos (en celular, detrás de un botón), carrito lateral al agregar, Hombre / Mujer lado a lado en celular y barra de anuncio clara
 - [ ] Revisión del dueño con sus fotos reales → lista de cambios
-- [ ] Probar un pago completo con las llaves de prueba de Stripe
+- [x] Probar un pago completo con las llaves de prueba de Stripe (2026-11-18: pedido DS-10100 cobrado en la cuenta de prueba de Varen y marcado como pagado por el webhook)
 
 ## Fase 1 · Diseño
 - [ ] Sistema de diseño: tokens, tipografía, botones, formularios, tarjetas

@@ -185,6 +185,9 @@ export async function iniciarCheckout(_prev: EstadoForm, formData: FormData): Pr
   redirect(sesion.url!);
 }
 
+/** Stripe acepta entre 30 minutos y 24 horas. */
+const MINUTOS_PARA_PAGAR = 60;
+
 function crearSesionPago(
   stripe: Stripe,
   pedido: { id: string; numero: number },
@@ -192,21 +195,17 @@ function crearSesionPago(
   email: string,
 ) {
   const sitio = urlDelSitio();
-  const envio = carrito.envio > 0
-    ? [{ quantity: 1, price_data: { currency: "mxn", unit_amount: carrito.envio, product_data: { name: "Envío" } } }]
-    : [];
-  return stripe.checkout.sessions.create({
-    mode: "payment",
-    locale: "es",
-    // Los cupones se crean en el panel de Stripe. El Checkout embebido pide una llave
-    // pública (pk_) que todavía no tenemos, así que el pago sigue en la página de Stripe.
-    allow_promotion_codes: true,
-    customer_email: email,
-    client_reference_id: pedido.id,
-    metadata: { pedidoId: pedido.id, folio: folio(pedido.numero) },
-    payment_intent_data: { metadata: { pedidoId: pedido.id } },
-    line_items: [
-      ...carrito.lineas.map((l) => ({
+  return stripe.checkout.sessions.create(
+    {
+      mode: "payment",
+      locale: "es",
+      // Los cupones se crean en el panel de Stripe
+      allow_promotion_codes: true,
+      customer_email: email,
+      client_reference_id: pedido.id,
+      metadata: { pedidoId: pedido.id, folio: folio(pedido.numero) },
+      payment_intent_data: { metadata: { pedidoId: pedido.id } },
+      line_items: carrito.lineas.map((l) => ({
         quantity: l.cantidad,
         price_data: {
           currency: "mxn",
@@ -214,12 +213,25 @@ function crearSesionPago(
           product_data: { name: `${l.nombre} · ${l.color} · ${textoDeTalla(l)}` },
         },
       })),
-      ...envio,
-    ],
-    // El ID del pedido es un UUID: no se puede adivinar como un folio consecutivo
-    success_url: `${sitio}/checkout/gracias?pedido=${pedido.id}`,
-    cancel_url: `${sitio}/carrito?pago=cancelado`,
-  });
+      // El envío va como envío de Stripe y no como producto: así un cupón no lo descuenta
+      shipping_options: [
+        {
+          shipping_rate_data: {
+            type: "fixed_amount",
+            display_name: carrito.envio > 0 ? "Envío estándar" : "Envío gratis",
+            fixed_amount: { amount: carrito.envio, currency: "mxn" },
+          },
+        },
+      ],
+      // Si no se paga en una hora, Stripe avisa (checkout.session.expired) y se liberan los pares
+      expires_at: Math.floor(Date.now() / 1000) + MINUTOS_PARA_PAGAR * 60,
+      // El ID del pedido es un UUID: no se puede adivinar como un folio consecutivo
+      success_url: `${sitio}/checkout/gracias?pedido=${pedido.id}`,
+      cancel_url: `${sitio}/carrito?pago=cancelado`,
+    },
+    // Si la petición se repite por un error de red, Stripe devuelve la misma sesión
+    { idempotencyKey: `checkout-${pedido.id}` },
+  );
 }
 
 // ---------- Newsletter y contacto ----------

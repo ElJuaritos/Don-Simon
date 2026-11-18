@@ -107,6 +107,7 @@ El dueño mandó un segundo PDF (`Diseño Página WEB.pdf`) con la estructura qu
 ### 10. Facturación
 ¿Se emitirá CFDI? ¿Con qué proveedor (Facturama, Facturapi, contador)?
 **Decisión**: _por definir_ (2026-10-07).
+- Nota (2026-11-18): **Stripe Invoicing no emite CFDI.** Las facturas de Stripe no son facturas fiscales mexicanas; para CFDI 4.0 hace falta un servicio con PAC (Facturapi, Facturama u otro) o el contador. **Stripe Tax** tampoco hace falta por ahora: los precios ya incluyen el IVA del 16 %, Stripe Tax cobra una comisión por transacción y no maneja la tasa reducida de la región fronteriza. Se revisa si se vende fuera de México.
 
 ### 11. Dominio y correo
 **Decisión (2026-09-29)**: ✅ Dominio **`donsimonshoes.com`**. Al ser `.com` funciona también si después se vende fuera de México.
